@@ -1,0 +1,11 @@
+{
+  "name": "lingua-platform",
+  "version": "0.1.0",
+  "description": "Lingua English Lab — full-course platform foundation (Phase 1). Zero-dependency Node backend with built-in SQLite, accounts, a content engine, and server-enforced progress.",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node --experimental-sqlite server.js",
+    "reset": "rm -f data.db && echo reset"
+  },
+  "engines": { "node": ">=22" }
+}
