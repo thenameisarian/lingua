@@ -421,7 +421,7 @@ async function adminHome(){
   h+=`<div class="eyebrow" style="margin-top:8px">All students (${rows.length})</div>`;
   if(!rows.length)h+=`<p class="muted center">No students enrolled yet.</p>`;
   else{h+=`<div class="card"><table><tr><th>Name</th><th>Class</th><th>Lv</th><th>XP</th><th>🔥</th></tr>`;rows.sort((a,b)=>b.xp-a.xp).forEach(r=>{h+=`<tr style="cursor:pointer" onclick="studentView('${r.sid}','${r.cid}')"><td><b>${escH(r.name)}</b></td><td>${escH(r.cls)} <span class="muted">${r.level}${r.placed?(' · placed '+r.placed):''}</span></td><td>${r.lv}</td><td>${r.xp}</td><td>${r.streak}</td></tr>`;});h+=`</table></div>`;}
-  h+=`<div class="btn row" style="margin-top:10px"><button class="btn ghost" onclick="adminHome()">↻ Refresh</button><button class="btn ghost" onclick="usersView()">👥 People</button><button class="btn ghost" onclick="exportCSV()">⬇ Export</button></div>`;
+  h+=`<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"><button class="btn ghost" style="flex:1;min-width:120px" onclick="adminHome()">↻ Refresh</button><button class="btn ghost" style="flex:1;min-width:120px" onclick="usersView()">👥 People</button><button class="btn ghost" style="flex:1;min-width:120px" onclick="analyticsView()">📊 Analytics</button><button class="btn ghost" style="flex:1;min-width:120px" onclick="exportCSV()">⬇ Export</button></div>`;
   $('app').innerHTML=h;
 }
 
@@ -491,6 +491,7 @@ async function studentView(sid,cid){wallOff();
   const e=(await SUPA.from('lingua_enrollments').select('student_name').eq('class_id',cid).eq('student_id',sid).maybeSingle()).data;
   const pr=(await SUPA.from('lingua_progress').select('state,updated_at').eq('class_id',cid).eq('student_id',sid).maybeSingle()).data;
   const pf=(await SUPA.from('lingua_profiles').select('placed_level').eq('id',sid).maybeSingle()).data;
+  const nt=(await SUPA.from('lingua_notes').select('body').eq('student_id',sid).eq('author_id',CTX.user.id).maybeSingle()).data;
   const st=(pr&&pr.state)||{}; const name=(e&&e.student_name)||'Student';
   const lvlUnits=UNITS.filter(u=>u.level===c.level);
   const doneInLevel=lvlUnits.filter(u=>(st.unitsDone||{})[u.id]);
@@ -505,6 +506,7 @@ async function studentView(sid,cid){wallOff();
      <span class="muted">Last active: ${st.lastActive||'—'}</span></div></div>
    <div class="eyebrow">${c.level} units (${doneInLevel.length}/${lvlUnits.length})</div>
    <div class="card">${lvlUnits.map(u=>`<div class="row-item" style="cursor:default;margin:2px 0"><div class="dot" style="width:28px;height:28px;font-size:13px;background:${(st.unitsDone||{})[u.id]?'#e9f8f0':'var(--teal-soft)'}">${(st.unitsDone||{})[u.id]?'✓':'·'}</div><div class="meta"><small>${escH(u.title)}</small></div></div>`).join('')||'<p class="muted">No units at this level.</p>'}</div>
+   <div class="eyebrow">Private note (only you see this)</div><div class="card"><textarea id="snote" placeholder="Your private notes about this student…" style="min-height:70px">${nt&&nt.body?escH(nt.body):``}</textarea><button class="btn ghost" style="margin-top:8px" onclick="saveNote('${sid}')">Save note</button></div>
    <div class="eyebrow">Actions</div>
    <div class="card"><label class="muted" style="font-size:12px">Move to another class / level</label>
      <select id="mvc">${allCls.filter(x=>x.id!==cid).map(x=>`<option value="${x.id}">${escH(x.name)} (${x.level})</option>`).join('')||'<option value="">No other classes</option>'}</select>
@@ -583,6 +585,31 @@ async function loadFeed(){const el=$('feed');if(!el||!CTX.classId)return;
   (asR.data||[]).forEach(a=>{const units=(a.unit_ids||[]).filter(id=>UNITS.find(u=>u.id===id));const done=units.filter(id=>S.unitsDone[id]).length;const pct=units.length?Math.round(done/units.length*100):0;const overdue=a.due_date&&a.due_date<today();
     h+=`<div class="card" style="border-left:3px solid var(--teal)"><div class="top" style="margin-bottom:4px"><b style="font-size:15px">📌 ${escH(a.title)}</b>${a.due_date?`<span class="pill" style="${overdue?'background:#fdeef0;color:var(--rose)':''}">due ${a.due_date}</span>`:''}</div>${a.live_info?`<div class="muted" style="font-size:12px">📅 ${escH(a.live_info)}</div>`:''}${a.note?`<div class="why" style="text-align:left">${escH(a.note)}</div>`:''}<div class="bar" style="margin:8px 0"><i style="width:${pct}%"></i></div><div class="muted" style="font-size:12px">Units ${done}/${units.length}${a.vocab_count?` · vocab ${Math.min(vocabSeen(),a.vocab_count)}/${a.vocab_count}`:''}</div>${units.map(id=>{const u=UNITS.find(x=>x.id===id);return `<div class="row-item" style="margin:4px 0" onclick="startUnit('${id}')"><div class="dot" style="width:30px;height:30px;font-size:14px">${S.unitsDone[id]?'✓':'📘'}</div><div class="meta"><small>${escH(u.title)}</small></div><span class="status">${S.unitsDone[id]?'✓':'›'}</span></div>`;}).join('')}</div>`;});
   el.innerHTML=h;}
+async function analyticsView(){wallOff();
+  $('app').innerHTML='<div class="center muted" style="margin-top:40px">Crunching numbers…</div>';
+  const [clsR,enrR,progR]=await Promise.all([SUPA.from('lingua_classes').select('*'),SUPA.from('lingua_enrollments').select('class_id,student_id,student_name'),SUPA.from('lingua_progress').select('student_id,class_id,state,updated_at')]);
+  const cls=clsR.data||[],enr=enrR.data||[],prog=progR.data||[];
+  const cmap={};cls.forEach(c=>cmap[c.id]=c);
+  const pk={};prog.forEach(p=>pk[p.student_id+'|'+p.class_id]=p);
+  const tdy=today();const dnum=d=>d?Math.floor((Date.now()-new Date(d).getTime())/864e5):999;
+  let activeToday=0,active7=0,totXP=0,n=enr.length;
+  const rows=enr.map(e=>{const st=(pk[e.student_id+'|'+e.class_id]||{}).state||{};const c=cmap[e.class_id]||{};const units=UNITS.filter(u=>u.level===c.level);const done=units.filter(u=>(st.unitsDone||{})[u.id]).length;const la=st.lastActive;const days=dnum(la);if(la===tdy)activeToday++;if(days<=7)active7++;totXP+=st.xp||0;return {name:e.student_name||'Student',cid:e.class_id,cls:c.name||'—',level:c.level||'',xp:st.xp||0,streak:st.streak||0,done,tot:units.length,la,days};});
+  const attention=rows.filter(r=>r.days>=7||r.xp===0).sort((a,b)=>b.days-a.days);
+  const atRisk=rows.filter(r=>r.streak>=2&&r.la!==tdy&&r.days<=2);
+  const top=rows.slice().sort((a,b)=>b.xp-a.xp).slice(0,5).filter(r=>r.xp>0);
+  const stat=(ic,v,l)=>`<div class="card" style="margin:0;text-align:center;padding:12px 4px"><div style="font-size:20px">${ic}</div><div style="font-size:20px;font-weight:800;font-family:Lora">${v}</div><div class="muted" style="font-size:11px">${l}</div></div>`;
+  let h=`<div class="progress-top"><button class="x" onclick="adminHome()">✕</button></div><div class="eyebrow">Analytics</div><h1 style="font-size:22px;margin-bottom:10px">Class insights</h1>
+   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px">${stat('🧑‍🎓',n,'Students')}${stat('🔥',activeToday,'Active today')}${stat('📆',active7,'Active 7d')}${stat('⭐',n?Math.round(totXP/n):0,'Avg XP')}</div>`;
+  h+=`<div class="eyebrow">⚠️ Needs attention (${attention.length})</div>`;
+  h+=attention.length?`<div class="card">`+attention.map(r=>`<div class="row-item" style="cursor:default;padding:6px 0"><div class="meta"><b style="font-size:14px">${escH(r.name)}</b><small>${escH(r.cls)} · ${r.xp===0?'no progress yet':(r.days>=999?'never active':r.days+' days inactive')}</small></div><div class="pill" style="background:#fdeef0;color:var(--rose)">${r.xp} XP</div></div>`).join('')+`</div>`:`<p class="muted center" style="font-size:13px">Everyone is active 🎉</p>`;
+  h+=`<div class="eyebrow" style="margin-top:6px">🔥 Streak at risk (${atRisk.length})</div>`;
+  h+=atRisk.length?`<div class="card">`+atRisk.map(r=>`<div class="row-item" style="cursor:default;padding:6px 0"><div class="meta"><b style="font-size:14px">${escH(r.name)}</b><small>${escH(r.cls)} · ${r.streak}-day streak, not active today</small></div></div>`).join('')+`</div>`:`<p class="muted center" style="font-size:13px">No streaks about to break.</p>`;
+  if(top.length){h+=`<div class="eyebrow" style="margin-top:6px">🌟 Top learners</div><div class="card">`+top.map((r,i)=>`<div class="row-item" style="cursor:default;padding:6px 0"><div style="width:28px;font-weight:700">${i+1}.</div><div class="meta"><b style="font-size:14px">${escH(r.name)}</b><small>${escH(r.cls)}</small></div><div style="font-weight:700">⭐ ${r.xp}</div></div>`).join('')+`</div>`;}
+  h+=`<div class="eyebrow" style="margin-top:6px">By class</div><div class="card"><table><tr><th>Class</th><th>Students</th><th>Avg units</th><th>Active 7d</th></tr>`;
+  cls.forEach(c=>{const cr=rows.filter(r=>r.cid===c.id);const avg=cr.length?Math.round(cr.reduce((s,r)=>s+r.done,0)/cr.length*10)/10:0;const a7=cr.filter(r=>r.days<=7).length;h+=`<tr><td><b>${escH(c.name)}</b> <span class="muted">${c.level}</span></td><td>${cr.length}</td><td>${cr.length?avg:'—'}</td><td>${a7}</td></tr>`;});
+  h+=`</table></div>`;
+  $('app').innerHTML=h;}
+async function saveNote(sid){const body=$('snote').value;const {error}=await SUPA.from('lingua_notes').upsert({author_id:CTX.user.id,student_id:sid,body,updated_at:new Date().toISOString()},{onConflict:'author_id,student_id'});if(error){toast('Could not save note');return;}toast('Note saved');}
 boot();
 </script>
 </body>
