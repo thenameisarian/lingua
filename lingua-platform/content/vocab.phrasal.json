@@ -1,0 +1,22 @@
+[
+{"id":"vp_giveup","term":"give up","meaning":"stop trying or quit","example":"Don't give up — keep practising.<br>She gave up smoking.<br>I give up; what's the answer?","type":"phrasal","tier":1},
+{"id":"vp_findout","term":"find out","meaning":"discover information","example":"I'll find out the time.<br>How did you find out?<br>We found out the truth.","type":"phrasal","tier":1},
+{"id":"vp_lookfor","term":"look for","meaning":"try to find","example":"I'm looking for my keys.<br>What are you looking for?<br>She's looking for a job.","type":"phrasal","tier":1},
+{"id":"vp_lookafter","term":"look after","meaning":"take care of","example":"Can you look after the kids?<br>He looks after his parents.<br>Look after yourself.","type":"phrasal","tier":1},
+{"id":"vp_pickup","term":"pick up","meaning":"collect someone or something","example":"I'll pick you up at eight.<br>Pick up the phone.<br>She picked up some milk.","type":"phrasal","tier":1},
+{"id":"vp_turnon","term":"turn on","meaning":"start a machine or light","example":"Turn on the lights.<br>He turned on the TV.<br>Turn the heating on.","type":"phrasal","tier":1},
+{"id":"vp_turnoff","term":"turn off","meaning":"stop a machine or light","example":"Turn off the TV.<br>Don't forget to turn off the tap.<br>Turn the lights off.","type":"phrasal","tier":1},
+{"id":"vp_getup","term":"get up","meaning":"leave your bed","example":"I get up at seven.<br>Get up, it's late!<br>She got up early.","type":"phrasal","tier":1},
+{"id":"vp_puton","term":"put on","meaning":"start wearing something","example":"Put on your coat.<br>He put on his shoes.<br>Put a jumper on.","type":"phrasal","tier":1},
+{"id":"vp_takeoff","term":"take off","meaning":"remove clothes; or (of a plane) leave the ground","example":"Take off your shoes.<br>The plane took off.<br>She took off her coat.","type":"phrasal","tier":2},
+{"id":"vp_comeback","term":"come back","meaning":"return","example":"She'll come back next week.<br>Come back soon!<br>He came back late.","type":"phrasal","tier":1},
+{"id":"vp_goon","term":"go on","meaning":"continue","example":"Go on, I'm listening.<br>The show must go on.<br>What's going on?","type":"phrasal","tier":1},
+{"id":"vp_runout","term":"run out (of)","meaning":"have no more left","example":"We've run out of milk.<br>Time is running out.<br>The printer ran out of ink.","type":"phrasal","tier":2},
+{"id":"vp_setup","term":"set up","meaning":"start or arrange something","example":"They set up a company.<br>Let's set up a meeting.<br>I set up the new phone.","type":"phrasal","tier":2},
+{"id":"vp_workout","term":"work out","meaning":"solve; or exercise","example":"Let's work out a plan.<br>I work out at the gym.<br>It worked out fine.","type":"phrasal","tier":2},
+{"id":"vp_dealwith","term":"deal with","meaning":"handle a problem or person","example":"I'll deal with it tomorrow.<br>She deals with customers.<br>How do you deal with stress?","type":"phrasal","tier":2},
+{"id":"vp_getalong","term":"get along (with)","meaning":"have a good relationship","example":"I get along with my colleagues.<br>They don't get along.<br>How do you two get along?","type":"phrasal","tier":2},
+{"id":"vp_giveback","term":"give back","meaning":"return something","example":"Please give back my pen.<br>He gave the money back.<br>Give it back!","type":"phrasal","tier":1},
+{"id":"vp_calloff","term":"call off","meaning":"cancel","example":"They called off the meeting.<br>The match was called off.<br>We called it off.","type":"phrasal","tier":3},
+{"id":"vp_putoff","term":"put off","meaning":"postpone","example":"We put off the trip.<br>Don't put it off.<br>The meeting was put off.","type":"phrasal","tier":3}
+]

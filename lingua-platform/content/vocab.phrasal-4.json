@@ -1,0 +1,22 @@
+[
+{"id":"vp4_getaway","term":"get away","meaning":"escape; or leave for a holiday","example":"We need to get away for a weekend.<br>The thief got away.<br>I couldn't get away from work.","type":"phrasal","tier":2},
+{"id":"vp4_getback","term":"get back","meaning":"return","example":"When did you get back?<br>I'll get back home by six.<br>Get back to me soon.","type":"phrasal","tier":1},
+{"id":"vp4_goahead","term":"go ahead","meaning":"start or proceed","example":"Go ahead, I'm listening.<br>They went ahead with the plan.<br>Can I go ahead and book it?","type":"phrasal","tier":2},
+{"id":"vp4_gooff","term":"go off","meaning":"explode or ring; or (of food) become bad","example":"The alarm went off at six.<br>The milk has gone off.<br>The fireworks went off.","type":"phrasal","tier":2},
+{"id":"vp4_hangup","term":"hang up","meaning":"end a phone call","example":"Don't hang up!<br>She hung up on me.<br>He hung up the phone.","type":"phrasal","tier":2},
+{"id":"vp4_hangout","term":"hang out","meaning":"spend time relaxing","example":"We hang out at weekends.<br>They hung out at the cafe.<br>Want to hang out later?","type":"phrasal","tier":2},
+{"id":"vp4_hurryup","term":"hurry up","meaning":"do something more quickly","example":"Hurry up, we're late!<br>Tell him to hurry up.<br>Hurry up and finish.","type":"phrasal","tier":1},
+{"id":"vp4_login","term":"log in","meaning":"sign into an account","example":"Log in with your email.<br>I can't log in.<br>She logged in to check.","type":"phrasal","tier":2},
+{"id":"vp4_lookforwardto","term":"look forward to","meaning":"feel happy about a future event","example":"I look forward to seeing you.<br>We look forward to the trip.<br>She's looking forward to it.","type":"phrasal","tier":2},
+{"id":"vp4_putaway","term":"put away","meaning":"return something to its place","example":"Put away your toys.<br>I put the dishes away.<br>Put your phone away.","type":"phrasal","tier":2},
+{"id":"vp4_putdown","term":"put down","meaning":"place something on a surface","example":"Put down that knife.<br>She put the bag down.<br>Put it down gently.","type":"phrasal","tier":2},
+{"id":"vp4_runaway","term":"run away","meaning":"escape by running","example":"The dog ran away.<br>Don't run away from problems.<br>They ran away together.","type":"phrasal","tier":2},
+{"id":"vp4_signup","term":"sign up","meaning":"register for something","example":"Sign up for the class.<br>I signed up online.<br>Hundreds signed up.","type":"phrasal","tier":2},
+{"id":"vp4_slowdown","term":"slow down","meaning":"go more slowly","example":"Slow down, you're too fast.<br>The car slowed down.<br>You need to slow down and rest.","type":"phrasal","tier":2},
+{"id":"vp4_stayup","term":"stay up","meaning":"not go to bed","example":"I stayed up late.<br>Don't stay up too long.<br>We stayed up talking.","type":"phrasal","tier":2},
+{"id":"vp4_takedown","term":"take down","meaning":"remove something; or write down","example":"Take down the poster.<br>She took down my number.<br>They took down the tent.","type":"phrasal","tier":3},
+{"id":"vp4_workon","term":"work on","meaning":"spend effort improving something","example":"I'm working on my English.<br>She's working on a project.<br>We need to work on this.","type":"phrasal","tier":2},
+{"id":"vp4_calmdown","term":"calm down","meaning":"become less angry or upset","example":"Calm down, it's okay.<br>He calmed down quickly.<br>Take a breath and calm down.","type":"phrasal","tier":2},
+{"id":"vp4_getin","term":"get in","meaning":"enter; or arrive","example":"Get in the car.<br>What time does the train get in?<br>We got in late.","type":"phrasal","tier":1},
+{"id":"vp4_goback","term":"go back","meaning":"return to a place","example":"I want to go back home.<br>Let's go back.<br>She went back to work.","type":"phrasal","tier":1}
+]

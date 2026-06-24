@@ -1,0 +1,22 @@
+[
+{"id":"vi_cake","term":"a piece of cake","meaning":"very easy","example":"The test was a piece of cake.<br>For her, cooking is a piece of cake.<br>Don't worry, it's a piece of cake.","type":"idiom","tier":2},
+{"id":"vi_ice","term":"break the ice","meaning":"make people feel relaxed","example":"He told a joke to break the ice.<br>A game can break the ice.<br>Someone needs to break the ice.","type":"idiom","tier":2},
+{"id":"vi_books","term":"hit the books","meaning":"study hard","example":"I need to hit the books this weekend.<br>Exams are coming, so hit the books.<br>She hit the books all night.","type":"idiom","tier":3},
+{"id":"vi_weather","term":"under the weather","meaning":"feeling ill","example":"I'm a bit under the weather today.<br>He stayed home, feeling under the weather.<br>You look under the weather.","type":"idiom","tier":2},
+{"id":"vi_bluemoon","term":"once in a blue moon","meaning":"very rarely","example":"We meet once in a blue moon.<br>He calls once in a blue moon.<br>It happens once in a blue moon.","type":"idiom","tier":3},
+{"id":"vi_samepage","term":"on the same page","meaning":"in agreement","example":"Let's make sure we're on the same page.<br>Are we on the same page?<br>The team is on the same page.","type":"idiom","tier":2},
+{"id":"vi_armleg","term":"cost an arm and a leg","meaning":"be very expensive","example":"That car cost an arm and a leg.<br>It doesn't cost an arm and a leg.<br>Tickets cost an arm and a leg.","type":"idiom","tier":2},
+{"id":"vi_callitday","term":"call it a day","meaning":"stop working for now","example":"It's late — let's call it a day.<br>We called it a day at six.<br>Shall we call it a day?","type":"idiom","tier":2},
+{"id":"vi_hang","term":"get the hang of it","meaning":"learn how to do something","example":"You'll get the hang of it soon.<br>I'm getting the hang of it.<br>Once you get the hang of it, it's easy.","type":"idiom","tier":2},
+{"id":"vi_blue","term":"out of the blue","meaning":"unexpectedly","example":"She called me out of the blue.<br>The news came out of the blue.<br>He showed up out of the blue.","type":"idiom","tier":3},
+{"id":"vi_laststraw","term":"the last straw","meaning":"the final problem you can accept","example":"That was the last straw — I quit.<br>The late bus was the last straw.<br>For her, it was the last straw.","type":"idiom","tier":3},
+{"id":"vi_bullet","term":"bite the bullet","meaning":"do something hard you've avoided","example":"I bit the bullet and called the dentist.<br>Just bite the bullet.<br>He bit the bullet and apologised.","type":"idiom","tier":3},
+{"id":"vi_pull","term":"pull yourself together","meaning":"calm down and control yourself","example":"Pull yourself together, it'll be fine.<br>She pulled herself together.<br>Come on, pull yourself together.","type":"idiom","tier":3},
+{"id":"vi_longrun","term":"in the long run","meaning":"over a long period of time","example":"It'll save money in the long run.<br>In the long run, it pays off.<br>It's better in the long run.","type":"idiom","tier":2},
+{"id":"vi_blessing","term":"a blessing in disguise","meaning":"a bad thing that turns out well","example":"Losing that job was a blessing in disguise.<br>It was a blessing in disguise.<br>The delay was a blessing in disguise.","type":"idiom","tier":3},
+{"id":"vi_corners","term":"cut corners","meaning":"do something badly to save time or money","example":"Don't cut corners on safety.<br>They cut corners to save money.<br>Cutting corners leads to mistakes.","type":"idiom","tier":3},
+{"id":"vi_nutshell","term":"in a nutshell","meaning":"in a few words","example":"In a nutshell, we won.<br>In a nutshell, it's complicated.<br>So, in a nutshell, yes.","type":"idiom","tier":2},
+{"id":"vi_facemusic","term":"face the music","meaning":"accept the consequences","example":"He had to face the music.<br>It's time to face the music.<br>She faced the music bravely.","type":"idiom","tier":3},
+{"id":"vi_ballpark","term":"a ballpark figure","meaning":"a rough estimate","example":"Give me a ballpark figure.<br>That's just a ballpark figure.<br>Can you give a ballpark figure?","type":"idiom","tier":3},
+{"id":"vi_touchbase","term":"touch base","meaning":"make brief contact","example":"Let's touch base next week.<br>I'll touch base with the team.<br>We touched base yesterday.","type":"idiom","tier":3}
+]
