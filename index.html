@@ -410,7 +410,7 @@ async function adminHome(){
   const lvlOf=xp=>{let l=0;for(let i=0;i<LV.length;i++)if(xp>=LV[i])l=i;return l;};
   const tdy=new Date().toISOString().slice(0,10); let activeToday=0;
   prog.forEach(p=>{const st=p.state||{}; if(st.lastActive===tdy)activeToday++;});
-  let h=`<div class="top"><div class="brand" style="font-size:20px">Lingua · Admin</div><button class="x" onclick="logout()">log out</button></div>`;
+  let h=`<div class="top"><div class="brand" style="font-size:20px">Lingua · Admin</div><button class="x" onclick="logout()">log out</button></div><div class="btn row" style="margin:10px 0 2px"><button class="btn" onclick="adminHome()">📊 Admin</button><button class="btn ghost" onclick="startPreview()">👁 Student view</button></div>`;
   h+=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px">`+
     [['👨‍🏫',teachers,'Teachers'],['🧑‍🎓',students,'Students'],['🗂',cls.length,'Classes'],['🔥',activeToday,'Active today']]
     .map(s=>`<div class="card" style="margin:0;text-align:center;padding:12px 4px"><div style="font-size:20px">${s[0]}</div><div style="font-size:20px;font-weight:800;font-family:Lora">${s[1]}</div><div class="muted" style="font-size:11px">${s[2]}</div></div>`).join('')+`</div>`;
@@ -428,7 +428,7 @@ async function adminHome(){
 
 async function teacherHome(){wallOff();
   const cls=(await SUPA.from('lingua_classes').select('*').order('created_at')).data||[];
-  let h=`<div class="top"><div class="brand" style="font-size:20px">Lingua · ${CTX.role==='admin'?'Admin':'Teacher'}</div><button class="x" onclick="logout()">log out</button></div><div class="btn row" style="margin:10px 0 2px"><button class="btn" onclick="adminHome()">📊 Admin</button><button class="btn ghost" onclick="startPreview()">👁 Student view</button></div>
+  let h=`<div class="top"><div class="brand" style="font-size:20px">Lingua · ${CTX.role==='admin'?'Admin':'Teacher'}</div><button class="x" onclick="logout()">log out</button></div>
    <p class="muted" style="font-size:13px;margin-bottom:6px">Welcome, ${escH(CTX.name)}. Create a class for each level — students see only that level.</p>
    <div class="card"><div class="eyebrow">New class</div>
      <input id="cn" placeholder="Class name (e.g. Tuesday A2 group)">
