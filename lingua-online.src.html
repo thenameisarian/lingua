@@ -270,7 +270,7 @@ function home(){
   const due=dueChunks().length, vt=VOCAB.length, vs=vocabSeen();
   const li=levelInfo(),dx=dayXP(),goalPct=Math.min(100,Math.round(dx.xp/(S.goal||30)*100)),bc=Object.keys(S.badges||{}).length;
   const doneCount=mine.filter(u=>S.unitsDone[u.id]).length;
-  $('app').innerHTML=`<div class="top"><div style="font-family:Lora;font-weight:700;font-size:20px">Lingua · ${CTX.level}</div>
+  $('app').innerHTML=`${CTX.preview?previewBar():''}<div class="top"><div style="font-family:Lora;font-weight:700;font-size:20px">Lingua · ${CTX.level}</div>
      <div class="chips"><span>🔥 ${S.streak}</span><span>⭐ ${S.xp}</span><button class="x" onclick="logout()" title="Log out">⎋</button></div></div>
    <div class="card" style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="badgesView()">
      ${ring(li.pct,'Lv '+li.level,li.name)}
@@ -428,7 +428,7 @@ async function adminHome(){
 
 async function teacherHome(){wallOff();
   const cls=(await SUPA.from('lingua_classes').select('*').order('created_at')).data||[];
-  let h=`<div class="top"><div class="brand" style="font-size:20px">Lingua · ${CTX.role==='admin'?'Admin':'Teacher'}</div><button class="x" onclick="logout()">log out</button></div>
+  let h=`<div class="top"><div class="brand" style="font-size:20px">Lingua · ${CTX.role==='admin'?'Admin':'Teacher'}</div><button class="x" onclick="logout()">log out</button></div><div class="btn row" style="margin:10px 0 2px"><button class="btn" onclick="adminHome()">📊 Admin</button><button class="btn ghost" onclick="startPreview()">👁 Student view</button></div>
    <p class="muted" style="font-size:13px;margin-bottom:6px">Welcome, ${escH(CTX.name)}. Create a class for each level — students see only that level.</p>
    <div class="card"><div class="eyebrow">New class</div>
      <input id="cn" placeholder="Class name (e.g. Tuesday A2 group)">
@@ -624,6 +624,11 @@ function cmsUnits(){wallOff();let h=`<div class="progress-top"><button class="x"
 function cmsUnitEdit(id){wallOff();const u=id?UNITS.find(x=>x.id===id):null;const tmpl={id:"newunit1",level:"A2",module:1,title:"",theme:"",canDo:"",chunks:[],grammar:{focus:"",pattern:"",examples:[]},reading:{passage:"",questions:[],vocabInContext:null},listening:{script:[],gist:{q:"",choices:[],a:0},dictogloss:{sentence:""},gap:{q:"",a:""}},speaking:{minimalPair:{a:"",b:"",note:""},fluency432:{prompt:""},retell:{prompt:"",useChunks:[]},task:{prompt:"",useChunks:[]}},writing:{model:"",sentenceCombining:[],task:{prompt:"",minWords:30}},review:{srItems:[]},quiz:[]};const json=JSON.stringify(u||tmpl,null,2);
   $('app').innerHTML=`<div class="progress-top"><button class="x" onclick="cmsUnits()">✕</button></div><div class="eyebrow">${id?'Edit':'New'} unit</div><p class="muted" style="font-size:12px">Edit the unit's content as JSON. Keep the structure valid (same shape as other units).</p><textarea id="ujson" spellcheck="false" style="min-height:360px;font-family:ui-monospace,monospace;font-size:12px">${escH(json)}</textarea><button class="btn" style="margin-top:10px" onclick="cmsUnitSave('${id||''}')">Save unit</button>${id?`<button class="btn ghost" style="margin-top:8px" onclick="cmsDelete('unit','${id}')">Delete unit</button>`:''}`;}
 async function cmsUnitSave(id){let obj;try{obj=JSON.parse($('ujson').value);}catch(e){toast('Invalid JSON: '+e.message);return;}if(!obj||!obj.id||!obj.level||!obj.title){toast('Need id, level and title');return;}const {error}=await SUPA.from('lingua_content').upsert({id:obj.id,kind:'unit',data:obj,deleted:false,updated_at:new Date().toISOString()},{onConflict:'id'});if(error){toast('Save failed');return;}const i=UNITS.findIndex(x=>x.id===obj.id);if(i>=0)UNITS[i]=obj;else UNITS.push(obj);toast('Unit saved');cmsUnits();}
+let PREVIEW_LEVEL='A1';
+function startPreview(){CTX.preview=true;CTX.classId=null;CTX.level=PREVIEW_LEVEL;CTX.className='Preview';S=fresh();home();}
+function exitPreview(){CTX.preview=false;CTX.level=null;CTX.className='';adminHome();}
+function setPreviewLevel(l){PREVIEW_LEVEL=l;CTX.level=l;S=fresh();home();}
+function previewBar(){return `<div class="card" style="background:var(--teal-soft);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px"><b style="font-size:13px;color:var(--teal-dark)">👁 Student preview</b><select onchange="setPreviewLevel(this.value)" style="width:auto;margin:0">${['A1','A2','B1','B2','C1','C2'].map(l=>`<option value="${l}" ${l===CTX.level?'selected':''}>${l}</option>`).join('')}</select><button class="btn ghost" style="width:auto;padding:8px 12px;margin-left:auto" onclick="exitPreview()">← Admin</button></div>`;}
 boot();
 </script>
 </body>
