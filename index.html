@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lingua — Arian Academy</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0f9d8e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{--teal:#0f9d8e;--teal-dark:#0b7d72;--teal-soft:#e6f6f3;--ink:#16302c;--muted:#6b8480;--line:#e4ecea;--bg:#f4f8f7;--rose:#e85d6b;--amber:#f0a020;--blue:#3b82c4;--violet:#7b6cf6;}
@@ -270,6 +277,7 @@ function home(){
        <div class="bar" style="margin-top:6px"><i style="width:${goalPct}%"></i></div></div></div>
    ${due>0?`<div class="card row-item" onclick="startReview()"><div class="dot">🔄</div><div class="meta"><b>Review ${due} item(s)</b><small>Spaced repetition — due now</small></div><span class="pill">Review →</span></div>`:''}
    ${vt>0?`<div class="card row-item" onclick="vocabStudy()"><div class="dot">📚</div><div class="meta"><b>Vocabulary</b><small>${vs}/${vt} learned · words, phrasal verbs, idioms…</small></div><span class="pill">Learn →</span></div>`:''}
+   <div class="card row-item" onclick="leaderboardView()"><div class="dot">🏆</div><div class="meta"><b>Class leaderboard</b><small>See how you rank in your class</small></div><span class="pill">View →</span></div>
    <div class="eyebrow" style="margin-top:6px">Your ${CTX.level} lessons</div>
    ${mine.length?mine.map(u=>`<div class="card row-item" onclick="startUnit('${u.id}')"><div class="dot">📘</div>
      <div class="meta"><b>${escH(u.title)}</b><small>${u.level} · ${escH(u.theme)}</small></div><span class="status">${S.unitsDone[u.id]?'✓':'›'}</span></div>`).join(''):'<div class="card muted">No lessons assigned to this level yet.</div>'}
@@ -524,6 +532,13 @@ async function exportCSV(){
   enr.forEach(e=>{const st=pk[e.student_id+'|'+e.class_id]||{};const c=cmap[e.class_id]||{};const xp=st.xp||0;let lv=0;for(let i=0;i<LV.length;i++)if(xp>=LV[i])lv=i;const cert=(st.certs&&c.level&&st.certs[c.level])?st.certs[c.level].score+'%':'';rows.push([e.student_name||'',c.name||'',c.level||'',xp,lv,st.streak||0,Object.keys(st.unitsDone||{}).length,st.cards?Object.keys(st.cards).length:0,cert,st.lastActive||'']);});
   const csv=rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='lingua-students.csv';document.body.appendChild(a);a.click();a.remove();toast('CSV downloaded');}
+async function leaderboardView(){wallOff();
+  const r=await SUPA.rpc('lingua_leaderboard',{p_class:CTX.classId});const rows=r.data||[];
+  let h=`<div class="progress-top"><button class="x" onclick="home()">✕</button></div><div class="eyebrow">${escH(CTX.className)} · ${CTX.level}</div><h1 style="font-size:22px;margin-bottom:10px">🏆 Leaderboard</h1>`;
+  if(!rows.length)h+=`<p class="muted center">No scores yet — be the first!</p>`;
+  else{h+=`<div class="card">`+rows.map((s,i)=>{const me=(s.name===CTX.name);const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';return `<div class="row-item" style="cursor:default;padding:7px 4px;${me?'background:var(--teal-soft);border-radius:10px':''}"><div style="width:32px;text-align:center;font-weight:700">${medal}</div><div class="meta"><b style="font-size:14px">${escH(s.name)}${me?' (you)':''}</b></div><div style="font-weight:700;width:64px;text-align:right">⭐ ${s.xp}</div><div class="muted" style="width:52px;text-align:right">🔥 ${s.streak}</div></div>`;}).join('')+`</div>`;}
+  $('app').innerHTML=h;}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));}
 boot();
 </script>
 </body>
