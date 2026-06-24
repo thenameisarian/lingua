@@ -227,7 +227,8 @@ async function route(){
     await SUPA.from('lingua_profiles').upsert({id:user.id,name:p.name,role:p.role});localStorage.removeItem('lingua_pending');
     prof={id:user.id,name:p.name,role:p.role};}
   CTX.role=prof.role;CTX.name=prof.name;
-  if(prof.role==='teacher'||prof.role==='admin'){teacherHome();return;}
+  if(prof.role==='admin'){adminHome();return;}
+  if(prof.role==='teacher'){teacherHome();return;}
   const enr=(await SUPA.from('lingua_enrollments').select('class_id,lingua_classes(id,name,level)').eq('student_id',user.id).limit(1)).data;
   if(enr&&enr.length&&enr[0].lingua_classes){const c=enr[0].lingua_classes;CTX.classId=c.id;CTX.className=c.name;CTX.level=c.level;await hydrate();home();}
   else studentJoin();
@@ -377,6 +378,41 @@ function confetti(){for(let k=0;k<24;k++){const c=document.createElement('div');
 
 /* ===== TEACHER ===== */
 function rnd(n){const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<n;i++)s+=a[Math.random()*a.length|0];return s;}
+function staffHome(){ if(CTX.role==='admin') adminHome(); else teacherHome(); }
+async function adminHome(){
+  wallOff();
+  $('app').innerHTML='<div class="center muted" style="margin-top:40px">Loading dashboard…</div>';
+  const [profsR,clsR,enrR,progR]=await Promise.all([
+    SUPA.from('lingua_profiles').select('id,name,role'),
+    SUPA.from('lingua_classes').select('*'),
+    SUPA.from('lingua_enrollments').select('class_id,student_id,student_name'),
+    SUPA.from('lingua_progress').select('student_id,class_id,state,updated_at')
+  ]);
+  const profs=profsR.data||[], cls=clsR.data||[], enr=enrR.data||[], prog=progR.data||[];
+  const nameById={}; profs.forEach(p=>nameById[p.id]=p.name);
+  const teachers=profs.filter(p=>p.role==='teacher'||p.role==='admin').length;
+  const students=profs.filter(p=>p.role==='student').length;
+  const progByKey={}; prog.forEach(p=>progByKey[p.student_id+'|'+p.class_id]=p);
+  const enrByClass={}; enr.forEach(e=>{(enrByClass[e.class_id]=enrByClass[e.class_id]||[]).push(e);});
+  const lvlOf=xp=>{let l=0;for(let i=0;i<LV.length;i++)if(xp>=LV[i])l=i;return l;};
+  const tdy=new Date().toISOString().slice(0,10); let activeToday=0;
+  prog.forEach(p=>{const st=p.state||{}; if(st.lastActive===tdy)activeToday++;});
+  let h=`<div class="top"><div class="brand" style="font-size:20px">Lingua · Admin</div><button class="x" onclick="logout()">log out</button></div>`;
+  h+=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px">`+
+    [['👨‍🏫',teachers,'Teachers'],['🧑‍🎓',students,'Students'],['🗂',cls.length,'Classes'],['🔥',activeToday,'Active today']]
+    .map(s=>`<div class="card" style="margin:0;text-align:center;padding:12px 4px"><div style="font-size:20px">${s[0]}</div><div style="font-size:20px;font-weight:800;font-family:Lora">${s[1]}</div><div class="muted" style="font-size:11px">${s[2]}</div></div>`).join('')+`</div>`;
+  h+=`<div class="card"><div class="eyebrow">New class</div><input id="cn" placeholder="Class name (e.g. Tuesday A2 group)"><select id="cl"><option value="A1">A1 · Beginner</option><option value="A2" selected>A2 · Elementary</option><option value="B1">B1 · Intermediate</option><option value="B2">B2 · Upper-int.</option><option value="C1">C1 · Advanced</option><option value="C2">C2 · Mastery</option></select><button class="btn" style="margin-top:10px" onclick="createClass()">Create class</button></div>`;
+  h+=`<div class="eyebrow">All classes (${cls.length})</div>`;
+  if(!cls.length)h+=`<p class="muted center">No classes yet.</p>`;
+  else cls.slice().sort((a,b)=>a.level.localeCompare(b.level)).forEach(c=>{const n=(enrByClass[c.id]||[]).length;h+=`<div class="card row-item" onclick="classView('${c.id}')"><div class="dot">${c.level}</div><div class="meta"><b>${escH(c.name)}</b><small>${n} student${n===1?'':'s'} · code ${c.join_code} · ${escH(nameById[c.teacher_id]||'—')}</small></div><span class="status">›</span></div>`;});
+  const rows=[]; enr.forEach(e=>{const st=(progByKey[e.student_id+'|'+e.class_id]||{}).state||{};const c=cls.find(x=>x.id===e.class_id);rows.push({name:e.student_name||nameById[e.student_id]||'Student',cls:c?c.name:'—',level:c?c.level:'',xp:st.xp||0,lv:lvlOf(st.xp||0),streak:st.streak||0});});
+  h+=`<div class="eyebrow" style="margin-top:8px">All students (${rows.length})</div>`;
+  if(!rows.length)h+=`<p class="muted center">No students enrolled yet.</p>`;
+  else{h+=`<div class="card"><table><tr><th>Name</th><th>Class</th><th>Lv</th><th>XP</th><th>🔥</th></tr>`;rows.sort((a,b)=>b.xp-a.xp).forEach(r=>{h+=`<tr><td><b>${escH(r.name)}</b></td><td>${escH(r.cls)} <span class="muted">${r.level}</span></td><td>${r.lv}</td><td>${r.xp}</td><td>${r.streak}</td></tr>`;});h+=`</table></div>`;}
+  h+=`<button class="btn ghost" style="margin-top:10px" onclick="adminHome()">↻ Refresh</button>`;
+  $('app').innerHTML=h;
+}
+
 async function teacherHome(){wallOff();
   const cls=(await SUPA.from('lingua_classes').select('*').order('created_at')).data||[];
   let h=`<div class="top"><div class="brand" style="font-size:20px">Lingua · ${CTX.role==='admin'?'Admin':'Teacher'}</div><button class="x" onclick="logout()">log out</button></div>
@@ -390,14 +426,14 @@ async function teacherHome(){wallOff();
   $('app').innerHTML=h;}
 async function createClass(){const name=$('cn').value.trim()||('New '+$('cl').value+' class');const level=$('cl').value;let code=level+'-'+rnd(4);
   const {error}=await SUPA.from('lingua_classes').insert({teacher_id:CTX.user.id,name,level,join_code:code});
-  if(error){toast('Could not create class');return;}toast('Class created');teacherHome();}
+  if(error){toast('Could not create class');return;}toast('Class created');staffHome();}
 async function classView(id){wallOff();
   const c=(await SUPA.from('lingua_classes').select('*').eq('id',id).single()).data;
   const enr=(await SUPA.from('lingua_enrollments').select('student_id,student_name').eq('class_id',id)).data||[];
   const prog=(await SUPA.from('lingua_progress').select('student_id,state,updated_at').eq('class_id',id)).data||[];
   const pmap={};prog.forEach(p=>pmap[p.student_id]=p);
   const totU=UNITS.filter(u=>u.level===c.level).length;
-  let h=`<div class="progress-top"><button class="x" onclick="teacherHome()">✕</button></div>
+  let h=`<div class="progress-top"><button class="x" onclick="staffHome()">✕</button></div>
    <div class="card"><div class="eyebrow">${c.level} class</div><h2 style="font-size:20px">${escH(c.name)}</h2>
      <p class="muted" style="font-size:13px">Share this code with students:</p><div style="text-align:center;margin:8px 0"><span class="code">${c.join_code}</span></div>
      <button class="btn ghost" onclick="copyText('${c.join_code}')">Copy code</button>
@@ -410,7 +446,7 @@ async function classView(id){wallOff();
     h+=`</table></div>`;}
   h+=`<button class="btn ghost" onclick="classView('${c.id}')">↻ Refresh progress</button>`;
   $('app').innerHTML=h;}
-async function delClass(id){if(!confirm('Delete this class and its data?'))return;await SUPA.from('lingua_classes').delete().eq('id',id);toast('Class deleted');teacherHome();}
+async function delClass(id){if(!confirm('Delete this class and its data?'))return;await SUPA.from('lingua_classes').delete().eq('id',id);toast('Class deleted');staffHome();}
 function copyText(t){try{navigator.clipboard.writeText(t);toast('Copied '+t);}catch(e){toast(t);}}
 
 boot();
