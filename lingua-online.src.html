@@ -130,6 +130,7 @@ function levelUnits(){return UNITS.filter(u=>u.level===CTX.level);}
 /* ===== context + state ===== */
 let CTX={user:null,role:null,name:'',classId:null,className:'',level:null};
 let S=fresh();
+let UNLOCKS=[];
 function fresh(){return {xp:0,streak:0,gems:0,lastActive:null,unitsDone:{},cards:{},certs:{},badges:{},day:{d:null,xp:0},goal:30};}
 let syncT=null,syncing=false;
 function save(){if(!CTX.classId)return;if(syncT)clearTimeout(syncT);syncT=setTimeout(pushProgress,700);}
@@ -246,6 +247,7 @@ async function route(){
 async function logout(){await SUPA.auth.signOut();CTX={user:null,role:null,name:'',classId:null,className:'',level:null};S=fresh();authScreen();}
 
 async function hydrate(){const r=(await SUPA.from('lingua_progress').select('state').eq('student_id',CTX.user.id).eq('class_id',CTX.classId).maybeSingle()).data;
+  const ur=await SUPA.from('lingua_unlocks').select('unit_id').eq('student_id',CTX.user.id).eq('class_id',CTX.classId);UNLOCKS=(ur.data||[]).map(x=>x.unit_id);
   S=Object.assign(fresh(),(r&&r.state)||{});}
 
 /* ===== STUDENT: join a class ===== */
@@ -264,6 +266,7 @@ async function doJoin(){const code=$('jc').value.trim().toUpperCase();if(!code){
   const c=data[0];CTX.classId=c.class_id;CTX.className=c.class_name;CTX.level=c.level;await hydrate();toast('Joined '+c.class_name);home();}
 
 /* ===== STUDENT: learning home (level-gated) ===== */
+function unlocked(u){if(CTX.preview||CTX.role!=='student')return true;const mine=levelUnits();const i=mine.findIndex(x=>x.id===u.id);if(i<=0)return true;if((UNLOCKS||[]).includes(u.id))return true;return !!S.unitsDone[(mine[i-1]||{}).id];}
 function home(){
   touchDay();wallOn();
   const mine=levelUnits();
@@ -283,8 +286,7 @@ function home(){
    <div id="feed"></div>
    <div class="card row-item" onclick="leaderboardView()"><div class="dot">🏆</div><div class="meta"><b>Class leaderboard</b><small>See how you rank in your class</small></div><span class="pill">View →</span></div>
    <div class="eyebrow" style="margin-top:6px">Your ${CTX.level} lessons</div>
-   ${mine.length?mine.map(u=>`<div class="card row-item" onclick="startUnit('${u.id}')"><div class="dot">📘</div>
-     <div class="meta"><b>${escH(u.title)}</b><small>${u.level} · ${escH(u.theme)}</small></div><span class="status">${S.unitsDone[u.id]?'✓':'›'}</span></div>`).join(''):'<div class="card muted">No lessons assigned to this level yet.</div>'}
+   ${mine.length?mine.map((u,i)=>{const un=unlocked(u);const dn=S.unitsDone[u.id];return `<div class="card row-item" ${un?`onclick="startUnit('${u.id}')"`:`style="opacity:.55;cursor:default" onclick="toast('Finish the previous lesson to unlock this')"`}><div class="dot">${un?'📘':'🔒'}</div><div class="meta"><b>${escH(u.title)}</b><small>${u.level} · ${escH(u.theme)}</small></div><span class="status">${dn?'✓':(un?'›':'🔒')}</span></div>`;}).join(''):'<div class="card muted">No lessons assigned to this level yet.</div>'}
    ${certBlock()}`;loadFeed();
 }
 function badgesView(){wallOff();const li=levelInfo();
@@ -335,7 +337,7 @@ function vocabStudy(){wallOff();
   card();}
 
 /* ===== unit player ===== */
-function startUnit(id){wallOff();const u=UNITS.find(x=>x.id===id);if(!u)return;touchDay();
+function startUnit(id){wallOff();const u=UNITS.find(x=>x.id===id);if(!u)return;if(!unlocked(u)){toast('Finish the previous lesson to unlock this');return;}touchDay();
   const steps=[{t:'unitintro'}];u.chunks.forEach(c=>steps.push({t:'chunk',c}));steps.push({t:'grammar'});steps.push({t:'reading'});
   u.reading.questions.forEach(q=>steps.push({t:'mc',q}));if(u.reading.vocabInContext)steps.push({t:'mc',q:u.reading.vocabInContext});
   steps.push({t:'listen'});steps.push({t:'mc',q:u.listening.gist});steps.push({t:'dictogloss'});steps.push({t:'gap'});steps.push({t:'script'});
@@ -493,6 +495,10 @@ async function studentView(sid,cid){wallOff();
   const pr=(await SUPA.from('lingua_progress').select('state,updated_at').eq('class_id',cid).eq('student_id',sid).maybeSingle()).data;
   const pf=(await SUPA.from('lingua_profiles').select('placed_level').eq('id',sid).maybeSingle()).data;
   const nt=(await SUPA.from('lingua_notes').select('body').eq('student_id',sid).eq('author_id',CTX.user.id).maybeSingle()).data;
+  const ul=(await SUPA.from('lingua_unlocks').select('unit_id').eq('student_id',sid).eq('class_id',cid)).data||[];const ulset=ul.map(x=>x.unit_id);
+  const lvU=UNITS.filter(u=>u.level===c.level);let lk=`<div class="eyebrow">Lesson access</div><div class="card">`;
+  lvU.forEach((u,i)=>{const dn=(st.unitsDone||{})[u.id];const auto=(i===0)||!!(st.unitsDone||{})[(lvU[i-1]||{}).id];const adm=ulset.includes(u.id);const open=dn||auto||adm;lk+=`<div class="row-item" style="cursor:default;padding:5px 0"><div class="dot" style="width:28px;height:28px;font-size:13px">${dn?'✓':(open?'🔓':'🔒')}</div><div class="meta"><small>${escH(u.title)}${adm?' · admin-unlocked':''}</small></div>${auto?`<span class="muted" style="font-size:11px">auto</span>`:(adm?`<button class="x" onclick="adminLock('${sid}','${cid}','${u.id}')">lock</button>`:`<button class="pill" style="border:none;cursor:pointer" onclick="adminUnlock('${sid}','${cid}','${u.id}')">unlock</button>`)}</div>`;});
+  lk+=`</div>`;
   const st=(pr&&pr.state)||{}; const name=(e&&e.student_name)||'Student';
   const lvlUnits=UNITS.filter(u=>u.level===c.level);
   const doneInLevel=lvlUnits.filter(u=>(st.unitsDone||{})[u.id]);
@@ -507,6 +513,7 @@ async function studentView(sid,cid){wallOff();
      <span class="muted">Last active: ${st.lastActive||'—'}</span></div></div>
    <div class="eyebrow">${c.level} units (${doneInLevel.length}/${lvlUnits.length})</div>
    <div class="card">${lvlUnits.map(u=>`<div class="row-item" style="cursor:default;margin:2px 0"><div class="dot" style="width:28px;height:28px;font-size:13px;background:${(st.unitsDone||{})[u.id]?'#e9f8f0':'var(--teal-soft)'}">${(st.unitsDone||{})[u.id]?'✓':'·'}</div><div class="meta"><small>${escH(u.title)}</small></div></div>`).join('')||'<p class="muted">No units at this level.</p>'}</div>
+   ${lk}
    <div class="eyebrow">Private note (only you see this)</div><div class="card"><textarea id="snote" placeholder="Your private notes about this student…" style="min-height:70px">${nt&&nt.body?escH(nt.body):``}</textarea><button class="btn ghost" style="margin-top:8px" onclick="saveNote('${sid}')">Save note</button></div>
    <div class="eyebrow">Actions</div>
    <div class="card"><label class="muted" style="font-size:12px">Move to another class / level</label>
@@ -629,6 +636,8 @@ function startPreview(){CTX.preview=true;CTX.classId=null;CTX.level=PREVIEW_LEVE
 function exitPreview(){CTX.preview=false;CTX.level=null;CTX.className='';adminHome();}
 function setPreviewLevel(l){PREVIEW_LEVEL=l;CTX.level=l;S=fresh();home();}
 function previewBar(){return `<div class="card" style="background:var(--teal-soft);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px"><b style="font-size:13px;color:var(--teal-dark)">👁 Student preview</b><select onchange="setPreviewLevel(this.value)" style="width:auto;margin:0">${['A1','A2','B1','B2','C1','C2'].map(l=>`<option value="${l}" ${l===CTX.level?'selected':''}>${l}</option>`).join('')}</select><button class="btn ghost" style="width:auto;padding:8px 12px;margin-left:auto" onclick="exitPreview()">← Admin</button></div>`;}
+async function adminUnlock(sid,cid,uid){const {error}=await SUPA.from('lingua_unlocks').upsert({student_id:sid,class_id:cid,unit_id:uid},{onConflict:'student_id,unit_id'});if(error){toast('Could not unlock');return;}toast('Unlocked');studentView(sid,cid);}
+async function adminLock(sid,cid,uid){await SUPA.from('lingua_unlocks').delete().eq('student_id',sid).eq('unit_id',uid);toast('Locked');studentView(sid,cid);}
 boot();
 </script>
 </body>
