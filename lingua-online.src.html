@@ -227,7 +227,7 @@ async function route(){
     await SUPA.from('lingua_profiles').upsert({id:user.id,name:p.name,role:p.role});localStorage.removeItem('lingua_pending');
     prof={id:user.id,name:p.name,role:p.role};}
   CTX.role=prof.role;CTX.name=prof.name;
-  if(prof.role==='teacher'){teacherHome();return;}
+  if(prof.role==='teacher'||prof.role==='admin'){teacherHome();return;}
   const enr=(await SUPA.from('lingua_enrollments').select('class_id,lingua_classes(id,name,level)').eq('student_id',user.id).limit(1)).data;
   if(enr&&enr.length&&enr[0].lingua_classes){const c=enr[0].lingua_classes;CTX.classId=c.id;CTX.className=c.name;CTX.level=c.level;await hydrate();home();}
   else studentJoin();
@@ -379,7 +379,7 @@ function confetti(){for(let k=0;k<24;k++){const c=document.createElement('div');
 function rnd(n){const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<n;i++)s+=a[Math.random()*a.length|0];return s;}
 async function teacherHome(){wallOff();
   const cls=(await SUPA.from('lingua_classes').select('*').order('created_at')).data||[];
-  let h=`<div class="top"><div class="brand" style="font-size:20px">Lingua · Teacher</div><button class="x" onclick="logout()">log out</button></div>
+  let h=`<div class="top"><div class="brand" style="font-size:20px">Lingua · ${CTX.role==='admin'?'Admin':'Teacher'}</div><button class="x" onclick="logout()">log out</button></div>
    <p class="muted" style="font-size:13px;margin-bottom:6px">Welcome, ${escH(CTX.name)}. Create a class for each level — students see only that level.</p>
    <div class="card"><div class="eyebrow">New class</div>
      <input id="cn" placeholder="Class name (e.g. Tuesday A2 group)">
