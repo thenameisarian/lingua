@@ -1,0 +1,17 @@
+[
+{"id":"vc11_heavyworkload","term":"a heavy workload","meaning":"a large amount of work","example":"She has a heavy workload.<br>The heavy workload tired him.<br>It's a heavy workload this term.","type":"collocation","tier":3},
+{"id":"vc11_longhistory","term":"a long history","meaning":"a past that goes back a long way","example":"The town has a long history.<br>It has a long history of trade.<br>There's a long history here.","type":"collocation","tier":3},
+{"id":"vc11_quickglance","term":"a quick glance","meaning":"a brief look","example":"She gave it a quick glance.<br>A quick glance was enough.<br>He took a quick glance.","type":"collocation","tier":4},
+{"id":"vc11_shortbreak","term":"a short break","meaning":"a brief rest or holiday","example":"Let's take a short break.<br>We had a short break.<br>A short break would help.","type":"collocation","tier":2},
+{"id":"vc11_strongimpr","term":"a strong impression","meaning":"a powerful effect on someone","example":"She made a strong impression.<br>It left a strong impression.<br>He made a strong impression on us.","type":"collocation","tier":3},
+{"id":"vc11_vagueidea","term":"a vague idea","meaning":"an unclear understanding","example":"I have a vague idea.<br>She had only a vague idea.<br>It's a vague idea so far.","type":"collocation","tier":3},
+{"id":"vc11_dailyroutine","term":"a daily routine","meaning":"things you do every day in order","example":"Exercise is part of my daily routine.<br>She has a strict daily routine.<br>It became a daily routine.","type":"collocation","tier":2},
+{"id":"vc11_direconseq","term":"dire consequences","meaning":"very serious bad results","example":"It could have dire consequences.<br>They warned of dire consequences.<br>The error had dire consequences.","type":"collocation","tier":4},
+{"id":"vc11_foreseeable","term":"the foreseeable future","meaning":"the period you can predict ahead","example":"We'll stay for the foreseeable future.<br>Not in the foreseeable future.<br>It holds for the foreseeable future.","type":"collocation","tier":4},
+{"id":"vc11_freeofcharge","term":"free of charge","meaning":"without any cost","example":"Delivery is free of charge.<br>It's free of charge.<br>They fixed it free of charge.","type":"collocation","tier":3},
+{"id":"vc11_majorsetback","term":"a major setback","meaning":"a serious problem that delays progress","example":"It was a major setback.<br>They suffered a major setback.<br>The injury was a major setback.","type":"collocation","tier":4},
+{"id":"vc11_minordetail","term":"a minor detail","meaning":"a small, unimportant point","example":"That's a minor detail.<br>Don't worry about minor details.<br>It's only a minor detail.","type":"collocation","tier":3},
+{"id":"vc11_primelocation","term":"a prime location","meaning":"an excellent, well-placed spot","example":"The shop is in a prime location.<br>It's a prime location for tourists.<br>They found a prime location.","type":"collocation","tier":4},
+{"id":"vc11_sorethroat","term":"a sore throat","meaning":"pain in the throat","example":"I have a sore throat.<br>A sore throat kept her home.<br>He woke with a sore throat.","type":"collocation","tier":2},
+{"id":"vc11_tightbudget","term":"a tight budget","meaning":"very limited money to spend","example":"We're on a tight budget.<br>It was done on a tight budget.<br>They work to a tight budget.","type":"collocation","tier":3}
+]

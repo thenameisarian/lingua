@@ -1,0 +1,22 @@
+[
+{"id":"vw4_question","term":"question","meaning":"a sentence that asks for information","example":"Can I ask you a question?<br>That's a good question.<br>She answered every question.","type":"word","tier":1},
+{"id":"vw4_answer","term":"answer","meaning":"a reply; a solution","example":"Do you know the answer?<br>He gave a clear answer.<br>There's no easy answer.","type":"word","tier":1},
+{"id":"vw4_language","term":"language","meaning":"a system of words people use to communicate","example":"English is a global language.<br>She speaks three languages.<br>Body language matters too.","type":"word","tier":1},
+{"id":"vw4_future","term":"future","meaning":"the time that is still to come","example":"Plan for the future.<br>In the future, I want to travel.<br>The future looks bright.","type":"word","tier":1},
+{"id":"vw4_health","term":"health","meaning":"the condition of your body and mind","example":"Look after your health.<br>Good health is important.<br>Smoking harms your health.","type":"word","tier":1},
+{"id":"vw4_news","term":"news","meaning":"information about recent events","example":"Did you hear the news?<br>I watch the news at night.<br>That's great news!","type":"word","tier":1},
+{"id":"vw4_nature","term":"nature","meaning":"the physical world; the qualities of a thing","example":"We love being in nature.<br>It's human nature to worry.<br>Nature is beautiful in spring.","type":"word","tier":2},
+{"id":"vw4_science","term":"science","meaning":"the study of the natural world","example":"She studies science.<br>Science explains how things work.<br>He loves science fiction.","type":"word","tier":1},
+{"id":"vw4_history","term":"history","meaning":"the study of past events","example":"I enjoy history.<br>It's a moment in history.<br>The town has a long history.","type":"word","tier":1},
+{"id":"vw4_culture","term":"culture","meaning":"the customs and beliefs of a group","example":"I want to learn the culture.<br>Food is part of culture.<br>It's a different culture.","type":"word","tier":2},
+{"id":"vw4_energy","term":"energy","meaning":"power; the strength to do things","example":"I have no energy today.<br>Solar energy is clean.<br>She's full of energy.","type":"word","tier":2},
+{"id":"vw4_power","term":"power","meaning":"strength, control, or electricity","example":"The storm cut the power.<br>He has the power to decide.<br>Knowledge is power.","type":"word","tier":1},
+{"id":"vw4_mind","term":"mind","meaning":"the part of you that thinks and feels","example":"It's all in your mind.<br>Keep an open mind.<br>I changed my mind.","type":"word","tier":1},
+{"id":"vw4_body","term":"body","meaning":"the physical structure of a person","example":"Exercise is good for the body.<br>Listen to your body.<br>The human body is amazing.","type":"word","tier":1},
+{"id":"vw4_situation","term":"situation","meaning":"the set of conditions at a time","example":"It's a difficult situation.<br>Let's assess the situation.<br>The situation has improved.","type":"word","tier":2},
+{"id":"vw4_experience","term":"experience","meaning":"knowledge from doing things; an event you live through","example":"She has years of experience.<br>It was an amazing experience.<br>Learn from experience.","type":"word","tier":1},
+{"id":"vw4_opportunity","term":"opportunity","meaning":"a chance to do something good","example":"This is a great opportunity.<br>Don't miss the opportunity.<br>I had the opportunity to travel.","type":"word","tier":2},
+{"id":"vw4_knowledge","term":"knowledge","meaning":"information and understanding you have","example":"She has deep knowledge of art.<br>Knowledge is power.<br>It improved my knowledge.","type":"word","tier":2},
+{"id":"vw4_society","term":"society","meaning":"people living together in a community","example":"Technology changes society.<br>It benefits society as a whole.<br>We live in a modern society.","type":"word","tier":2},
+{"id":"vw4_environment","term":"environment","meaning":"the natural world; your surroundings","example":"We must protect the environment.<br>It's a friendly work environment.<br>Pollution harms the environment.","type":"word","tier":2}
+]

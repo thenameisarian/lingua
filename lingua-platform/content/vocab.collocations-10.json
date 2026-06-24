@@ -1,0 +1,22 @@
+[
+{"id":"vc10_briefoverview","term":"a brief overview","meaning":"a short general description","example":"Here's a brief overview.<br>She gave a brief overview.<br>I'll start with a brief overview.","type":"collocation","tier":3},
+{"id":"vc10_firmbelief","term":"a firm belief","meaning":"a strongly held opinion","example":"It's my firm belief.<br>She has a firm belief in fairness.<br>They hold a firm belief.","type":"collocation","tier":4},
+{"id":"vc10_goodcause","term":"a good cause","meaning":"a charitable or worthy aim","example":"The money goes to a good cause.<br>It's all for a good cause.<br>We support good causes.","type":"collocation","tier":3},
+{"id":"vc10_minorproblem","term":"a minor problem","meaning":"a small, unimportant difficulty","example":"It's only a minor problem.<br>We had a minor problem.<br>That's a minor problem.","type":"collocation","tier":2},
+{"id":"vc10_seriousconcern","term":"a serious concern","meaning":"an important worry","example":"Safety is a serious concern.<br>This raises serious concern.<br>It's a serious concern for parents.","type":"collocation","tier":3},
+{"id":"vc10_sharpcontrast","term":"a sharp contrast","meaning":"a strong, clear difference","example":"There's a sharp contrast between them.<br>It stands in sharp contrast.<br>A sharp contrast in style.","type":"collocation","tier":4},
+{"id":"vc10_strongcase","term":"a strong case","meaning":"a convincing argument","example":"She made a strong case.<br>There's a strong case for it.<br>They built a strong case.","type":"collocation","tier":3},
+{"id":"vc10_considerableeffort","term":"considerable effort","meaning":"a large amount of effort","example":"It took considerable effort.<br>They made considerable effort.<br>With considerable effort, she won.","type":"collocation","tier":4},
+{"id":"vc10_dramaticchange","term":"a dramatic change","meaning":"a big, noticeable change","example":"There was a dramatic change.<br>We saw a dramatic change.<br>It marked a dramatic change.","type":"collocation","tier":3},
+{"id":"vc10_fiercedebate","term":"a fierce debate","meaning":"a strong, intense argument","example":"It sparked a fierce debate.<br>There was a fierce debate.<br>The bill caused fierce debate.","type":"collocation","tier":4},
+{"id":"vc10_growinginterest","term":"growing interest","meaning":"increasing curiosity or attention","example":"There's growing interest in it.<br>Growing interest boosted sales.<br>We note growing interest.","type":"collocation","tier":3},
+{"id":"vc10_keyelement","term":"a key element","meaning":"an essential part","example":"Trust is a key element.<br>It's a key element of success.<br>Design is a key element.","type":"collocation","tier":3},
+{"id":"vc10_majorfactor","term":"a major factor","meaning":"an important cause or influence","example":"Cost was a major factor.<br>It's a major factor in health.<br>Weather is a major factor.","type":"collocation","tier":3},
+{"id":"vc10_ongoingdebate","term":"an ongoing debate","meaning":"a discussion that continues","example":"It's an ongoing debate.<br>There's an ongoing debate about it.<br>The ongoing debate divides people.","type":"collocation","tier":4},
+{"id":"vc10_particularatt","term":"particular attention","meaning":"special focus on something","example":"Pay particular attention here.<br>Give particular attention to safety.<br>It needs particular attention.","type":"collocation","tier":3},
+{"id":"vc10_primeexample","term":"a prime example","meaning":"a perfect, typical case","example":"It's a prime example of waste.<br>She's a prime example.<br>This is a prime example.","type":"collocation","tier":4},
+{"id":"vc10_severeweather","term":"severe weather","meaning":"very bad or dangerous weather","example":"Severe weather is expected.<br>They closed for severe weather.<br>Severe weather hit the coast.","type":"collocation","tier":3},
+{"id":"vc10_sharpdecline","term":"a sharp decline","meaning":"a sudden, large fall","example":"There was a sharp decline in sales.<br>A sharp decline in numbers.<br>We saw a sharp decline.","type":"collocation","tier":4},
+{"id":"vc10_strongsupport","term":"strong support","meaning":"firm backing or approval","example":"The plan has strong support.<br>They gave strong support.<br>It enjoys strong support.","type":"collocation","tier":3},
+{"id":"vc10_widespreadsupport","term":"widespread support","meaning":"support from many people","example":"The idea has widespread support.<br>It won widespread support.<br>There's widespread support for it.","type":"collocation","tier":4}
+]

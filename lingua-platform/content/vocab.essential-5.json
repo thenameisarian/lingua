@@ -1,0 +1,22 @@
+[
+{"id":"vw5_affect","term":"affect","meaning":"to have an influence on something","example":"The weather affects my mood.<br>It didn't affect the result.<br>Stress affects your health.","type":"word","tier":2},
+{"id":"vw5_benefit","term":"benefit","meaning":"an advantage; to be helped by","example":"Exercise has many benefits.<br>Who benefits from this?<br>We all benefit from clean air.","type":"word","tier":2},
+{"id":"vw5_decision","term":"decision","meaning":"a choice you make after thinking","example":"It was a tough decision.<br>Make a decision soon.<br>I respect your decision.","type":"word","tier":1},
+{"id":"vw5_quality","term":"quality","meaning":"how good something is; a feature","example":"The quality is excellent.<br>Kindness is a good quality.<br>We value quality over quantity.","type":"word","tier":2},
+{"id":"vw5_amount","term":"amount","meaning":"how much there is of something","example":"A small amount of salt.<br>The amount is too high.<br>It depends on the amount.","type":"word","tier":2},
+{"id":"vw5_purpose","term":"purpose","meaning":"the reason for doing something","example":"What's the purpose of this?<br>It serves a clear purpose.<br>She works with purpose.","type":"word","tier":2},
+{"id":"vw5_result","term":"result","meaning":"something that happens because of an action","example":"The results were good.<br>As a result, we won.<br>What was the result?","type":"word","tier":1},
+{"id":"vw5_ability","term":"ability","meaning":"the power or skill to do something","example":"She has the ability to lead.<br>I admire his ability.<br>It's beyond my ability.","type":"word","tier":2},
+{"id":"vw5_activity","term":"activity","meaning":"something you do, often for interest or fun","example":"Swimming is my favourite activity.<br>The school offers many activities.<br>It's a fun group activity.","type":"word","tier":1},
+{"id":"vw5_attitude","term":"attitude","meaning":"the way you think or feel about something","example":"She has a positive attitude.<br>Change your attitude.<br>His attitude surprised me.","type":"word","tier":2},
+{"id":"vw5_average","term":"average","meaning":"typical or usual; the middle amount","example":"On an average day, I walk a lot.<br>He's of average height.<br>The average is about ten.","type":"word","tier":2},
+{"id":"vw5_behaviour","term":"behaviour","meaning":"the way someone acts","example":"Her behaviour was strange.<br>Good behaviour is rewarded.<br>We study animal behaviour.","type":"word","tier":2},
+{"id":"vw5_challenge","term":"challenge","meaning":"something difficult that tests you","example":"It was a real challenge.<br>I enjoy a challenge.<br>She rose to the challenge.","type":"word","tier":2},
+{"id":"vw5_character","term":"character","meaning":"a person's nature; a person in a story","example":"He has a strong character.<br>My favourite character died.<br>It shows good character.","type":"word","tier":2},
+{"id":"vw5_choice","term":"choice","meaning":"the act of choosing; an option","example":"It's your choice.<br>We have no choice.<br>There's a wide choice.","type":"word","tier":1},
+{"id":"vw5_condition","term":"condition","meaning":"the state of something; a requirement","example":"The car is in good condition.<br>Weather conditions are poor.<br>There's one condition.","type":"word","tier":2},
+{"id":"vw5_control","term":"control","meaning":"the power to manage something","example":"She's in control.<br>Keep your emotions under control.<br>He lost control of the car.","type":"word","tier":2},
+{"id":"vw5_detail","term":"detail","meaning":"a small piece of information","example":"Tell me every detail.<br>Pay attention to detail.<br>The details matter.","type":"word","tier":2},
+{"id":"vw5_effect","term":"effect","meaning":"a change caused by something","example":"The medicine had no effect.<br>It has a positive effect.<br>The new rule takes effect today.","type":"word","tier":2},
+{"id":"vw5_effort","term":"effort","meaning":"the energy you put into doing something","example":"It took a lot of effort.<br>Put in more effort.<br>Your effort paid off.","type":"word","tier":2}
+]

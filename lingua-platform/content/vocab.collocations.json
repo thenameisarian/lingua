@@ -1,0 +1,22 @@
+[
+{"id":"vc_decision","term":"make a decision","meaning":"decide something","example":"We need to make a decision today.<br>It's a hard decision to make.<br>She made the right decision.","type":"collocation","tier":1},
+{"id":"vc_break","term":"take a break","meaning":"stop to rest","example":"Let's take a break.<br>I took a short break.<br>You should take a break.","type":"collocation","tier":1},
+{"id":"vc_homework","term":"do homework","meaning":"complete school work at home","example":"Have you done your homework?<br>I do my homework after dinner.<br>She does homework every evening.","type":"collocation","tier":1},
+{"id":"vc_breakfast","term":"have breakfast","meaning":"eat the morning meal","example":"I have breakfast at seven.<br>Let's have breakfast together.<br>He skipped breakfast.","type":"collocation","tier":1},
+{"id":"vc_attention","term":"pay attention","meaning":"listen or watch carefully","example":"Please pay attention.<br>Pay attention to detail.<br>He wasn't paying attention.","type":"collocation","tier":1},
+{"id":"vc_mistake","term":"make a mistake","meaning":"do something wrong","example":"Everyone makes mistakes.<br>I made a small mistake.<br>Don't make the same mistake.","type":"collocation","tier":1},
+{"id":"vc_photo","term":"take a photo","meaning":"use a camera","example":"Can you take a photo of us?<br>She took a photo.<br>Let's take a photo here.","type":"collocation","tier":1},
+{"id":"vc_business","term":"do business","meaning":"trade or work commercially","example":"We do business worldwide.<br>It's a pleasure to do business.<br>They do business online.","type":"collocation","tier":2},
+{"id":"vc_promise","term":"keep a promise","meaning":"do what you said you would","example":"She always keeps her promises.<br>Keep your promise.<br>He kept his promise.","type":"collocation","tier":2},
+{"id":"vc_friends","term":"make friends","meaning":"start friendships","example":"He makes friends easily.<br>I made friends at work.<br>It's hard to make friends.","type":"collocation","tier":1},
+{"id":"vc_care","term":"take care","meaning":"be careful; look after","example":"Take care on the roads.<br>Take care of yourself.<br>Take care, see you soon.","type":"collocation","tier":1},
+{"id":"vc_fun","term":"have fun","meaning":"enjoy yourself","example":"Have fun at the party!<br>We had a lot of fun.<br>The kids are having fun.","type":"collocation","tier":1},
+{"id":"vc_time","term":"save time","meaning":"use less time","example":"Planning ahead saves time.<br>This saves a lot of time.<br>To save time, take the train.","type":"collocation","tier":2},
+{"id":"vc_money","term":"spend money","meaning":"pay for things","example":"Don't spend too much money.<br>She spends money on books.<br>We spent money on a holiday.","type":"collocation","tier":1},
+{"id":"vc_cold","term":"catch a cold","meaning":"become ill with a cold","example":"Wear a coat or you'll catch a cold.<br>I caught a cold last week.<br>He catches colds easily.","type":"collocation","tier":2},
+{"id":"vc_advice","term":"give advice","meaning":"tell someone what to do","example":"Can you give me some advice?<br>She gave good advice.<br>I'd like to give you advice.","type":"collocation","tier":2},
+{"id":"vc_progress","term":"make progress","meaning":"improve or advance","example":"You're making good progress.<br>We made progress today.<br>Slow but steady progress.","type":"collocation","tier":2},
+{"id":"vc_risk","term":"take a risk","meaning":"do something that might fail","example":"Sometimes you have to take a risk.<br>She took a big risk.<br>Don't take that risk.","type":"collocation","tier":2},
+{"id":"vc_effort","term":"make an effort","meaning":"try hard","example":"Please make an effort to be on time.<br>He made a real effort.<br>Make an effort to listen.","type":"collocation","tier":2},
+{"id":"vc_note","term":"take notes","meaning":"write down information","example":"I take notes in every class.<br>She took detailed notes.<br>Take notes during the meeting.","type":"collocation","tier":2}
+]

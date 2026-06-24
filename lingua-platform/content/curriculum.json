@@ -1,0 +1,104 @@
+[
+  {
+    "id": "a1u1", "level": "A1", "module": "People & home", "icon": "🌱",
+    "title": "First words", "theme": "People & home", "ord": 1,
+    "vocab": [
+      { "id": "name", "word": "name", "ipa": "/neɪm/", "meaning": "what someone is called", "ex": "My name is Mia." },
+      { "id": "friend", "word": "friend", "ipa": "/frend/", "meaning": "a person you like and know well", "ex": "He is my best friend." },
+      { "id": "water", "word": "water", "ipa": "/ˈwɔː.tɚ/", "meaning": "the clear liquid we drink", "ex": "Can I have some water?" },
+      { "id": "house", "word": "house", "ipa": "/haʊs/", "meaning": "a building where people live", "ex": "Their house is big." },
+      { "id": "eat", "word": "eat", "ipa": "/iːt/", "meaning": "to put food in your mouth", "ex": "We eat dinner at seven." }
+    ],
+    "grammar": { "concept": "The verb \"to be\" (am/is/are)", "body": "Use am with I, is with he/she/it, are with you/we/they.", "eg": "I am Mia. She is my friend. They are here." },
+    "reading": {
+      "passage": "Hi! My name is Mia. This is my house. I live here with my best friend, Sam. We eat dinner together and drink water with our food.",
+      "q": [
+        { "q": "Who does Mia live with?", "choices": ["Her friend Sam", "Her teacher", "Nobody"], "a": 0 },
+        { "q": "What do they drink with food?", "choices": ["Juice", "Water", "Tea"], "a": 1 }
+      ]
+    },
+    "listening": {
+      "lines": [ {"s":"A","t":"Hello! Are you Sam?"}, {"s":"B","t":"Yes, I am. Are you Mia's friend?"}, {"s":"A","t":"Yes, I am. Nice to meet you!"} ],
+      "q": [ { "q": "Are they friends of Mia?", "choices": ["Yes", "No"], "a": 0 } ],
+      "gap": { "q": "\"Nice to ___ you.\"", "a": "meet", "accept": ["meet"] }
+    },
+    "speaking": {
+      "shadow": ["My name is Mia.", "This is my house."],
+      "retell": { "prompt": "Retell Mia's introduction in your own words.", "source": "reading", "useWords": ["name", "friend", "house"], "minWords": 12 }
+    },
+    "writing": {
+      "tip": "A simple introduction: say your name, then one fact about you.",
+      "scramble": "This is my friend.",
+      "gap": { "q": "My ___ is Mia.", "a": "name", "accept": ["name"] },
+      "task": { "prompt": "Write a 2-sentence introduction about yourself. Use the word \"name\".", "include": ["name"], "minWords": 6 }
+    }
+  },
+  {
+    "id": "a1u2", "level": "A1", "module": "Daily basics", "icon": "☀️",
+    "title": "Everyday life", "theme": "Daily basics", "ord": 2,
+    "vocab": [
+      { "id": "morning", "word": "morning", "ipa": "/ˈmɔːr.nɪŋ/", "meaning": "the early part of the day", "ex": "I run every morning." },
+      { "id": "work", "word": "work", "ipa": "/wɜːrk/", "meaning": "a job; to do a job", "ex": "She goes to work by bus." },
+      { "id": "food", "word": "food", "ipa": "/fuːd/", "meaning": "things we eat", "ex": "The food here is good." },
+      { "id": "money", "word": "money", "ipa": "/ˈmʌn.i/", "meaning": "coins and notes we pay with", "ex": "I have no money today." },
+      { "id": "time", "word": "time", "ipa": "/taɪm/", "meaning": "minutes, hours, days", "ex": "What time is it?" }
+    ],
+    "grammar": { "concept": "Articles a / an / the", "body": "Use a/an for one general thing (an before a vowel sound), the for a specific one.", "eg": "a house · an apple · the house on my street" },
+    "reading": {
+      "passage": "Every morning, Tom goes to work. He buys food for lunch. He does not spend much money. He always has time for a coffee.",
+      "q": [
+        { "q": "When does Tom go to work?", "choices": ["At night", "Every morning", "On weekends"], "a": 1 },
+        { "q": "Does he spend a lot of money?", "choices": ["Yes, a lot", "No, not much"], "a": 1 }
+      ]
+    },
+    "listening": {
+      "lines": [ {"s":"A","t":"What time is it?"}, {"s":"B","t":"It's nine o'clock. Time for work!"}, {"s":"A","t":"Do you have time for breakfast?"}, {"s":"B","t":"No, I'll buy food later."} ],
+      "q": [ { "q": "What time is it?", "choices": ["Eight", "Nine", "Ten"], "a": 1 } ],
+      "gap": { "q": "\"Time for ___!\"", "a": "work", "accept": ["work"] }
+    },
+    "speaking": {
+      "shadow": ["What time is it?", "I go to work every morning."],
+      "retell": { "prompt": "Retell Tom's morning in your own words.", "source": "reading", "useWords": ["morning", "work", "food"], "minWords": 12 }
+    },
+    "writing": {
+      "tip": "Use a/an for one general thing, the for a specific one.",
+      "scramble": "I have time for coffee.",
+      "gap": { "q": "Tom goes to ___ every morning.", "a": "work", "accept": ["work"] },
+      "task": { "prompt": "Write 2 sentences about your morning routine. Use the word \"morning\".", "include": ["morning"], "minWords": 8 }
+    }
+  },
+  {
+    "id": "a1u3", "level": "A1", "module": "Places & directions", "icon": "🚌",
+    "title": "Getting around", "theme": "Places & directions", "ord": 3,
+    "vocab": [
+      { "id": "bus", "word": "bus", "ipa": "/bʌs/", "meaning": "a large vehicle that carries many people", "ex": "I take the bus to school." },
+      { "id": "ticket", "word": "ticket", "ipa": "/ˈtɪk.ɪt/", "meaning": "a paper that lets you travel", "ex": "Buy a ticket here." },
+      { "id": "street", "word": "street", "ipa": "/striːt/", "meaning": "a road in a town with houses", "ex": "They live on this street." },
+      { "id": "near", "word": "near", "ipa": "/nɪr/", "meaning": "close to; not far", "ex": "The shop is near my house." },
+      { "id": "left", "word": "left", "ipa": "/left/", "meaning": "the opposite of right", "ex": "Turn left at the bank." }
+    ],
+    "grammar": { "concept": "There is / There are", "body": "Use there is for one thing, there are for more than one.", "eg": "There is a bus stop. There are two shops." },
+    "reading": {
+      "passage": "The bus stop is near my house. I buy a ticket and wait on the street. To find it, turn left at the bank.",
+      "q": [
+        { "q": "Where is the bus stop?", "choices": ["Far away", "Near my house", "At school"], "a": 1 },
+        { "q": "Where do you turn?", "choices": ["Right", "Left"], "a": 1 }
+      ]
+    },
+    "listening": {
+      "lines": [ {"s":"A","t":"Excuse me, is there a bus stop near here?"}, {"s":"B","t":"Yes, there is. Turn left at the bank."}, {"s":"A","t":"Thank you!"} ],
+      "q": [ { "q": "Is there a bus stop near?", "choices": ["Yes", "No"], "a": 0 } ],
+      "gap": { "q": "\"Turn ___ at the bank.\"", "a": "left", "accept": ["left"] }
+    },
+    "speaking": {
+      "shadow": ["Is there a bus stop near here?", "Turn left at the bank."],
+      "retell": { "prompt": "Explain how to find the bus stop, in your own words.", "source": "reading", "useWords": ["bus", "near", "left", "ticket"], "minWords": 12 }
+    },
+    "writing": {
+      "tip": "Giving directions: use turn left/right and near / next to.",
+      "scramble": "The bus stop is near.",
+      "gap": { "q": "I buy a ___ for the bus.", "a": "ticket", "accept": ["ticket"] },
+      "task": { "prompt": "Write directions from your home to a shop (2 sentences). Use \"near\".", "include": ["near"], "minWords": 8 }
+    }
+  }
+]

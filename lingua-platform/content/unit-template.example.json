@@ -1,0 +1,71 @@
+{
+  "id": "b1-m01-u01",
+  "level": "B1",
+  "module": "Social life",
+  "title": "Making plans with a friend",
+  "theme": "Inviting, arranging, and changing plans",
+  "canDo": "I can invite a friend out, arrange a time, and politely change a plan.",
+
+  "chunks": [
+    { "id": "upto",       "text": "What are you up to this weekend?",        "use": "Casually ask about someone's plans.",                 "example": "Hey, what are you up to this weekend?",        "freqTier": 2, "audio": "" },
+    { "id": "fancy",      "text": "Do you fancy grabbing a coffee?",         "use": "Informally invite someone out.",                      "example": "Do you fancy grabbing a coffee after work?",    "freqTier": 2, "audio": "" },
+    { "id": "free",       "text": "I'm free on Saturday afternoon.",         "use": "Say when you are available.",                         "example": "I'm free on Saturday afternoon, if that works.","freqTier": 1, "audio": "" },
+    { "id": "meet",       "text": "Let's meet around noon.",                 "use": "Suggest a time to meet.",                             "example": "Let's meet around noon at the usual place.",    "freqTier": 1, "audio": "" },
+    { "id": "reschedule", "text": "Something came up — can we reschedule?",  "use": "Politely move or cancel a plan.",                     "example": "Sorry, something came up — can we reschedule?", "freqTier": 3, "audio": "" },
+    { "id": "raincheck",  "text": "Can I take a rain check?",                "use": "Politely decline now but suggest another time.",      "example": "I can't tonight — can I take a rain check?",     "freqTier": 4, "audio": "" }
+  ],
+
+  "grammar": {
+    "focus": "Present continuous for future arrangements",
+    "pattern": "subject + am/is/are + verb-ing (+ time)",
+    "examples": ["I'm meeting Sara on Saturday.", "We're having lunch at noon.", "What are you doing this weekend?"],
+    "enhance": "present-continuous arrangements (am/is/are + -ing)"
+  },
+
+  "reading": {
+    "passage": "Maya texts her friend: \"Hey, what are you up to this weekend? I'm meeting a few people on Saturday. Do you fancy grabbing a coffee first? I'm free on Saturday afternoon.\" Liam replies: \"Sounds good! Let's meet around noon.\" An hour later he writes again: \"Sorry, something came up — can we reschedule?\"",
+    "questions": [
+      { "q": "What does Maya suggest first?", "choices": ["Dinner", "Grabbing a coffee", "A film"], "a": 1 },
+      { "q": "When is Maya free?",            "choices": ["Saturday morning", "Saturday afternoon", "Sunday"], "a": 1 },
+      { "q": "Why does Liam write again?",    "choices": ["To confirm", "Something came up", "He's lost"], "a": 1 }
+    ],
+    "vocabInContext": { "q": "\"Something came up\" means…", "choices": ["I'm free", "an unexpected thing happened", "I'm coming up"], "a": 1 }
+  },
+
+  "listening": {
+    "script": [
+      { "s": "A", "t": "Hey! What are you up to this weekend?" },
+      { "s": "B", "t": "Not much. Do you fancy grabbing a coffee?" },
+      { "s": "A", "t": "Sure! I'm free on Saturday afternoon." },
+      { "s": "B", "t": "Great, let's meet around noon." }
+    ],
+    "gist": { "q": "What do they agree to do?", "choices": ["Have dinner", "Get a coffee on Saturday", "Go to the gym"], "a": 1 },
+    "dictogloss": { "sentence": "I'm free on Saturday afternoon." },
+    "gap": { "q": "\"Let's meet around ___.\"", "a": "noon", "accept": ["noon", "12", "twelve"] }
+  },
+
+  "speaking": {
+    "shadow": ["upto", "fancy", "free", "meet", "reschedule"],
+    "minimalPair": { "a": "free", "b": "three", "note": "/f/ vs /θr/ — 'free' (lip-teeth) vs 'three' (tongue tip out)." },
+    "fluency432": { "prompt": "Tell me about your typical weekend. Say it once with no rush, then again a little faster, then once more — smooth and confident." },
+    "retell": { "prompt": "Retell Maya and Liam's chat in your own words.", "useChunks": ["upto", "fancy", "free", "meet", "reschedule"], "minWords": 25 },
+    "task": { "prompt": "Invite a friend to do something this weekend, suggest a time, then change the plan politely.", "useChunks": ["fancy", "free", "meet", "reschedule"], "need": 2 }
+  },
+
+  "writing": {
+    "model": "Hi Sam! What are you up to this weekend? Do you fancy grabbing a coffee? I'm free on Saturday afternoon — let's meet around noon. Talk soon, Alex",
+    "sentenceCombining": [
+      { "parts": ["I'm free on Saturday.", "We could meet at noon."], "answer": "I'm free on Saturday, so let's meet around noon." },
+      { "parts": ["Something came up.", "I can't meet today."], "answer": "Something came up, so I can't meet today." }
+    ],
+    "task": { "prompt": "Write a short message inviting a friend out this weekend. Suggest a time and a place.", "genre": "message", "mustInclude": ["fancy", "free", "meet"], "minWords": 25 }
+  },
+
+  "review": { "srItems": ["upto", "fancy", "free", "meet", "reschedule", "raincheck"] },
+
+  "quiz": [
+    { "type": "situation", "q": "You want to ask a friend about their weekend plans.", "options": ["What are you up to this weekend?", "Let's meet around noon.", "Can I take a rain check?"], "a": 0 },
+    { "type": "situation", "q": "You can't make it and want to move the plan.", "options": ["I'm free on Saturday afternoon.", "Something came up — can we reschedule?", "Do you fancy grabbing a coffee?"], "a": 1 },
+    { "type": "cloze", "q": "\"Do you ___ grabbing a coffee?\"", "a": "fancy", "accept": ["fancy"] }
+  ]
+}

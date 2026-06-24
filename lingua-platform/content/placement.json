@@ -1,0 +1,14 @@
+[
+  { "level": "A1", "q": "She ___ a teacher.", "choices": ["am", "is", "are"], "a": 1 },
+  { "level": "A1", "q": "I have two ___.", "choices": ["book", "books", "bookes"], "a": 1 },
+  { "level": "A2", "q": "Yesterday I ___ to the shop.", "choices": ["go", "went", "goed"], "a": 1 },
+  { "level": "A2", "q": "She is ___ than me.", "choices": ["tall", "taller", "tallest"], "a": 1 },
+  { "level": "B1", "q": "I ___ here since 2019.", "choices": ["live", "have lived", "am living"], "a": 1 },
+  { "level": "B1", "q": "If it rains, we ___ inside.", "choices": ["stay", "will stay", "stayed"], "a": 1 },
+  { "level": "B2", "q": "The report ___ yesterday.", "choices": ["wrote", "was written", "is writing"], "a": 1 },
+  { "level": "B2", "q": "___ he was tired, he kept working.", "choices": ["However", "Although", "Therefore"], "a": 1 },
+  { "level": "C1", "q": "Choose the correct emphasis: \"Never ___ such talent.\"", "choices": ["I have seen", "have I seen", "I saw"], "a": 1 },
+  { "level": "C1", "q": "\"___ we need is more time.\"", "choices": ["That", "What", "Which"], "a": 1 },
+  { "level": "C2", "q": "Most formal: \"We need to ___ more data.\"", "choices": ["get", "obtain", "grab"], "a": 1 },
+  { "level": "C2", "q": "Which sentence is \"hedged\" (softened)?", "choices": ["This is wrong.", "This may not be entirely accurate.", "This is totally false."], "a": 1 }
+]

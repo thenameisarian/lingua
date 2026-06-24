@@ -1,0 +1,22 @@
+[
+{"id":"vw7_examine","term":"examine","meaning":"to look at something carefully","example":"The doctor examined her.<br>Examine the evidence.<br>Let's examine the facts.","type":"word","tier":3},
+{"id":"vw7_exist","term":"exist","meaning":"to be real or present","example":"Does life exist on Mars?<br>The problem still exists.<br>Such a place doesn't exist.","type":"word","tier":2},
+{"id":"vw7_expand","term":"expand","meaning":"to become or make larger","example":"The company expanded fast.<br>Metal expands when hot.<br>We plan to expand.","type":"word","tier":2},
+{"id":"vw7_explore","term":"explore","meaning":"to investigate or travel to learn","example":"Let's explore the city.<br>We should explore options.<br>She loves to explore.","type":"word","tier":2},
+{"id":"vw7_express","term":"express","meaning":"to show a thought or feeling","example":"Express your opinion.<br>She expressed her thanks.<br>It's hard to express.","type":"word","tier":2},
+{"id":"vw7_extend","term":"extend","meaning":"to make longer or larger","example":"They extended the deadline.<br>The road extends north.<br>We extended our stay.","type":"word","tier":2},
+{"id":"vw7_focus","term":"focus","meaning":"to give attention to one thing","example":"Focus on your work.<br>Let's focus on the goal.<br>I can't focus today.","type":"word","tier":2},
+{"id":"vw7_force","term":"force","meaning":"to make someone do something; strength","example":"Don't force him.<br>They used force.<br>She was forced to wait.","type":"word","tier":2},
+{"id":"vw7_gain","term":"gain","meaning":"to get or obtain something useful","example":"You'll gain experience.<br>He gained weight.<br>What do we gain from this?","type":"word","tier":2},
+{"id":"vw7_generate","term":"generate","meaning":"to produce or create something","example":"Wind generates power.<br>It generates income.<br>The ad generated interest.","type":"word","tier":3},
+{"id":"vw7_identify","term":"identify","meaning":"to recognise or name something","example":"Can you identify the problem?<br>She identified the man.<br>We must identify the cause.","type":"word","tier":3},
+{"id":"vw7_imagine","term":"imagine","meaning":"to form a picture in your mind","example":"Imagine a quiet beach.<br>I can't imagine it.<br>Imagine how she felt.","type":"word","tier":2},
+{"id":"vw7_indicate","term":"indicate","meaning":"to show or point out","example":"The sign indicates the way.<br>Results indicate progress.<br>Please indicate your choice.","type":"word","tier":3},
+{"id":"vw7_influence","term":"influence","meaning":"to affect how someone thinks or acts","example":"Ads influence buyers.<br>She influenced my choice.<br>He has great influence.","type":"word","tier":2},
+{"id":"vw7_inform","term":"inform","meaning":"to tell someone about something","example":"Please inform the staff.<br>Keep me informed.<br>She informed us of the change.","type":"word","tier":2},
+{"id":"vw7_intend","term":"intend","meaning":"to plan to do something","example":"I intend to finish today.<br>What do you intend to do?<br>It wasn't intended.","type":"word","tier":2},
+{"id":"vw7_invest","term":"invest","meaning":"to put money or effort into something","example":"They invest in shares.<br>Invest in your skills.<br>She invested her savings.","type":"word","tier":2},
+{"id":"vw7_investigate","term":"investigate","meaning":"to examine carefully to find facts","example":"Police investigate the case.<br>We'll investigate the issue.<br>They investigated the cause.","type":"word","tier":3},
+{"id":"vw7_judge","term":"judge","meaning":"to form an opinion; to decide","example":"Don't judge too quickly.<br>It's hard to judge.<br>She judged the contest.","type":"word","tier":2},
+{"id":"vw7_justify","term":"justify","meaning":"to give a good reason for something","example":"How do you justify the cost?<br>Nothing justifies that.<br>She justified her choice.","type":"word","tier":3}
+]
