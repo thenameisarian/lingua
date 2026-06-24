@@ -131,7 +131,8 @@ function levelUnits(){return UNITS.filter(u=>u.level===CTX.level);}
 let CTX={user:null,role:null,name:'',classId:null,className:'',level:null};
 let S=fresh();
 let UNLOCKS=[];
-function fresh(){return {xp:0,streak:0,gems:0,lastActive:null,unitsDone:{},cards:{},certs:{},badges:{},day:{d:null,xp:0},goal:30};}
+let SPRINT=null;
+function fresh(){return {xp:0,streak:0,gems:0,lastActive:null,unitsDone:{},cards:{},certs:{},badges:{},day:{d:null,xp:0},goal:30,sprint:{daysDone:{}}};}
 let syncT=null,syncing=false;
 function save(){if(!CTX.classId)return;if(syncT)clearTimeout(syncT);syncT=setTimeout(pushProgress,700);}
 async function pushProgress(){if(!CTX.classId||syncing)return;syncing=true;try{await SUPA.from('lingua_progress').upsert({student_id:CTX.user.id,class_id:CTX.classId,state:S,updated_at:new Date().toISOString()},{onConflict:'student_id,class_id'});}catch(e){}syncing=false;}
@@ -248,6 +249,7 @@ async function logout(){await SUPA.auth.signOut();CTX={user:null,role:null,name:
 
 async function hydrate(){const r=(await SUPA.from('lingua_progress').select('state').eq('student_id',CTX.user.id).eq('class_id',CTX.classId).maybeSingle()).data;
   const ur=await SUPA.from('lingua_unlocks').select('unit_id').eq('student_id',CTX.user.id).eq('class_id',CTX.classId);UNLOCKS=(ur.data||[]).map(x=>x.unit_id);
+  const sp=(await SUPA.from('lingua_sprint').select('start_date,active').eq('student_id',CTX.user.id).maybeSingle()).data;SPRINT=(sp&&sp.active)?sp:null;
   S=Object.assign(fresh(),(r&&r.state)||{});}
 
 /* ===== STUDENT: join a class ===== */
@@ -266,9 +268,9 @@ async function doJoin(){const code=$('jc').value.trim().toUpperCase();if(!code){
   const c=data[0];CTX.classId=c.class_id;CTX.className=c.class_name;CTX.level=c.level;await hydrate();toast('Joined '+c.class_name);home();}
 
 /* ===== STUDENT: learning home (level-gated) ===== */
-function unlocked(u){if(CTX.preview||CTX.role!=='student')return true;if(S.unitsDone[u.id])return true;const mine=levelUnits();const i=mine.findIndex(x=>x.id===u.id);if(i<=0)return true;if((UNLOCKS||[]).includes(u.id))return true;return !!S.unitsDone[(mine[i-1]||{}).id];}
+function unlocked(u){if(CTX.preview||CTX.role!=='student'||CTX.sprintActive)return true;if(S.unitsDone[u.id])return true;const mine=levelUnits();const i=mine.findIndex(x=>x.id===u.id);if(i<=0)return true;if((UNLOCKS||[]).includes(u.id))return true;return !!S.unitsDone[(mine[i-1]||{}).id];}
 function home(){
-  touchDay();wallOn();
+  touchDay();wallOn();CTX.sprintActive=false;
   const mine=levelUnits();
   const due=dueChunks().length, vt=VOCAB.length, vs=vocabSeen();
   const li=levelInfo(),dx=dayXP(),goalPct=Math.min(100,Math.round(dx.xp/(S.goal||30)*100)),bc=Object.keys(S.badges||{}).length;
@@ -283,6 +285,7 @@ function home(){
        <div class="bar" style="margin-top:6px"><i style="width:${goalPct}%"></i></div></div></div>
    ${due>0?`<div class="card row-item" onclick="startReview()"><div class="dot">🔄</div><div class="meta"><b>Review ${due} item(s)</b><small>Spaced repetition — due now</small></div><span class="pill">Review →</span></div>`:''}
    ${vt>0?`<div class="card row-item" onclick="vocabStudy()"><div class="dot">📚</div><div class="meta"><b>Vocabulary</b><small>${vs}/${vt} learned · words, phrasal verbs, idioms…</small></div><span class="pill">Learn →</span></div>`:''}
+   ${CTX.preview?'':(SPRINT?`<div class="card row-item" onclick="sprintView()" style="background:linear-gradient(135deg,#0f9d8e,#0c7d72);color:#fff"><div class="dot" style="background:rgba(255,255,255,.2)">🔥</div><div class="meta"><b>100-Day Intensive · Day ${sprintDayNum()}/100</b><small style="color:#e7f6f4">${sprintDaysLeft()} days left · ${sprintDoneCount()}/100 done</small></div><span class="pill" style="background:#fff;color:var(--teal)">Open →</span></div>`:`<div class="card row-item" onclick="sprintStart()"><div class="dot">🔥</div><div class="meta"><b>100-Day English Intensive</b><small>Fast-track course · finish in 100 days</small></div><span class="pill">Start →</span></div>`)}
    <div id="feed"></div>
    <div class="card row-item" onclick="leaderboardView()"><div class="dot">🏆</div><div class="meta"><b>Class leaderboard</b><small>See how you rank in your class</small></div><span class="pill">View →</span></div>
    <div class="eyebrow" style="margin-top:6px">Your ${CTX.level} lessons</div>
@@ -336,6 +339,39 @@ function vocabStudy(){wallOff();
     window.vg=(g)=>{S.cards[v.id]=fsrsReview(S.cards[v.id],g);gainXP(g>=3?5:2);save();i++;card();};}
   card();}
 
+/* ===== 100-Day Intensive ===== */
+function sprintAllUnits(){const o=['A1','A2','B1','B2','C1','C2'];return UNITS.slice().sort((a,b)=>(o.indexOf(a.level)-o.indexOf(b.level))||String(a.id).localeCompare(String(b.id)));}
+function sprintPlan(){const us=sprintAllUnits();const vids=VOCAB.map(v=>v.id);const perV=Math.ceil(vids.length/100)||1;const days=[];let li=0,vi=0;for(let d=1;d<=100;d++){const day={day:d,lesson:null,vocab:vids.slice(vi,vi+perV)};vi+=perV;if(li<us.length&&d%2===1){day.lesson=us[li].id;li++;}days.push(day);}let d2=0;while(li<us.length&&d2<100){if(!days[d2].lesson){days[d2].lesson=us[li].id;li++;}d2++;}return days;}
+function sprintDayNum(){if(!SPRINT)return 1;const ms=Date.now()-new Date(SPRINT.start_date+'T00:00:00').getTime();return Math.max(1,Math.min(100,Math.floor(ms/86400000)+1));}
+function sprintDaysLeft(){if(!SPRINT)return 100;const end=new Date(SPRINT.start_date+'T00:00:00').getTime()+100*86400000;return Math.max(0,Math.ceil((end-Date.now())/86400000));}
+function sprintDoneCount(){return Object.keys(((S.sprint||{}).daysDone)||{}).length;}
+async function sprintStart(){const st=today();const {error}=await SUPA.from('lingua_sprint').upsert({student_id:CTX.user.id,start_date:st,active:true},{onConflict:'student_id'});if(error){toast('Could not start the challenge');return;}SPRINT={start_date:st,active:true};if(!S.sprint)S.sprint={daysDone:{}};save();toast('100-Day Intensive started! 🔥');sprintView();}
+function sprintView(){wallOff();CTX.sprintActive=false;if(!SPRINT){home();return;}const plan=sprintPlan();const dn=sprintDayNum();const left=sprintDaysLeft();const done=sprintDoneCount();const pace=done>=dn?'On track ✓':('Behind by '+(dn-done)+' day'+((dn-done)>1?'s':''));const pct=Math.round(done/100*100);const t=plan[dn-1];const dd=((S.sprint||{}).daysDone)||{};
+  let h=`<div class="progress-top"><button class="x" onclick="home()">✕</button></div>
+   <div class="card" style="background:linear-gradient(135deg,#0f9d8e,#0c7d72);color:#fff">
+     <div class="eyebrow" style="color:#cdeee9">100-Day English Intensive</div>
+     <h1 style="font-size:25px;margin:4px 0">Day ${dn} <span style="opacity:.7;font-size:15px">of 100</span></h1>
+     <div style="display:flex;gap:14px;font-size:13px;margin-top:6px;flex-wrap:wrap"><span>⏳ ${left} days left</span><span>✅ ${done}/100 done</span><span>${pace}</span></div>
+     <div class="bar" style="margin-top:8px;background:rgba(255,255,255,.25)"><i style="width:${pct}%;background:#fff"></i></div></div>`;
+  const tl=t.lesson?UNITS.find(u=>u.id===t.lesson):null;
+  h+=`<div class="eyebrow">Today · Day ${dn}</div><div class="card">`;
+  if(tl)h+=`<div class="row-item" onclick="sprintStartUnit('${tl.id}')" style="cursor:pointer"><div class="dot">${(S.unitsDone||{})[tl.id]?'✓':'📘'}</div><div class="meta"><b>${escH(tl.title)}</b><small>${tl.level} · today's lesson</small></div><span class="pill">Start →</span></div>`;
+  h+=`<div class="row-item" onclick="sprintVocab(${dn})" style="cursor:pointer"><div class="dot">📚</div><div class="meta"><b>${t.vocab.length} vocabulary cards</b><small>today's batch</small></div><span class="pill">Study →</span></div>`;
+  h+=`<div class="row-item" onclick="startReview()" style="cursor:pointer"><div class="dot">🔄</div><div class="meta"><b>Spaced review</b><small>keep earlier words fresh</small></div><span class="pill">Review →</span></div>`;
+  h+=`<button class="btn" style="margin-top:10px" onclick="sprintMark(${dn})">${dd[dn]?'✓ Day '+dn+' complete':'Mark Day '+dn+' complete'}</button></div>`;
+  h+=`<div class="eyebrow" style="margin-top:8px">All 100 days <span class="muted" style="font-weight:400">· tap any day, go at your own pace</span></div><div class="card" style="max-height:340px;overflow:auto">`;
+  plan.forEach(p=>{const d2=dd[p.day];const isT=p.day===dn;const lu=p.lesson?UNITS.find(u=>u.id===p.lesson):null;h+=`<div class="row-item" onclick="sprintDayView(${p.day})" style="cursor:pointer;${isT?'background:rgba(15,157,142,.10);border-radius:9px':''}"><div class="dot" style="width:30px;height:30px;font-size:12px;${d2?'background:var(--teal);color:#fff':''}">${d2?'✓':p.day}</div><div class="meta"><b style="font-size:14px">Day ${p.day}${isT?' · today':''}</b><small>${lu?escH(lu.title):'Vocabulary & review'} · ${p.vocab.length} words</small></div><span class="status">${d2?'done':'›'}</span></div>`;});
+  h+=`</div>`;$('app').innerHTML=h;}
+function sprintDayView(d){wallOff();if(!SPRINT){home();return;}const plan=sprintPlan();const p=plan[d-1];if(!p)return sprintView();const tl=p.lesson?UNITS.find(u=>u.id===p.lesson):null;const done=(((S.sprint||{}).daysDone)||{})[d];
+  let h=`<div class="progress-top"><button class="x" onclick="sprintView()">✕</button></div><div class="eyebrow">100-Day Intensive</div><h1 style="font-size:22px;margin-bottom:8px">Day ${d} of 100</h1><div class="card">`;
+  if(tl)h+=`<div class="row-item" onclick="sprintStartUnit('${tl.id}')" style="cursor:pointer"><div class="dot">${(S.unitsDone||{})[tl.id]?'✓':'📘'}</div><div class="meta"><b>${escH(tl.title)}</b><small>${tl.level} · ${escH(tl.theme)}</small></div><span class="pill">Start →</span></div>`;
+  h+=`<div class="row-item" onclick="sprintVocab(${d})" style="cursor:pointer"><div class="dot">📚</div><div class="meta"><b>${p.vocab.length} vocabulary cards</b><small>this day's batch</small></div><span class="pill">Study →</span></div>`;
+  h+=`<button class="btn" style="margin-top:10px" onclick="sprintMark(${d})">${done?'✓ Day '+d+' complete':'Mark Day '+d+' complete'}</button></div>`;
+  $('app').innerHTML=h;}
+function sprintMark(d){if(!S.sprint)S.sprint={daysDone:{}};if(!S.sprint.daysDone)S.sprint.daysDone={};if(S.sprint.daysDone[d])delete S.sprint.daysDone[d];else S.sprint.daysDone[d]=true;save();sprintView();}
+function sprintStartUnit(id){CTX.sprintActive=true;startUnit(id);}
+function sprintVocab(d){const plan=sprintPlan();const p=plan[d-1];if(!p)return sprintView();const queue=p.vocab.map(id=>VOCAB.find(v=>v.id===id)).filter(Boolean);if(!queue.length)return sprintView();wallOff();let i=0;function card(){if(i>=queue.length){save();sprintView();return;}const v=queue[i];const typeName={word:'Word',collocation:'Collocation',phrasal:'Phrasal verb',idiom:'Idiom'}[v.type]||'Phrase';$('app').innerHTML=`<div class="progress-top"><button class="x" onclick="sprintView()">✕</button><div class="bar"><i style="width:${i/queue.length*100}%"></i></div></div><div class="card center"><div class="eyebrow"><span class="tag voc">${typeName}</span> Day ${d}</div><div class="chunk">${v.term}</div><div id="rev" style="display:none"><div class="use">${v.meaning}</div><div class="eg" style="margin-top:8px">${v.example}</div></div></div><div id="f"><div class="btn row"><button class="btn ghost" onclick="speak('${esc(v.term)}')">🔊 Hear it</button><button class="btn" id="show">What does it mean?</button></div></div>`;$('show').onclick=()=>{$('rev').style.display='';$('f').innerHTML=`<div class="grade-row"><div class="grade" onclick="vg(1)">Again<small>didn't know</small></div><div class="grade" onclick="vg(2)">Hard</div><div class="grade" onclick="vg(3)">Good</div><div class="grade" onclick="vg(4)">Easy</div></div>`;};window.vg=(g)=>{S.cards[v.id]=fsrsReview(S.cards[v.id],g);gainXP(g>=3?5:2);save();i++;card();};}card();}
+async function adminSprint(sid,cid,on){if(on){const {error}=await SUPA.from('lingua_sprint').upsert({student_id:sid,start_date:today(),active:true},{onConflict:'student_id'});if(error){toast('Failed to enroll');return;}toast('Enrolled in Intensive');}else{await SUPA.from('lingua_sprint').update({active:false}).eq('student_id',sid);toast('Enrollment ended');}studentView(sid,cid);}
 /* ===== unit player ===== */
 function startUnit(id){wallOff();const u=UNITS.find(x=>x.id===id);if(!u)return;if(!unlocked(u)){toast('Finish the previous lesson to unlock this');return;}touchDay();
   const steps=[{t:'unitintro'}];u.chunks.forEach(c=>steps.push({t:'chunk',c}));steps.push({t:'phrasematch'});steps.push({t:'grammar'});steps.push({t:'reading'});steps.push({t:'shadow'});
@@ -380,7 +416,7 @@ function renderStep(){const ss=SESS,u=ss.u,st=ss.steps[ss.i];
   else if(st.t==='roleplay'){const sc=u.listening.script;frame(`<div class="eyebrow"><span class="tag say">Roleplay</span> Perform the whole dialogue aloud</div><div class="card">${sc.map(l=>`<div class="dline"><span class="who">${l.s}</span><span>${l.t}</span></div>`).join('')}<button class="btn ghost" style="max-width:170px;margin:10px auto 4px" onclick="playScript()">🔊 Hear it first</button><div class="timer" id="tm">1:00</div><div class="muted center" id="hint">Tap start, then read every line aloud — play all the parts</div><button class="btn" id="go" style="max-width:200px;margin:6px auto">Start roleplay</button></div>`,`<button class="btn ghost" id="nx" style="display:none" onclick="next()">Next →</button>`);$('go').onclick=()=>{$('go').style.display='none';beep();$('hint').textContent='Perform it now! 🎙';let s=60;const iv=setInterval(()=>{s--;$('tm').textContent=(s>=60?'1:00':'0:'+(s<10?'0':'')+s);if(s<=0){clearInterval(iv);beep(440,300);$('tm').textContent='✓';$('hint').textContent='Excellent — well performed!';award(10);$('nx').style.display='';}},1000);};}
   else if(st.t==='produce'){const cs=u.chunks;frame(`<div class="eyebrow"><span class="tag out">Produce</span> Write the right phrase for each situation</div><div class="card">${cs.map((c,x)=>`<div style="margin-bottom:11px"><div class="use">${escH(c.use)}</div><input id="p${x}" placeholder="Write the phrase…"><div id="pf${x}"></div></div>`).join('')}</div>`,`<button class="btn" onclick="checkProduce()">Check answers</button>`);}
   else if(st.t==='unitdone'){u.review.srItems.forEach(id=>{if(!S.cards[id]||!S.cards[id].S)S.cards[id]=fsrsReview(null,3);});if(!S.unitsDone[u.id]){S.unitsDone[u.id]=true;S.gems+=10;}save();checkBadges();
-    frame(`<div class="center" style="padding:6px"><div class="big">🎉</div><h1 style="font-size:22px">Lesson complete!</h1><p class="muted">${ss.correct}/${ss.total} correct · +${ss.xp} XP</p></div><div class="eyebrow">✓ What you learned</div><div class="card" style="text-align:left"><div class="why" style="text-align:left">🎯 ${escH(u.canDo)}</div>${u.chunks.map(c=>`<div class="eg" style="margin-top:5px">✓ ${escH(c.text)}</div>`).join('')}<div class="eg" style="margin-top:8px">✓ Grammar: ${escH(u.grammar.focus)}</div></div><div class="muted" style="text-align:left;font-size:13px;margin-top:8px">Your ${u.review.srItems.length} phrases are now in <b>spaced review</b> — they'll come back over the next days.</div>`,`<button class="btn" onclick="home()">Back home</button>`);confetti();}}
+    frame(`<div class="center" style="padding:6px"><div class="big">🎉</div><h1 style="font-size:22px">Lesson complete!</h1><p class="muted">${ss.correct}/${ss.total} correct · +${ss.xp} XP</p></div><div class="eyebrow">✓ What you learned</div><div class="card" style="text-align:left"><div class="why" style="text-align:left">🎯 ${escH(u.canDo)}</div>${u.chunks.map(c=>`<div class="eg" style="margin-top:5px">✓ ${escH(c.text)}</div>`).join('')}<div class="eg" style="margin-top:8px">✓ Grammar: ${escH(u.grammar.focus)}</div></div><div class="muted" style="text-align:left;font-size:13px;margin-top:8px">Your ${u.review.srItems.length} phrases are now in <b>spaced review</b> — they'll come back over the next days.</div>`,`<button class="btn" onclick="${CTX.sprintActive?'sprintView()':'home()'}">Back home</button>`);confetti();}}
 function speakTaskStep(data,label,useChunks,minW,need){const ss=SESS;const secs=label==='Retell'?60:45;frame(`<div class="eyebrow"><span class="tag say">${label}</span></div><div class="card"><p style="font-size:16px">${escH(data.prompt)}</p>${useChunks?`<p class="muted" style="font-size:12px;margin-top:6px">Try to use: ${useChunks.map(id=>'"'+CHUNK(id).text+'"').join(' · ')}</p>`:''}<div class="timer" id="tm">0:${secs}</div><div class="muted center" id="hint">Tap start, wait for the beep, then speak aloud — as much as you can</div><button class="btn" id="go" style="max-width:210px;margin:10px auto">Start speaking</button></div>`,`<button class="btn ghost" id="nx" style="display:none" onclick="next()">Next →</button>`);
   $('go').onclick=()=>{$('go').style.display='none';beep();$('hint').textContent='Speak now! 🎙';let s=secs;$('tm').textContent='0:'+(s<10?'0':'')+s;const iv=setInterval(()=>{s--;$('tm').textContent='0:'+(s<10?'0':'')+s;if(s<=0){clearInterval(iv);beep(440,320);$('tm').textContent='✓';$('hint').textContent='Well done — great speaking!';award(10);ss.total++;ss.correct++;$('nx').style.display='';}},1000);};}
 function playScript(){const u=SESS.u;try{speechSynthesis.cancel();}catch(e){}u.listening.script.forEach(l=>speak(l.t));}
@@ -503,6 +539,8 @@ async function studentView(sid,cid){wallOff();
   const pf=(await SUPA.from('lingua_profiles').select('placed_level').eq('id',sid).maybeSingle()).data;
   const nt=(await SUPA.from('lingua_notes').select('body').eq('student_id',sid).eq('author_id',CTX.user.id).maybeSingle()).data;
   const ul=(await SUPA.from('lingua_unlocks').select('unit_id').eq('student_id',sid).eq('class_id',cid)).data||[];const ulset=ul.map(x=>x.unit_id);
+  const spd=(await SUPA.from('lingua_sprint').select('start_date,active').eq('student_id',sid).maybeSingle()).data;const spA=spd&&spd.active;
+  const spc=`<div class="eyebrow">100-Day Intensive</div><div class="card"><div class="row-item" style="cursor:default"><div class="dot">🔥</div><div class="meta"><b>${spA?'Enrolled':'Not enrolled'}</b><small>${spA?('Started '+spd.start_date):'Paid fast-track course'}</small></div></div>${spA?`<button class="x" onclick="adminSprint('${sid}','${cid}',false)">End enrollment</button>`:`<button class="btn" onclick="adminSprint('${sid}','${cid}',true)">Enroll in 100-Day Intensive</button>`}</div>`;
   const sd=(pr&&pr.state)||{};const lvU=UNITS.filter(u=>u.level===c.level);let lk=`<div class="eyebrow">Lesson access</div><div class="card">`;
   lvU.forEach((u,i)=>{const dn=(sd.unitsDone||{})[u.id];const auto=dn||(i===0)||!!(sd.unitsDone||{})[(lvU[i-1]||{}).id];const adm=ulset.includes(u.id);const open=dn||auto||adm;lk+=`<div class="row-item" style="cursor:default;padding:5px 0"><div class="dot" style="width:28px;height:28px;font-size:13px">${dn?'✓':(open?'🔓':'🔒')}</div><div class="meta"><small>${escH(u.title)}${adm?' · admin-unlocked':''}</small></div>${auto?`<span class="muted" style="font-size:11px">auto</span>`:(adm?`<button class="x" onclick="adminLock('${sid}','${cid}','${u.id}')">lock</button>`:`<button class="pill" style="border:none;cursor:pointer" onclick="adminUnlock('${sid}','${cid}','${u.id}')">unlock</button>`)}</div>`;});
   lk+=`</div>`;
@@ -520,6 +558,7 @@ async function studentView(sid,cid){wallOff();
      <span class="muted">Last active: ${st.lastActive||'—'}</span></div></div>
    <div class="eyebrow">${c.level} units (${doneInLevel.length}/${lvlUnits.length})</div>
    <div class="card">${lvlUnits.map(u=>`<div class="row-item" style="cursor:default;margin:2px 0"><div class="dot" style="width:28px;height:28px;font-size:13px;background:${(st.unitsDone||{})[u.id]?'#e9f8f0':'var(--teal-soft)'}">${(st.unitsDone||{})[u.id]?'✓':'·'}</div><div class="meta"><small>${escH(u.title)}</small></div></div>`).join('')||'<p class="muted">No units at this level.</p>'}</div>
+   ${spc}
    ${lk}
    <div class="eyebrow">Private note (only you see this)</div><div class="card"><textarea id="snote" placeholder="Your private notes about this student…" style="min-height:70px">${nt&&nt.body?escH(nt.body):``}</textarea><button class="btn ghost" style="margin-top:8px" onclick="saveNote('${sid}')">Save note</button></div>
    <div class="eyebrow">Actions</div>
