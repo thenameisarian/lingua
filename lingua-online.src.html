@@ -200,14 +200,36 @@ function wallOff(){document.body.classList.remove('wallon');}
 async function boot(){
   await loadContentOverrides();
   const {data:{session}}=await SUPA.auth.getSession();
-  if(!session){authScreen();return;}
+  if(!session){landingScreen();return;}
   try{const pp=new URLSearchParams(location.search).get('paid');if(pp){toast('Payment received — unlocking…');history.replaceState({},'',location.pathname);}}catch(e){}
   await route();
 }
-SUPA.auth.onAuthStateChange((ev)=>{if(ev==='SIGNED_OUT')authScreen();});
+SUPA.auth.onAuthStateChange((ev)=>{if(ev==='SIGNED_OUT')landingScreen();});
 
+function landingScreen(){wallOn();
+ $('app').innerHTML=`
+  <div style="height:18px"></div>
+  <div class="brand">Lingua</div>
+  <p class="center muted" style="font-size:13px;margin-bottom:8px">by Arian Academy</p>
+  <div class="card" style="text-align:center">
+    <h1 style="font-size:24px;margin:4px 0 6px;font-family:Lora">Speak English with confidence</h1>
+    <p class="muted" style="font-size:14px;margin-bottom:14px">Structured CEFR courses, real-life speaking practice, and live weekly classes — learn at your level and track every step.</p>
+    <div class="btn row"><button class="btn" onclick="authScreen('signup')">Get started</button><button class="btn ghost" onclick="authScreen('login')">Log in</button></div>
+    <div style="display:flex;justify-content:center;gap:18px;margin-top:14px;font-size:12px" class="muted"><span>📘 48 lessons</span><span>📚 1,002 words</span><span>🎤 87 missions</span></div>
+  </div>
+  <div class="eyebrow" style="margin-top:8px">Courses</div>
+  <div class="card row-item"><div class="dot">🏫</div><div class="meta"><b>Level classes (A1–C2)</b><small>Join your teacher's class with a code · live weekly sessions</small></div></div>
+  <div class="card row-item"><div class="dot">✍️</div><div class="meta"><b>Writing in 90 Days</b><small>Sentence → research paper · 60 lessons</small></div><span class="pill">$${PRICES.writing}</span></div>
+  <div class="card row-item"><div class="dot">🔥</div><div class="meta"><b>90-Day English Intensive</b><small>Fast-track, self-paced full course</small></div><span class="pill">$${PRICES.intensive}</span></div>
+  <div class="card row-item"><div class="dot">🎤</div><div class="meta"><b>Speaking Missions</b><small>87 real-life speaking challenges</small></div><span class="pill">$${PRICES.missions}</span></div>
+  <div class="eyebrow" style="margin-top:8px">Why Lingua</div>
+  <div class="card"><div style="font-size:13px;line-height:1.95">🗣️ Speaking-first — repeat aloud with guided prompts<br>🔄 Spaced repetition so words actually stick<br>📈 Streaks, badges & progress tracking<br>🎓 Earn a certificate when you finish a level or course</div></div>
+  <button class="btn" style="margin-top:6px" onclick="authScreen('signup')">Create your free account</button>
+  <p class="center muted" style="font-size:11px;margin-top:8px">Already have an account? <a href="#" onclick="authScreen('login');return false" style="color:var(--teal);font-weight:600">Log in</a></p>
+  <div style="height:18px"></div>`;
+}
 function authScreen(mode){mode=mode||'login';wallOn();
-  $('app').innerHTML=`<div style="height:24px"></div><div class="brand">Lingua</div><p class="center muted" style="font-size:13px;margin-bottom:18px">English with Arian Academy</p>
+  $('app').innerHTML=`<div style="height:10px"></div><div style="text-align:left;margin-bottom:2px"><button class="x" onclick="landingScreen()">← back</button></div><div class="brand">Lingua</div><p class="center muted" style="font-size:13px;margin-bottom:18px">English with Arian Academy</p>
    <div class="card">
      <div class="btn row" style="margin-bottom:8px"><button class="btn ${mode==='login'?'':'ghost'}" onclick="authScreen('login')">Log in</button><button class="btn ${mode==='signup'?'':'ghost'}" onclick="authScreen('signup')">Sign up</button></div>
      ${mode==='signup'?`<input id="nm" placeholder="Your name">
@@ -249,7 +271,7 @@ async function route(){
   else if(!prof.placed_level){placementTest();}
   else studentJoin();
 }
-async function logout(){await SUPA.auth.signOut();CTX={user:null,role:null,name:'',classId:null,className:'',level:null};S=fresh();authScreen();}
+async function logout(){await SUPA.auth.signOut();CTX={user:null,role:null,name:'',classId:null,className:'',level:null};S=fresh();landingScreen();}
 
 async function hydrate(){const r=(await SUPA.from('lingua_progress').select('state').eq('student_id',CTX.user.id).eq('class_id',CTX.classId).maybeSingle()).data;
   const ur=await SUPA.from('lingua_unlocks').select('unit_id').eq('student_id',CTX.user.id).eq('class_id',CTX.classId);UNLOCKS=(ur.data||[]).map(x=>x.unit_id);
