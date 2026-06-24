@@ -193,8 +193,8 @@ function buildWall(){const wall=$('wall');if(!wall)return;
     n.style.left=Math.round(x)+'px';n.style.top=Math.round(y)+'px';
     const sz=mob?(34+Math.round(Math.random()*8)):(44+Math.round(Math.random()*16));const t=n.querySelector('.tile');t.style.width=sz+'px';t.style.height=sz+'px';wall.appendChild(n);}}
 let _ww=innerWidth;addEventListener('resize',()=>{if(!document.body.classList.contains('wallon'))return;if(Math.abs(innerWidth-_ww)<60)return;_ww=innerWidth;buildWall();});
-function wallOn(){document.body.classList.add('wallon');buildWall();}
-function wallOff(){document.body.classList.remove('wallon');}
+function wallOn(){document.body.classList.remove('lp');document.body.classList.add('wallon');buildWall();}
+function wallOff(){document.body.classList.remove('wallon');document.body.classList.remove('lp');}
 
 /* ===== AUTH + ROUTING ===== */
 async function boot(){
@@ -206,27 +206,81 @@ async function boot(){
 }
 SUPA.auth.onAuthStateChange((ev)=>{if(ev==='SIGNED_OUT')landingScreen();});
 
-function landingScreen(){wallOn();
+function landingScreen(){
+ wallOff();document.body.classList.add('lp');
+ if(!document.getElementById('lpcss')){const st=document.createElement('style');st.id='lpcss';st.textContent=`
+  body.lp{background:#fff}
+  body.lp .wrap{max-width:none;padding:0}
+  .lp-nav{display:flex;align-items:center;justify-content:space-between;max-width:1000px;margin:0 auto;padding:18px 22px}
+  .lp-logo{font-family:Lora,serif;font-weight:700;font-size:22px;color:var(--ink);line-height:1.05}
+  .lp-logo small{display:block;font-family:Inter,sans-serif;font-weight:600;font-size:10px;color:#7c918d;letter-spacing:.12em}
+  .lp-navr{display:flex;align-items:center;gap:14px}
+  .lp-link{color:#3a534e;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none}
+  .lp-btn{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+  .lp-btn:hover{filter:brightness(1.07)}
+  .lp-btn.lg{padding:15px 32px;font-size:16px;border-radius:12px}
+  .lp-sec{max-width:1000px;margin:0 auto;padding:46px 22px}
+  .lp-hero{text-align:center;padding:70px 22px 54px;max-width:760px;margin:0 auto}
+  .lp-eyebrow{font-size:12px;font-weight:700;letter-spacing:.16em;color:var(--teal);text-transform:uppercase}
+  .lp-h1{font-family:Lora,serif;font-size:48px;line-height:1.08;margin:16px 0 16px;color:var(--ink);font-weight:700}
+  .lp-sub{font-size:18px;color:#5c726d;max-width:560px;margin:0 auto 28px;line-height:1.6}
+  .lp-chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+  .lp-chip{background:#f0f6f5;color:#3a534e;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600}
+  .lp-alt{background:#f7faf9;border-top:1px solid #eef3f1;border-bottom:1px solid #eef3f1}
+  .lp-h2{font-family:Lora,serif;font-size:30px;text-align:center;color:var(--ink);margin:0 0 6px}
+  .lp-lead{text-align:center;color:#5c726d;margin:0 auto 30px;max-width:520px}
+  .lp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+  .lp-card{background:#fff;border:1px solid #e6eeec;border-radius:16px;padding:24px;box-shadow:0 6px 24px rgba(20,70,66,.05)}
+  .lp-card .ic{font-size:28px}
+  .lp-card h3{font-size:17px;margin:12px 0 5px;color:var(--ink)}
+  .lp-card p{font-size:14px;color:#5c726d;margin:0;line-height:1.55}
+  .lp-price{display:inline-block;margin-top:14px;background:#eafaf7;color:var(--teal);font-weight:700;font-size:12.5px;border-radius:8px;padding:5px 11px}
+  .lp-step{display:flex;gap:14px;align-items:flex-start}
+  .lp-num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .lp-cta{background:var(--teal);text-align:center;padding:60px 22px;color:#fff}
+  .lp-cta h2{font-family:Lora,serif;font-size:32px;margin:0 0 8px}
+  .lp-cta p{opacity:.92;margin:0 0 24px}
+  .lp-cta .lp-btn{background:#fff;color:var(--teal)}
+  .lp-foot{text-align:center;padding:28px;color:#8c9d99;font-size:13px}
+  @media(max-width:640px){.lp-h1{font-size:34px}.lp-hero{padding:44px 18px 34px}.lp-h2{font-size:25px}}
+ `;document.head.appendChild(st);}
  $('app').innerHTML=`
-  <div style="height:18px"></div>
-  <div class="brand">Lingua</div>
-  <p class="center muted" style="font-size:13px;margin-bottom:8px">by Arian Academy</p>
-  <div class="card" style="text-align:center">
-    <h1 style="font-size:24px;margin:4px 0 6px;font-family:Lora">Speak English with confidence</h1>
-    <p class="muted" style="font-size:14px;margin-bottom:14px">Structured CEFR courses, real-life speaking practice, and live weekly classes — learn at your level and track every step.</p>
-    <button class="btn" style="width:100%;font-size:15px" onclick="authScreen('signup')">Get started →</button>
-    <div style="display:flex;justify-content:center;gap:18px;margin-top:14px;font-size:12px" class="muted"><span>📘 48 lessons</span><span>📚 1,002 words</span><span>🎤 87 missions</span></div>
-  </div>
-  <div class="eyebrow" style="margin-top:8px">Courses</div>
-  <div class="card row-item"><div class="dot">🏫</div><div class="meta"><b>Level classes (A1–C2)</b><small>Join your teacher's class with a code · live weekly sessions</small></div></div>
-  <div class="card row-item"><div class="dot">✍️</div><div class="meta"><b>Writing in 90 Days</b><small>Sentence → research paper · 60 lessons</small></div><span class="pill">$${PRICES.writing}</span></div>
-  <div class="card row-item"><div class="dot">🔥</div><div class="meta"><b>90-Day English Intensive</b><small>Fast-track, self-paced full course</small></div><span class="pill">$${PRICES.intensive}</span></div>
-  <div class="card row-item"><div class="dot">🎤</div><div class="meta"><b>Speaking Missions</b><small>87 real-life speaking challenges</small></div><span class="pill">$${PRICES.missions}</span></div>
-  <div class="eyebrow" style="margin-top:8px">Why Lingua</div>
-  <div class="card"><div style="font-size:13px;line-height:1.95">🗣️ Speaking-first — repeat aloud with guided prompts<br>🔄 Spaced repetition so words actually stick<br>📈 Streaks, badges & progress tracking<br>🎓 Earn a certificate when you finish a level or course</div></div>
-  <button class="btn" style="margin-top:6px" onclick="authScreen('signup')">Create your free account</button>
-  <p class="center muted" style="font-size:11px;margin-top:8px">Already have an account? <a href="#" onclick="authScreen('login');return false" style="color:var(--teal);font-weight:600">Log in</a></p>
-  <div style="height:18px"></div>`;
+  <div class="lp-nav"><div class="lp-logo">Lingua<small>BY ARIAN ACADEMY</small></div><div class="lp-navr"><span class="lp-link" onclick="authScreen('login')">Log in</span><button class="lp-btn" onclick="authScreen('signup')">Get started</button></div></div>
+  <section class="lp-hero">
+    <div class="lp-eyebrow">English, made to stick</div>
+    <h1 class="lp-h1">Speak English with confidence</h1>
+    <p class="lp-sub">Structured CEFR courses, real-life speaking practice, and live weekly classes — learn at your level and see your progress every day.</p>
+    <button class="lp-btn lg" onclick="authScreen('signup')">Get started →</button>
+    <div class="lp-chips"><span class="lp-chip">📘 48 lessons</span><span class="lp-chip">📚 1,002 words</span><span class="lp-chip">🎤 87 speaking missions</span><span class="lp-chip">🎓 Certificates</span></div>
+  </section>
+  <section class="lp-alt"><div class="lp-sec">
+    <h2 class="lp-h2">How it works</h2><p class="lp-lead">Three simple steps from your first word to real conversation.</p>
+    <div class="lp-grid">
+      <div class="lp-card"><div class="lp-step"><div class="lp-num">1</div><div><h3 style="margin:2px 0 5px">Pick your course</h3><p>Join a live level class, or take a self-paced course like Writing in 90 Days.</p></div></div></div>
+      <div class="lp-card"><div class="lp-step"><div class="lp-num">2</div><div><h3 style="margin:2px 0 5px">Learn a little daily</h3><p>Short, focused lessons across reading, listening, speaking and writing.</p></div></div></div>
+      <div class="lp-card"><div class="lp-step"><div class="lp-num">3</div><div><h3 style="margin:2px 0 5px">Speak &amp; track</h3><p>Practice aloud, build streaks, and watch your level rise.</p></div></div></div>
+    </div>
+  </div></section>
+  <section class="lp-sec">
+    <h2 class="lp-h2">Courses</h2><p class="lp-lead">Something for every goal and every level.</p>
+    <div class="lp-grid">
+      <div class="lp-card"><div class="ic">🏫</div><h3>Level classes (A1–C2)</h3><p>Live weekly sessions with your teacher. Join with a class code.</p></div>
+      <div class="lp-card"><div class="ic">✍️</div><h3>Writing in 90 Days</h3><p>From a strong sentence to a full research paper — 60 guided lessons.</p><span class="lp-price">$${PRICES.writing} USDT</span></div>
+      <div class="lp-card"><div class="ic">🔥</div><h3>90-Day English Intensive</h3><p>A fast-track, self-paced route through the whole curriculum.</p><span class="lp-price">$${PRICES.intensive} USDT</span></div>
+      <div class="lp-card"><div class="ic">🎤</div><h3>Speaking Missions</h3><p>87 real-life challenges to get you talking, confidently.</p><span class="lp-price">$${PRICES.missions} USDT</span></div>
+    </div>
+  </section>
+  <section class="lp-alt"><div class="lp-sec">
+    <h2 class="lp-h2">Why learners choose Lingua</h2><div class="lp-grid" style="margin-top:24px">
+      <div class="lp-card"><div class="ic">🗣️</div><h3>Speaking-first</h3><p>Repeat aloud with guided prompts and a built-in speaking timer.</p></div>
+      <div class="lp-card"><div class="ic">🔄</div><h3>Spaced repetition</h3><p>Words return right before you forget them, so they actually stick.</p></div>
+      <div class="lp-card"><div class="ic">📈</div><h3>Real progress</h3><p>Streaks, badges, leaderboards and a clear path through your level.</p></div>
+      <div class="lp-card"><div class="ic">👩‍🏫</div><h3>A real teacher</h3><p>Live weekly classes and personal feedback from Arian Academy.</p></div>
+    </div>
+  </div></section>
+  <section class="lp-cta"><h2>Ready to start speaking?</h2><p>Create your free account and take your first lesson today.</p><button class="lp-btn lg" onclick="authScreen('signup')">Get started →</button></section>
+  <div class="lp-foot">Lingua · Arian Academy · © 2026</div>
+ `;
 }
 function authScreen(mode){mode=mode||'login';wallOn();
   $('app').innerHTML=`<div style="height:10px"></div><div style="text-align:left;margin-bottom:2px"><button class="x" onclick="landingScreen()">← back</button></div><div class="brand">Lingua</div><p class="center muted" style="font-size:13px;margin-bottom:18px">English with Arian Academy</p>
