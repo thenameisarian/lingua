@@ -279,11 +279,12 @@ function home(){
        <div class="bar" style="margin-top:6px"><i style="width:${goalPct}%"></i></div></div></div>
    ${due>0?`<div class="card row-item" onclick="startReview()"><div class="dot">🔄</div><div class="meta"><b>Review ${due} item(s)</b><small>Spaced repetition — due now</small></div><span class="pill">Review →</span></div>`:''}
    ${vt>0?`<div class="card row-item" onclick="vocabStudy()"><div class="dot">📚</div><div class="meta"><b>Vocabulary</b><small>${vs}/${vt} learned · words, phrasal verbs, idioms…</small></div><span class="pill">Learn →</span></div>`:''}
+   <div id="feed"></div>
    <div class="card row-item" onclick="leaderboardView()"><div class="dot">🏆</div><div class="meta"><b>Class leaderboard</b><small>See how you rank in your class</small></div><span class="pill">View →</span></div>
    <div class="eyebrow" style="margin-top:6px">Your ${CTX.level} lessons</div>
    ${mine.length?mine.map(u=>`<div class="card row-item" onclick="startUnit('${u.id}')"><div class="dot">📘</div>
      <div class="meta"><b>${escH(u.title)}</b><small>${u.level} · ${escH(u.theme)}</small></div><span class="status">${S.unitsDone[u.id]?'✓':'›'}</span></div>`).join(''):'<div class="card muted">No lessons assigned to this level yet.</div>'}
-   ${certBlock()}`;
+   ${certBlock()}`;loadFeed();
 }
 function badgesView(){wallOff();const li=levelInfo();
   let h=`<div class="progress-top"><button class="x" onclick="home()">✕</button></div><div class="eyebrow">Achievements</div>
@@ -443,6 +444,8 @@ async function classView(id){wallOff();
   if(!c){toast('Class not found');staffHome();return;}
   const enr=(await SUPA.from('lingua_enrollments').select('student_id,student_name').eq('class_id',id)).data||[];
   const prog=(await SUPA.from('lingua_progress').select('student_id,state,updated_at').eq('class_id',id)).data||[];
+  const ann=(await SUPA.from('lingua_announcements').select('id,body,created_at').eq('class_id',id).order('created_at',{ascending:false})).data||[];
+  const asg=(await SUPA.from('lingua_assignments').select('*').eq('class_id',id).order('due_date',{ascending:true})).data||[];
   const pmap={};prog.forEach(p=>pmap[p.student_id]=p);
   const totU=UNITS.filter(u=>u.level===c.level).length;
   let h=`<div class="progress-top"><button class="x" onclick="staffHome()">✕</button></div>
@@ -456,6 +459,11 @@ async function classView(id){wallOff();
     enr.map(e=>{const st=(pmap[e.student_id]||{}).state||{};const done=Object.keys(st.unitsDone||{}).filter(uid=>UNITS.find(u=>u.id===uid&&u.level===c.level)).length;const li=(()=>{const xp=st.xp||0;let l=0;for(let i=0;i<LV.length;i++)if(xp>=LV[i])l=i;return l;})();const cert=(st.certs&&st.certs[c.level])?st.certs[c.level].score+'%':'—';return {sid:e.student_id,name:e.student_name||'Student',xp:st.xp||0,streak:st.streak||0,done,totU,li,cert};})
       .sort((a,b)=>b.xp-a.xp).forEach(r=>{h+=`<tr style="cursor:pointer" onclick="studentView('${r.sid}','${c.id}')"><td><b>${escH(r.name)}</b></td><td>${r.li}</td><td>${r.xp}</td><td>${r.streak}</td><td>${r.done}/${r.totU}</td><td>${r.cert}</td></tr>`;});
     h+=`</table></div><p class="muted center" style="font-size:11px">Tap a student for details</p>`;}
+  h+=`<div class="eyebrow" style="margin-top:8px">📣 Announcements</div><div class="card"><textarea id="annbody" placeholder="Post a notice — Zoom link, reminder, encouragement…" style="min-height:60px"></textarea><button class="btn" style="margin-top:8px" onclick="postAnnouncement('${id}')">Post announcement</button></div>`;
+  ann.forEach(a=>{h+=`<div class="card" style="border-left:3px solid var(--amber);display:flex;gap:8px;align-items:flex-start"><div class="meta" style="white-space:pre-wrap;font-size:13px">${escH(a.body)}<div class="muted" style="font-size:11px;margin-top:4px">${(a.created_at||'').slice(0,10)}</div></div><button class="x" onclick="delAnnouncement('${a.id}','${id}')">✕</button></div>`;});
+  const lvlU=UNITS.filter(u=>u.level===c.level);
+  h+=`<div class="eyebrow" style="margin-top:8px">📌 Weekly assignment</div><div class="card"><input id="asgt" placeholder="Title (e.g. Week 1)"><label class="muted" style="font-size:12px;margin-top:8px;display:block">Units</label><div style="max-height:150px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:8px;margin-top:4px">${lvlU.map(u=>`<label style="display:flex;gap:8px;align-items:center;font-size:13px;padding:3px 0"><input type="checkbox" style="width:auto;margin:0" data-au value="${u.id}"> ${escH(u.title)}</label>`).join('')}</div><div class="btn row" style="margin-top:8px"><input id="asgv" type="number" placeholder="Vocab goal" style="margin-top:0"><input id="asgd" type="date" style="margin-top:0"></div><input id="asgl" placeholder="Live session (date / time / Zoom link)" style="margin-top:8px"><textarea id="asgn" placeholder="Note for students (optional)" style="min-height:50px"></textarea><button class="btn" style="margin-top:8px" onclick="createAssignment('${id}')">Create assignment</button></div>`;
+  asg.forEach(a=>{const u2=(a.unit_ids||[]).filter(x=>UNITS.find(u=>u.id===x));const finished=enr.filter(e=>{const st=(pmap[e.student_id]||{}).state||{};return u2.length&&u2.every(uid=>(st.unitsDone||{})[uid]);}).length;h+=`<div class="card" style="border-left:3px solid var(--teal)"><div class="top" style="margin-bottom:4px"><b>${escH(a.title)}</b><button class="x" onclick="delAssignment('${a.id}','${id}')">✕</button></div><div class="muted" style="font-size:12px">${u2.length} units${a.vocab_count?` · ${a.vocab_count} vocab`:''}${a.due_date?` · due ${a.due_date}`:''}</div>${a.live_info?`<div class="muted" style="font-size:12px">📅 ${escH(a.live_info)}</div>`:''}<div class="pill" style="margin-top:6px">${finished}/${enr.length} finished all units</div></div>`;});
   h+=`<button class="btn ghost" onclick="classView('${c.id}')">↻ Refresh</button>`;
   $('app').innerHTML=h;}
 async function delClass(id){if(!confirm('Delete this class and its data?'))return;await SUPA.from('lingua_classes').delete().eq('id',id);toast('Class deleted');staffHome();}
@@ -564,6 +572,17 @@ function placementTest(){wallOn();let i=0,correct=0;
 async function finishPlacement(correct){const map=['A1','A1','A1','A2','A2','B1','B1','B2','B2','C1','C1','C2','C2'];const lvl=map[Math.min(correct,map.length-1)];const names={A1:'Beginner',A2:'Elementary',B1:'Intermediate',B2:'Upper-Intermediate',C1:'Advanced',C2:'Mastery'};
   CTX.placed=lvl;try{await SUPA.from('lingua_profiles').update({placed_level:lvl}).eq('id',CTX.user.id);}catch(e){}
   wallOff();$('app').innerHTML=`<div class="card center" style="margin-top:36px"><div class="big">🎯</div><div class="eyebrow">Your placement</div><h1 style="font-size:34px;color:var(--teal-dark);margin:6px 0">${lvl}</h1><p class="muted">${names[lvl]} · ${correct}/${PLACEMENT.length} correct</p><p class="muted" style="font-size:13px;margin-top:10px">Tell your teacher your level — they'll give you the ${lvl} class code.</p><button class="btn" style="margin-top:14px" onclick="studentJoin()">Continue →</button></div>`;}
+async function postAnnouncement(cid){const b=$('annbody').value.trim();if(!b){toast('Write something first');return;}const {error}=await SUPA.from('lingua_announcements').insert({class_id:cid,body:b});if(error){toast('Could not post');return;}toast('Posted');classView(cid);}
+async function delAnnouncement(id,cid){if(!confirm('Delete this announcement?'))return;await SUPA.from('lingua_announcements').delete().eq('id',id);classView(cid);}
+async function createAssignment(cid){const title=$('asgt').value.trim()||'Assignment';const units=[...document.querySelectorAll('[data-au]:checked')].map(x=>x.value);const vocab=parseInt($('asgv').value,10)||0;const due=$('asgd').value||null;const live=$('asgl').value.trim()||null;const note=$('asgn').value.trim()||null;const {error}=await SUPA.from('lingua_assignments').insert({class_id:cid,title,unit_ids:units,vocab_count:vocab,due_date:due,live_info:live,note});if(error){toast('Could not create');return;}toast('Assignment created');classView(cid);}
+async function delAssignment(id,cid){if(!confirm('Delete this assignment?'))return;await SUPA.from('lingua_assignments').delete().eq('id',id);classView(cid);}
+async function loadFeed(){const el=$('feed');if(!el||!CTX.classId)return;
+  const [aR,asR]=await Promise.all([SUPA.from('lingua_announcements').select('body,created_at').eq('class_id',CTX.classId).order('created_at',{ascending:false}).limit(3),SUPA.from('lingua_assignments').select('*').eq('class_id',CTX.classId).order('due_date',{ascending:true})]);
+  let h='';
+  (aR.data||[]).forEach(a=>{h+=`<div class="card" style="border-left:3px solid var(--amber)"><div class="eyebrow" style="color:var(--amber);margin-bottom:2px">📣 Announcement</div><div style="font-size:14px;white-space:pre-wrap">${escH(a.body)}</div><div class="muted" style="font-size:11px;margin-top:4px">${(a.created_at||'').slice(0,10)}</div></div>`;});
+  (asR.data||[]).forEach(a=>{const units=(a.unit_ids||[]).filter(id=>UNITS.find(u=>u.id===id));const done=units.filter(id=>S.unitsDone[id]).length;const pct=units.length?Math.round(done/units.length*100):0;const overdue=a.due_date&&a.due_date<today();
+    h+=`<div class="card" style="border-left:3px solid var(--teal)"><div class="top" style="margin-bottom:4px"><b style="font-size:15px">📌 ${escH(a.title)}</b>${a.due_date?`<span class="pill" style="${overdue?'background:#fdeef0;color:var(--rose)':''}">due ${a.due_date}</span>`:''}</div>${a.live_info?`<div class="muted" style="font-size:12px">📅 ${escH(a.live_info)}</div>`:''}${a.note?`<div class="why" style="text-align:left">${escH(a.note)}</div>`:''}<div class="bar" style="margin:8px 0"><i style="width:${pct}%"></i></div><div class="muted" style="font-size:12px">Units ${done}/${units.length}${a.vocab_count?` · vocab ${Math.min(vocabSeen(),a.vocab_count)}/${a.vocab_count}`:''}</div>${units.map(id=>{const u=UNITS.find(x=>x.id===id);return `<div class="row-item" style="margin:4px 0" onclick="startUnit('${id}')"><div class="dot" style="width:30px;height:30px;font-size:14px">${S.unitsDone[id]?'✓':'📘'}</div><div class="meta"><small>${escH(u.title)}</small></div><span class="status">${S.unitsDone[id]?'✓':'›'}</span></div>`;}).join('')}</div>`;});
+  el.innerHTML=h;}
 boot();
 </script>
 </body>
