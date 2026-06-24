@@ -405,11 +405,11 @@ async function adminHome(){
   h+=`<div class="eyebrow">All classes (${cls.length})</div>`;
   if(!cls.length)h+=`<p class="muted center">No classes yet.</p>`;
   else cls.slice().sort((a,b)=>a.level.localeCompare(b.level)).forEach(c=>{const n=(enrByClass[c.id]||[]).length;h+=`<div class="card row-item" onclick="classView('${c.id}')"><div class="dot">${c.level}</div><div class="meta"><b>${escH(c.name)}</b><small>${n} student${n===1?'':'s'} · code ${c.join_code} · ${escH(nameById[c.teacher_id]||'—')}</small></div><span class="status">›</span></div>`;});
-  const rows=[]; enr.forEach(e=>{const st=(progByKey[e.student_id+'|'+e.class_id]||{}).state||{};const c=cls.find(x=>x.id===e.class_id);rows.push({name:e.student_name||nameById[e.student_id]||'Student',cls:c?c.name:'—',level:c?c.level:'',xp:st.xp||0,lv:lvlOf(st.xp||0),streak:st.streak||0});});
+  const rows=[]; enr.forEach(e=>{const st=(progByKey[e.student_id+'|'+e.class_id]||{}).state||{};const c=cls.find(x=>x.id===e.class_id);rows.push({name:e.student_name||nameById[e.student_id]||'Student',cls:c?c.name:'—',level:c?c.level:'',xp:st.xp||0,lv:lvlOf(st.xp||0),streak:st.streak||0,sid:e.student_id,cid:e.class_id});});
   h+=`<div class="eyebrow" style="margin-top:8px">All students (${rows.length})</div>`;
   if(!rows.length)h+=`<p class="muted center">No students enrolled yet.</p>`;
-  else{h+=`<div class="card"><table><tr><th>Name</th><th>Class</th><th>Lv</th><th>XP</th><th>🔥</th></tr>`;rows.sort((a,b)=>b.xp-a.xp).forEach(r=>{h+=`<tr><td><b>${escH(r.name)}</b></td><td>${escH(r.cls)} <span class="muted">${r.level}</span></td><td>${r.lv}</td><td>${r.xp}</td><td>${r.streak}</td></tr>`;});h+=`</table></div>`;}
-  h+=`<button class="btn ghost" style="margin-top:10px" onclick="adminHome()">↻ Refresh</button>`;
+  else{h+=`<div class="card"><table><tr><th>Name</th><th>Class</th><th>Lv</th><th>XP</th><th>🔥</th></tr>`;rows.sort((a,b)=>b.xp-a.xp).forEach(r=>{h+=`<tr style="cursor:pointer" onclick="studentView('${r.sid}','${r.cid}')"><td><b>${escH(r.name)}</b></td><td>${escH(r.cls)} <span class="muted">${r.level}</span></td><td>${r.lv}</td><td>${r.xp}</td><td>${r.streak}</td></tr>`;});h+=`</table></div>`;}
+  h+=`<div class="btn row" style="margin-top:10px"><button class="btn ghost" onclick="adminHome()">↻ Refresh</button><button class="btn ghost" onclick="usersView()">👥 People</button><button class="btn ghost" onclick="exportCSV()">⬇ Export</button></div>`;
   $('app').innerHTML=h;
 }
 
@@ -429,26 +429,100 @@ async function createClass(){const name=$('cn').value.trim()||('New '+$('cl').va
   if(error){toast('Could not create class');return;}toast('Class created');staffHome();}
 async function classView(id){wallOff();
   const c=(await SUPA.from('lingua_classes').select('*').eq('id',id).single()).data;
+  if(!c){toast('Class not found');staffHome();return;}
   const enr=(await SUPA.from('lingua_enrollments').select('student_id,student_name').eq('class_id',id)).data||[];
   const prog=(await SUPA.from('lingua_progress').select('student_id,state,updated_at').eq('class_id',id)).data||[];
   const pmap={};prog.forEach(p=>pmap[p.student_id]=p);
   const totU=UNITS.filter(u=>u.level===c.level).length;
   let h=`<div class="progress-top"><button class="x" onclick="staffHome()">✕</button></div>
    <div class="card"><div class="eyebrow">${c.level} class</div><h2 style="font-size:20px">${escH(c.name)}</h2>
-     <p class="muted" style="font-size:13px">Share this code with students:</p><div style="text-align:center;margin:8px 0"><span class="code">${c.join_code}</span></div>
-     <button class="btn ghost" onclick="copyText('${c.join_code}')">Copy code</button>
+     <p class="muted" style="font-size:13px">Class code:</p><div style="text-align:center;margin:8px 0"><span class="code">${c.join_code}</span></div>
+     <div class="btn row"><button class="btn ghost" onclick="copyText('${c.join_code}')">Copy code</button><button class="btn ghost" onclick="editClass('${c.id}')">Edit class</button></div>
      <button class="btn ghost" style="margin-top:8px" onclick="delClass('${c.id}')">Delete class</button></div>
    <div class="eyebrow">Students (${enr.length})</div>`;
   if(!enr.length)h+=`<p class="muted center">No students have joined yet.</p>`;
-  else{h+=`<div class="card"><table><tr><th>Name</th><th>Lv</th><th>XP</th><th>🔥</th><th>Units</th><th>Vocab</th><th>Test</th></tr>`;
-    enr.map(e=>{const st=(pmap[e.student_id]||{}).state||{};const done=Object.keys(st.unitsDone||{}).filter(uid=>UNITS.find(u=>u.id===uid&&u.level===c.level)).length;const li=(()=>{const xp=st.xp||0;let l=0;for(let i=0;i<LV.length;i++)if(xp>=LV[i])l=i;return l;})();const cert=(st.certs&&st.certs[c.level])?st.certs[c.level].score+'%':'—';const vocab=st.cards?Object.keys(st.cards).length:0;return {name:e.student_name||'Student',xp:st.xp||0,streak:st.streak||0,done,totU,li,cert,vocab};})
-      .sort((a,b)=>b.xp-a.xp).forEach(r=>{h+=`<tr><td><b>${escH(r.name)}</b></td><td>${r.li}</td><td>${r.xp}</td><td>${r.streak}</td><td>${r.done}/${r.totU}</td><td>${r.vocab}</td><td>${r.cert}</td></tr>`;});
-    h+=`</table></div>`;}
-  h+=`<button class="btn ghost" onclick="classView('${c.id}')">↻ Refresh progress</button>`;
+  else{h+=`<div class="card"><table><tr><th>Name</th><th>Lv</th><th>XP</th><th>🔥</th><th>Units</th><th>Test</th></tr>`;
+    enr.map(e=>{const st=(pmap[e.student_id]||{}).state||{};const done=Object.keys(st.unitsDone||{}).filter(uid=>UNITS.find(u=>u.id===uid&&u.level===c.level)).length;const li=(()=>{const xp=st.xp||0;let l=0;for(let i=0;i<LV.length;i++)if(xp>=LV[i])l=i;return l;})();const cert=(st.certs&&st.certs[c.level])?st.certs[c.level].score+'%':'—';return {sid:e.student_id,name:e.student_name||'Student',xp:st.xp||0,streak:st.streak||0,done,totU,li,cert};})
+      .sort((a,b)=>b.xp-a.xp).forEach(r=>{h+=`<tr style="cursor:pointer" onclick="studentView('${r.sid}','${c.id}')"><td><b>${escH(r.name)}</b></td><td>${r.li}</td><td>${r.xp}</td><td>${r.streak}</td><td>${r.done}/${r.totU}</td><td>${r.cert}</td></tr>`;});
+    h+=`</table></div><p class="muted center" style="font-size:11px">Tap a student for details</p>`;}
+  h+=`<button class="btn ghost" onclick="classView('${c.id}')">↻ Refresh</button>`;
   $('app').innerHTML=h;}
 async function delClass(id){if(!confirm('Delete this class and its data?'))return;await SUPA.from('lingua_classes').delete().eq('id',id);toast('Class deleted');staffHome();}
 function copyText(t){try{navigator.clipboard.writeText(t);toast('Copied '+t);}catch(e){toast(t);}}
 
+async function editClass(id){
+  const c=(await SUPA.from('lingua_classes').select('*').eq('id',id).single()).data; if(!c)return;
+  const levels=['A1','A2','B1','B2','C1','C2'];
+  $('app').innerHTML=`<div class="progress-top"><button class="x" onclick="classView('${id}')">✕</button></div>
+   <div class="eyebrow">Edit class</div>
+   <div class="card"><label class="muted" style="font-size:12px">Class name</label><input id="ecn" value="${escH(c.name)}">
+     <label class="muted" style="font-size:12px;margin-top:8px;display:block">Level</label>
+     <select id="ecl">${levels.map(l=>`<option value="${l}" ${l===c.level?'selected':''}>${l}</option>`).join('')}</select>
+     <label class="muted" style="font-size:12px;margin-top:8px;display:block">Join code</label>
+     <div class="btn row"><input id="ecc" value="${escH(c.join_code)}" style="margin-top:0"><button class="btn ghost" style="max-width:130px" onclick="document.getElementById('ecc').value=document.getElementById('ecl').value+'-'+rnd(4)">Regenerate</button></div>
+     <button class="btn" style="margin-top:12px" onclick="saveClass('${id}')">Save changes</button></div>`;
+}
+async function saveClass(id){const name=$('ecn').value.trim(),level=$('ecl').value,code=$('ecc').value.trim().toUpperCase();
+  if(!name||!code){toast('Name and code required');return;}
+  const {error}=await SUPA.from('lingua_classes').update({name,level,join_code:code}).eq('id',id);
+  if(error){toast(/duplicate|unique/i.test(error.message)?'That code is taken':'Could not save');return;}
+  toast('Saved');classView(id);}
+async function studentView(sid,cid){wallOff();
+  const c=(await SUPA.from('lingua_classes').select('*').eq('id',cid).single()).data;
+  const e=(await SUPA.from('lingua_enrollments').select('student_name').eq('class_id',cid).eq('student_id',sid).maybeSingle()).data;
+  const pr=(await SUPA.from('lingua_progress').select('state,updated_at').eq('class_id',cid).eq('student_id',sid).maybeSingle()).data;
+  const st=(pr&&pr.state)||{}; const name=(e&&e.student_name)||'Student';
+  const lvlUnits=UNITS.filter(u=>u.level===c.level);
+  const doneInLevel=lvlUnits.filter(u=>(st.unitsDone||{})[u.id]);
+  const xp=st.xp||0;let lv=0;for(let i=0;i<LV.length;i++)if(xp>=LV[i])lv=i;
+  const cert=(st.certs&&st.certs[c.level])?(st.certs[c.level].score+'% · '+st.certs[c.level].date):'—';
+  const allCls=(await SUPA.from('lingua_classes').select('id,name,level').order('level')).data||[];
+  let h=`<div class="progress-top"><button class="x" onclick="classView('${cid}')">✕</button></div>
+   <div class="eyebrow">${escH(c.name)} · ${c.level}</div><h2 style="font-size:22px">${escH(name)}</h2>
+   <div class="card"><div style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px">
+     <span><b>Level ${lv}</b> · ${LVNAME[lv]}</span><span>⭐ ${xp} XP</span><span>🔥 ${st.streak||0}</span>
+     <span>📘 ${doneInLevel.length}/${lvlUnits.length}</span><span>📚 ${st.cards?Object.keys(st.cards).length:0}</span><span>🎓 ${cert}</span>
+     <span class="muted">Last active: ${st.lastActive||'—'}</span></div></div>
+   <div class="eyebrow">${c.level} units (${doneInLevel.length}/${lvlUnits.length})</div>
+   <div class="card">${lvlUnits.map(u=>`<div class="row-item" style="cursor:default;margin:2px 0"><div class="dot" style="width:28px;height:28px;font-size:13px;background:${(st.unitsDone||{})[u.id]?'#e9f8f0':'var(--teal-soft)'}">${(st.unitsDone||{})[u.id]?'✓':'·'}</div><div class="meta"><small>${escH(u.title)}</small></div></div>`).join('')||'<p class="muted">No units at this level.</p>'}</div>
+   <div class="eyebrow">Actions</div>
+   <div class="card"><label class="muted" style="font-size:12px">Move to another class / level</label>
+     <select id="mvc">${allCls.filter(x=>x.id!==cid).map(x=>`<option value="${x.id}">${escH(x.name)} (${x.level})</option>`).join('')||'<option value="">No other classes</option>'}</select>
+     <button class="btn" style="margin-top:8px" onclick="moveStudent('${sid}','${cid}')">Move student</button>
+     <button class="btn ghost" style="margin-top:8px" onclick="resetStudent('${sid}','${cid}')">Reset progress</button>
+     <button class="btn ghost" style="margin-top:8px" onclick="removeStudent('${sid}','${cid}')">Remove from class</button></div>`;
+  $('app').innerHTML=h;}
+async function moveStudent(sid,cid){const to=$('mvc').value;if(!to){toast('No target class');return;}if(!confirm('Move this student to the selected class?'))return;
+  const {error}=await SUPA.rpc('lingua_move_student',{p_student:sid,p_to_class:to});
+  if(error){toast('Could not move student');return;}toast('Student moved');classView(to);}
+async function resetStudent(sid,cid){if(!confirm('Reset progress for this student? This cannot be undone.'))return;
+  const {error}=await SUPA.from('lingua_progress').update({state:{}}).eq('student_id',sid).eq('class_id',cid);
+  if(error){toast('Could not reset');return;}toast('Progress reset');studentView(sid,cid);}
+async function removeStudent(sid,cid){if(!confirm('Remove this student from the class?'))return;
+  await SUPA.from('lingua_progress').delete().eq('student_id',sid).eq('class_id',cid);
+  await SUPA.from('lingua_enrollments').delete().eq('student_id',sid).eq('class_id',cid);
+  toast('Removed');classView(cid);}
+async function usersView(){wallOff();
+  const profs=(await SUPA.from('lingua_profiles').select('id,name,role')).data||[];
+  const ord={admin:0,teacher:1,student:2};
+  profs.sort((a,b)=>(ord[a.role]-ord[b.role])||((a.name||'').localeCompare(b.name||'')));
+  let h=`<div class="progress-top"><button class="x" onclick="adminHome()">✕</button></div><div class="eyebrow">People (${profs.length})</div><h2 style="font-size:22px;margin-bottom:10px">Manage roles</h2>`;
+  if(!profs.length)h+=`<p class="muted center">No users yet.</p>`;
+  profs.forEach(p=>{h+=`<div class="card" style="display:flex;align-items:center;gap:10px"><div class="meta"><b>${escH(p.name||'(no name)')}</b><small>${p.role}</small></div>
+    <select id="role_${p.id}" style="width:auto;margin:0">${['student','teacher','admin'].map(r=>`<option value="${r}" ${r===p.role?'selected':''}>${r}</option>`).join('')}</select>
+    <button class="btn ghost" style="width:auto;padding:9px 12px" onclick="setUserRole('${p.id}')">Set</button></div>`;});
+  $('app').innerHTML=h;}
+async function setUserRole(uid){const role=$('role_'+uid).value;const {error}=await SUPA.rpc('lingua_set_role',{p_user:uid,p_role:role});
+  if(error){toast('Could not update role');return;}toast('Role updated');usersView();}
+async function exportCSV(){
+  const [profsR,clsR,enrR,progR]=await Promise.all([SUPA.from('lingua_profiles').select('id,name,role'),SUPA.from('lingua_classes').select('*'),SUPA.from('lingua_enrollments').select('class_id,student_id,student_name'),SUPA.from('lingua_progress').select('student_id,class_id,state')]);
+  const cls=(clsR.data||[]),enr=(enrR.data||[]),prog=(progR.data||[]);
+  const pk={};prog.forEach(p=>pk[p.student_id+'|'+p.class_id]=p.state||{});
+  const cmap={};cls.forEach(c=>cmap[c.id]=c);
+  const rows=[['Name','Class','Level','XP','LevelNum','Streak','UnitsDone','Vocab','Certificate','LastActive']];
+  enr.forEach(e=>{const st=pk[e.student_id+'|'+e.class_id]||{};const c=cmap[e.class_id]||{};const xp=st.xp||0;let lv=0;for(let i=0;i<LV.length;i++)if(xp>=LV[i])lv=i;const cert=(st.certs&&c.level&&st.certs[c.level])?st.certs[c.level].score+'%':'';rows.push([e.student_name||'',c.name||'',c.level||'',xp,lv,st.streak||0,Object.keys(st.unitsDone||{}).length,st.cards?Object.keys(st.cards).length:0,cert,st.lastActive||'']);});
+  const csv=rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='lingua-students.csv';document.body.appendChild(a);a.click();a.remove();toast('CSV downloaded');}
 boot();
 </script>
 </body>
