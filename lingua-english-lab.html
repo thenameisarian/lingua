@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lingua — English Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--teal:#0f9d8e;--teal-dark:#0b7d72;--teal-soft:#e6f6f3;--ink:#16302c;--muted:#6b8480;--line:#e4ecea;--bg:#f4f8f7;--card:#fff;--amber:#f0a020;--rose:#e85d6b;--violet:#7b6cf6;--blue:#3b82c4;--gold:#f5b73d;--shadow:0 6px 22px rgba(16,60,55,.07);--radius:18px;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+  h1,h2,h3,.serif{font-family:'Lora',Georgia,serif}
+  .eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px}
+  .app{max-width:520px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:88px}
+  .screen{display:none}.screen.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .pad{padding:0 16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+  .card+.card{margin-top:14px}
+  .btn{appearance:none;border:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:15px;border-radius:14px;padding:14px 18px;background:var(--teal);color:#fff;width:100%;transition:.15s;box-shadow:0 4px 12px rgba(15,157,142,.28)}
+  .btn:hover{background:var(--teal-dark)}.btn:active{transform:translateY(1px)}
+  .btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);box-shadow:none}.btn.ghost:hover{background:var(--teal-soft)}
+  .btn:disabled{opacity:.45;cursor:default;box-shadow:none}
+  .btn.row2{display:flex;gap:10px}.btn.row2 *{flex:1}
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(244,248,247,.92);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:9px;font-family:'Lora';font-weight:700;font-size:19px}
+  .logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--teal),#13c2ad);display:grid;place-items:center;color:#fff;font-weight:700;font-family:'Lora'}
+  .stats-chips{display:flex;gap:10px;font-weight:700;font-size:14px}.chip{display:flex;align-items:center;gap:5px}
+  .back{background:none;border:none;cursor:pointer;font:inherit;font-weight:600;color:var(--muted)}
+  .hero{background:linear-gradient(135deg,#0f9d8e,#0b7d72);color:#fff;border:none;margin-top:16px}
+  .hero .eyebrow{color:#bdeee6}.hero h2{font-size:22px;margin-bottom:2px}
+  .prog-line{display:flex;justify-content:space-between;font-size:12px;opacity:.92;margin-top:14px}
+  .pbar{height:10px;background:rgba(255,255,255,.26);border-radius:99px;overflow:hidden;margin-top:6px}
+  .pbar>i{display:block;height:100%;background:#fff;border-radius:99px;transition:width .5s}
+  .pbar.dark{background:#e4ecea}.pbar.dark>i{background:var(--teal)}
+  .hero-meta{display:flex;gap:18px;margin-top:14px;font-size:13px}.hero-meta b{font-family:'Lora';font-size:17px;display:block}.hero-meta small{opacity:.85}
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
+  .tile .ico{font-size:20px}.tile b{font-family:'Lora';font-size:26px;display:block;margin-top:4px}.tile small{color:var(--muted);font-size:11px;display:block;margin-top:2px}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin:22px 4px 10px}
+  .sec-head h2{font-size:20px}.sec-head a{color:var(--teal);font-weight:600;font-size:13px;cursor:pointer}
+  .due{display:flex;align-items:center;gap:14px;background:var(--teal-soft);border:1px solid #cdede7;cursor:pointer}
+  .due .big{font-family:'Lora';font-size:30px;color:var(--teal-dark);font-weight:700}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--teal-soft);color:var(--teal-dark)}
+  .lvlpill{background:#eef0ff;color:var(--violet)}
+  .unit{display:flex;align-items:center;gap:14px;cursor:pointer;transition:.15s}.unit:hover{transform:translateX(2px)}
+  .unit .dot{width:48px;height:48px;border-radius:15px;flex:none;display:grid;place-items:center;font-size:22px;background:var(--teal-soft)}
+  .unit.done .dot{background:#e7f7ee}.unit.current .dot{outline:3px solid var(--teal);outline-offset:2px}
+  .unit .meta{flex:1;min-width:0}.unit .meta b{font-size:15px}.unit .meta small{color:var(--muted);display:block;font-size:12px}
+  .unit .status{font-size:13px;font-weight:700;color:var(--muted)}
+  .unit.locked{opacity:.45;cursor:not-allowed}.unit.locked:hover{transform:none}
+  .lvl-band{display:flex;align-items:center;gap:8px;margin:18px 4px 8px;font-weight:700;color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+  .lvl-band:before,.lvl-band:after{content:'';flex:1;height:1px;background:var(--line)}
+  .week{display:flex;justify-content:space-between;margin-top:14px}
+  .day{text-align:center;font-size:11px;color:var(--muted);font-weight:600}
+  .day .fl{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;margin-bottom:5px;background:#f0f4f3;font-size:16px}
+  .day.on .fl{background:#fff0d8}.day.today .fl{outline:2px solid var(--teal)}
+  /* unit hub */
+  .io-head{display:flex;align-items:center;gap:8px;margin:18px 4px 10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+  .io-head .tag{font-size:10px;padding:2px 8px;border-radius:99px;color:#fff}
+  .io-head .tag.in{background:var(--blue)}.io-head .tag.out{background:var(--amber)}
+  .skill{display:flex;align-items:center;gap:14px;cursor:pointer}
+  .skill .ic{width:46px;height:46px;border-radius:14px;flex:none;display:grid;place-items:center;font-size:22px;background:var(--teal-soft)}
+  .skill.done .ic{background:#e7f7ee}.skill .meta{flex:1}.skill .meta b{font-size:15px}.skill .meta small{color:var(--muted);display:block;font-size:12px}
+  .skill.locked{opacity:.5;cursor:not-allowed}
+  .skill .chk{font-weight:800;color:var(--teal)}
+  /* study */
+  .study-wrap{padding:14px 16px}
+  .progress-top{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  .progress-top .bar{flex:1;height:10px;background:#e4ecea;border-radius:99px;overflow:hidden}
+  .progress-top .bar>i{display:block;height:100%;background:var(--teal);border-radius:99px;transition:width .3s}
+  .hearts{font-size:16px;letter-spacing:1px}
+  .fcard{min-height:200px;display:flex;flex-direction:column;justify-content:center;text-align:center;padding:26px 22px}
+  .fcard .q{font-family:'Lora';font-size:28px;font-weight:600;margin:6px 0}.fcard .sub{color:var(--muted);font-size:14px}.fcard .ipa{color:var(--teal);font-weight:600;margin-top:6px}
+  .reveal{margin-top:18px;padding-top:18px;border-top:1px dashed var(--line);display:none}.reveal.show{display:block;animation:fade .2s}
+  .reveal .ans{font-family:'Lora';font-size:22px;color:var(--teal-dark);font-weight:600}.reveal .ex{color:var(--muted);font-size:14px;margin-top:8px;font-style:italic}
+  .grade-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+  .grade{padding:12px 4px;border-radius:13px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-weight:700;font-size:13px;text-align:center}
+  .grade small{display:block;font-weight:500;font-size:10px;color:var(--muted);margin-top:2px}
+  .grade.again{border-color:#f6d3d7}.grade.hard{border-color:#fbe7c4}.grade.good{border-color:#cdeae6}.grade.easy{border-color:#cfeede}
+  .choices{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+  .choice{padding:15px 16px;border:1.5px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;font-weight:600;text-align:left;transition:.12s;font-size:15px}
+  .choice:hover{border-color:var(--teal);background:var(--teal-soft)}
+  .choice.correct{border-color:var(--teal);background:#e9f8f0;color:var(--teal-dark)}.choice.wrong{border-color:var(--rose);background:#fdeef0;color:var(--rose)}.choice.dim{opacity:.5}
+  .typing{width:100%;padding:15px 16px;border:1.5px solid var(--line);border-radius:14px;font:inherit;font-size:16px;margin-top:16px}
+  .typing:focus{outline:none;border-color:var(--teal)}
+  textarea.typing{min-height:120px;resize:vertical}
+  .teach .concept{font-family:'Lora';font-size:22px;font-weight:600;margin-bottom:6px}.teach p{color:#3c534f;margin:10px 0;font-size:15px}
+  .teach .eg{background:var(--teal-soft);border-radius:12px;padding:12px 14px;margin:10px 0;font-size:15px}.teach .eg b{color:var(--teal-dark)}
+  .passage{font-size:17px;line-height:1.7;color:#26413c}.passage b{color:var(--teal-dark);font-weight:700}
+  .dialogue{margin-top:6px}.dline{display:flex;gap:10px;margin:8px 0}.dline .who{font-weight:700;color:var(--teal);flex:none;width:24px}
+  .intro-card{text-align:center;padding:24px 22px}.intro-card .word{font-family:'Lora';font-size:32px;font-weight:700}.intro-card .ipa{color:var(--teal);font-weight:600;margin:4px 0 14px}.intro-card .mean{font-size:17px;font-weight:600}.intro-card .ex{color:var(--muted);font-style:italic;margin-top:10px}
+  .speakbox{text-align:center;padding:10px 0}
+  .mic{width:84px;height:84px;border-radius:50%;border:none;background:var(--teal);color:#fff;font-size:34px;cursor:pointer;margin:14px auto;display:block;box-shadow:0 6px 18px rgba(15,157,142,.4);transition:.15s}
+  .mic:active{transform:scale(.94)}.mic.rec{background:var(--rose);animation:pulse 1s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(232,93,107,.5)}70%{box-shadow:0 0 0 16px rgba(232,93,107,0)}100%{box-shadow:0 0 0 0 rgba(232,93,107,0)}}
+  .stars{font-size:24px;letter-spacing:3px;margin:8px 0}
+  .heard{background:#f0f4f3;border-radius:12px;padding:10px 12px;font-size:14px;color:#3c534f;margin-top:8px}
+  .heard b{color:var(--teal-dark)}
+  .tiles-build{display:flex;flex-wrap:wrap;gap:8px;min-height:54px;border:1.5px dashed var(--line);border-radius:14px;padding:10px;margin:10px 0;background:#fafdfc}
+  .tilebank{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .word-tile{padding:9px 13px;border:1.5px solid var(--line);border-radius:11px;background:#fff;cursor:pointer;font-weight:600;font-size:15px}
+  .word-tile:hover{border-color:var(--teal);background:var(--teal-soft)}
+  .word-tile.placed{background:var(--teal-soft);border-color:var(--teal)}
+  .fb{border-radius:12px;padding:11px 14px;font-size:14px;margin-top:12px;font-weight:600}
+  .fb.ok{background:#e9f8f0;color:var(--teal-dark)}.fb.no{background:#fdeef0;color:var(--rose)}
+  .ai-soon{font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
+  .result{text-align:center;padding:34px 22px}.result .big{font-size:54px}.result h2{font-size:26px;margin:8px 0}
+  .result .statgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0}
+  .result .statgrid div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+  .result .statgrid b{font-family:'Lora';font-size:24px;color:var(--teal);display:block}.result .statgrid small{color:var(--muted)}
+  .nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 0 12px;z-index:30}
+  .nav button{background:none;border:none;cursor:pointer;font:inherit;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;flex:1}
+  .nav button.active{color:var(--teal)}.nav .ni{font-size:21px}
+  .ob{padding:34px 22px;text-align:center}
+  .logo-lg{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--teal),#13c2ad);display:grid;place-items:center;color:#fff;font-family:'Lora';font-weight:700;font-size:30px;margin:0 auto 18px}
+  .ob h1{font-size:30px;margin-bottom:8px}.ob p.lede{color:var(--muted);font-size:15px;max-width:340px;margin:0 auto 24px}
+  .opt{border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;cursor:pointer;background:#fff;transition:.12s;text-align:left;margin-bottom:10px}
+  .opt:hover{border-color:var(--teal);background:var(--teal-soft)}.opt.sel{border-color:var(--teal);background:var(--teal-soft)}
+  .opt b{font-size:16px}.opt small{display:block;color:var(--muted);font-size:13px}
+  .feat{display:flex;gap:12px;text-align:left;margin:10px 0;align-items:flex-start}.feat .fi{font-size:20px;flex:none}.feat b{font-size:14px}.feat small{color:var(--muted);font-size:13px}
+  .toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:99px;font-weight:600;font-size:14px;z-index:50;opacity:0;transition:.25s;pointer-events:none;max-width:90%;text-align:center}
+  .toast.show{opacity:1}
+  .muted{color:var(--muted)}.center{text-align:center}
+  .finishbox{background:#fff;border:1px dashed #cdede7;border-radius:14px;padding:12px 14px;margin-top:12px;display:flex;align-items:center;gap:12px}.finishbox .cal{font-size:24px}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ONBOARDING -->
+  <section class="screen active" id="s-onboard">
+    <div class="ob">
+      <div class="logo-lg">L</div>
+      <h1>Lingua English Lab</h1>
+      <p class="lede">A personal 3–6 month English program. Four skills every unit: read &amp; listen for input, speak &amp; write for output.</p>
+      <div class="card" style="text-align:left">
+        <div class="feat"><span class="fi">📖</span><div><b>Input: Reading &amp; Listening</b><small>Real passages and audio that carry the grammar and vocabulary in context.</small></div></div>
+        <div class="feat"><span class="fi">🎤</span><div><b>Output: Speaking &amp; Writing</b><small>Shadowing, retelling stories, and game-like writing practice.</small></div></div>
+        <div class="feat"><span class="fi">🧠</span><div><b>Spaced repetition</b><small>Words come back right before you'd forget them, so they stick.</small></div></div>
+      </div>
+      <div id="ob-step1" style="margin-top:20px">
+        <div class="eyebrow center">Step 1 — Find your level</div>
+        <p class="muted" style="font-size:13px;margin-bottom:14px">A short test places you on the right CEFR level so you don't start too easy or too hard.</p>
+        <button class="btn" onclick="App.startPlacement()">📝 Take the placement test</button>
+        <p class="muted" style="font-size:12px;margin:10px 0">12 quick questions · about 3 minutes · this sets your starting level</p>
+      </div>
+      <div id="ob-step2" style="display:none">
+        <div id="ob-assessed"></div>
+        <div class="eyebrow center">Step 2 — How fast do you want to learn?</div>
+        <p class="muted" style="font-size:13px;margin-bottom:14px">More time per day = sooner you finish.</p>
+        <div class="opt" onclick="App.obPace('casual',this)"><b>🐢 Casual · ~15 min/day</b><small>Gentle daily habit. Longest timeline.</small></div>
+        <div class="opt sel" onclick="App.obPace('regular',this)"><b>🚶 Regular · ~30 min/day</b><small>The steady sweet spot. <span class="pill">Recommended</span></small></div>
+        <div class="opt" onclick="App.obPace('intensive',this)"><b>🚀 Intensive · ~45–60 min/day</b><small>Push hard, finish soonest.</small></div>
+        <div class="finishbox"><span class="cal">📅</span><div style="flex:1"><b id="ob-finish">—</b><div class="muted" style="font-size:12px" id="ob-finish-sub"></div></div></div>
+        <button class="btn" style="margin-top:16px" onclick="App.obStart()">Start my program →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLACEMENT TEST -->
+  <section class="screen" id="s-placement">
+    <div class="study-wrap">
+      <div class="progress-top"><button class="back" onclick="App.cancelPlacement()">✕</button>
+        <div class="bar"><i id="pl-bar" style="width:0%"></i></div><span style="width:24px"></span></div>
+      <div id="pl-body"></div><div id="pl-foot" style="margin-top:16px"></div>
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <section class="screen" id="s-home">
+    <div class="topbar">
+      <div class="brand"><div class="logo">L</div> Lingua</div>
+      <div class="stats-chips"><span class="chip" id="chip-streak">🔥 0</span><span class="chip" id="chip-hearts">❤️ 5</span><span class="chip" id="chip-gems">💎 0</span></div>
+    </div>
+    <div class="pad">
+      <div class="card hero">
+        <div class="eyebrow">Your program</div>
+        <h2 id="hero-goal">Path to B1</h2>
+        <div style="font-size:13px;opacity:.92" id="hero-day">Day 1</div>
+        <div class="pbar"><i id="hero-pbar" style="width:0%"></i></div>
+        <div class="prog-line"><span id="hero-pct">0% complete</span><span id="hero-units">0 / 9 units</span></div>
+        <div class="hero-meta"><div><b id="hero-finish">—</b><small>Projected finish</small></div>
+          <div><b id="hero-pace">~30 min/day</b><small><a style="color:#cdeee8;cursor:pointer;text-decoration:underline" onclick="App.go('pace')">change pace</a></small></div></div>
+      </div>
+      <div class="tiles">
+        <div class="tile"><div class="ico">🔥</div><b id="t-streak">0</b><small id="t-streak-sub">Start today!</small></div>
+        <div class="tile"><div class="ico">⭐</div><b id="t-xp">0</b><small id="t-goal-sub">/ 60 XP today</small></div>
+        <div class="tile"><div class="ico">🎯</div><b id="t-goal">0%</b><small>Daily goal</small></div>
+      </div>
+      <div class="card due" id="due-banner" onclick="App.startReview()" style="margin-top:14px">
+        <div class="big" id="due-count">0</div>
+        <div style="flex:1"><div style="font-weight:700" id="due-title">Words to review</div><small class="muted" id="due-sub">Spaced repetition keeps these fresh</small></div>
+        <span class="pill">Review →</span>
+      </div>
+      <div class="sec-head"><h2>Today's unit</h2><a onclick="App.go('path')">Full path →</a></div>
+      <div class="card unit current" id="next-unit-card" onclick="App.openCurrentUnit()">
+        <div class="dot" id="nu-icon">📘</div>
+        <div class="meta"><b id="nu-title">—</b><small id="nu-sub">—</small></div>
+        <span class="pill" id="nu-pill">Open →</span>
+      </div>
+      <div class="card" style="margin-top:14px"><div class="eyebrow">This week</div><div class="week" id="week-strip"></div></div>
+    </div>
+  </section>
+
+  <!-- UNIT HUB -->
+  <section class="screen" id="s-unit">
+    <div class="topbar"><button class="back" onclick="App.go('path')">‹ Path</button>
+      <div class="brand" style="font-size:16px" id="uh-title">Unit</div><span class="pill" id="uh-level">A1</span></div>
+    <div class="pad" style="padding-top:14px">
+      <div class="card"><div class="eyebrow" id="uh-theme">Theme</div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between"><h2 style="font-size:20px" id="uh-pct">0/4 skills</h2><span class="muted" id="uh-words"></span></div>
+        <div class="pbar dark" style="margin-top:10px"><i id="uh-bar" style="width:0%"></i></div></div>
+      <div class="io-head"><span class="tag in">INPUT</span> Read &amp; Listen</div>
+      <div class="card skill" id="sk-reading" onclick="App.startSkill('reading')"><div class="ic">📖</div><div class="meta"><b>Reading</b><small>Passage + grammar &amp; vocabulary</small></div><span class="chk" id="ck-reading">›</span></div>
+      <div class="card skill" id="sk-listening" onclick="App.startSkill('listening')"><div class="ic">🎧</div><div class="meta"><b>Listening</b><small>Audio dialogue + comprehension</small></div><span class="chk" id="ck-listening">›</span></div>
+      <div class="io-head"><span class="tag out">OUTPUT</span> Speak &amp; Write</div>
+      <div class="card skill" id="sk-speaking" onclick="App.startSkill('speaking')"><div class="ic">🎤</div><div class="meta"><b>Speaking</b><small>Shadowing + retell the story</small></div><span class="chk" id="ck-speaking">›</span></div>
+      <div class="card skill" id="sk-writing" onclick="App.startSkill('writing')"><div class="ic">✍️</div><div class="meta"><b>Writing</b><small>Build sentences + a real writing task</small></div><span class="chk" id="ck-writing">›</span></div>
+      <p class="muted" style="font-size:12px;margin:14px 4px">Output unlocks after you finish both input skills.</p>
+    </div>
+  </section>
+
+  <!-- PATH -->
+  <section class="screen" id="s-path">
+    <div class="topbar"><div class="brand"><div class="logo">L</div> Your path</div><span class="pill" id="path-goal">→ B1</span></div>
+    <div class="pad" style="padding-top:14px">
+      <div class="card" style="margin-bottom:6px"><div class="eyebrow">Program progress</div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between"><h2 style="font-size:20px" id="path-pct">0% complete</h2><span class="muted" id="path-finish"></span></div>
+        <div class="pbar dark" style="margin-top:10px"><i id="path-bar" style="width:0%"></i></div></div>
+      <div id="path-list"></div>
+    </div>
+  </section>
+
+  <!-- PACE -->
+  <section class="screen" id="s-pace">
+    <div class="topbar"><button class="back" onclick="App.go('home')">‹ Back</button><div class="brand" style="font-size:16px">Pace</div><span style="width:40px"></span></div>
+    <div class="pad" style="padding-top:16px"><div class="card"><div class="eyebrow">Choose your intensity</div>
+      <p class="muted" style="font-size:13px;margin-bottom:12px">The more you do each day, the sooner you reach your goal.</p>
+      <div class="opt" data-pace="casual" onclick="App.setPace('casual',this)"><b>🐢 Casual · ~15 min/day</b><small id="pc-casual"></small></div>
+      <div class="opt" data-pace="regular" onclick="App.setPace('regular',this)"><b>🚶 Regular · ~30 min/day</b><small id="pc-regular"></small></div>
+      <div class="opt" data-pace="intensive" onclick="App.setPace('intensive',this)"><b>🚀 Intensive · ~45–60 min/day</b><small id="pc-intensive"></small></div></div></div>
+  </section>
+
+  <!-- STUDY -->
+  <section class="screen" id="s-study">
+    <div class="study-wrap">
+      <div class="progress-top"><button class="back" onclick="App.confirmExit()">✕</button>
+        <div class="bar"><i id="study-bar" style="width:0%"></i></div><span class="hearts" id="study-hearts"></span></div>
+      <div id="study-body"></div><div id="study-foot" style="margin-top:16px"></div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="screen" id="s-stats">
+    <div class="topbar"><div class="brand"><div class="logo">L</div> Progress</div></div>
+    <div class="pad" style="padding-top:16px">
+      <div class="card"><div class="eyebrow">Mastery</div><h2 style="font-size:20px;margin-bottom:4px" id="stat-mastered">0 words mastered</h2>
+        <p class="muted" style="font-size:13px">Words you've recalled enough that they rarely slip away.</p>
+        <div class="pbar dark" style="margin-top:12px"><i id="stat-bar" style="width:0%"></i></div><small class="muted" id="stat-bar-label"></small></div>
+      <div class="tiles" style="grid-template-columns:1fr 1fr">
+        <div class="tile"><div class="ico">📚</div><b id="stat-seen">0</b><small>Words started</small></div>
+        <div class="tile"><div class="ico">🔥</div><b id="stat-best">0</b><small>Best streak</small></div>
+        <div class="tile"><div class="ico">🎤</div><b id="stat-skills">0</b><small>Skills done</small></div>
+        <div class="tile"><div class="ico">🎓</div><b id="stat-units">0</b><small>Units done</small></div>
+      </div>
+      <div class="card"><div class="eyebrow">Level breakdown</div><div id="stat-levels"></div></div>
+      <button class="btn ghost" style="margin-top:14px" onclick="App.reset()">Reset all progress</button>
+    </div>
+  </section>
+
+  <nav class="nav" id="nav">
+    <button data-nav="home" onclick="App.go('home')"><span class="ni">🏠</span>Home</button>
+    <button data-nav="path" onclick="App.go('path')"><span class="ni">🗺️</span>Path</button>
+    <button data-nav="review" onclick="App.startReview()"><span class="ni">🔄</span>Review</button>
+    <button data-nav="stats" onclick="App.go('stats')"><span class="ni">📊</span>Progress</button>
+  </nav>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   LINGUA ENGLISH LAB — four-skill adaptive program
+   INPUT  : Reading + Listening (carry grammar & vocabulary)
+   OUTPUT : Speaking (shadowing + retelling) + Writing (games)
+   Engine : SM-2 spaced repetition, active recall, interleaving,
+            browser TTS + speech recognition, rule-checked games
+            with an AI-feedback hook for later.
+   ============================================================ */
+const ORDER=['A1','A2','B1','B2','C1','C2'];
+const LEVELNAME={A1:'Beginner',A2:'Elementary',B1:'Intermediate',B2:'Upper-Int.',C1:'Advanced',C2:'Mastery'};
+const SKILLS=['reading','listening','speaking','writing'];
+const PACE={casual:{goalXP:30,daysPerUnit:20,label:'~15 min/day'},regular:{goalXP:60,daysPerUnit:15,label:'~30 min/day'},intensive:{goalXP:120,daysPerUnit:10,label:'~45–60 min/day'}};
+
+/* ---------- PLACEMENT TEST (determines entry level) ----------
+   Ordered easy→hard, ~2 items per CEFR band. Entry = the first
+   band the learner cannot reliably pass, so the path starts where
+   it's challenging and grows from there. */
+const PLACEMENT=[
+ {level:'A1',q:'She ___ a teacher.',choices:['am','is','are'],a:1},
+ {level:'A1',q:'I have two ___.',choices:['book','books','bookes'],a:1},
+ {level:'A2',q:'Yesterday I ___ to the shop.',choices:['go','went','goed'],a:1},
+ {level:'A2',q:'She is ___ than me.',choices:['tall','taller','tallest'],a:1},
+ {level:'B1',q:'I ___ here since 2019.',choices:['live','have lived','am living'],a:1},
+ {level:'B1',q:'If it rains, we ___ inside.',choices:['stay','will stay','stayed'],a:1},
+ {level:'B2',q:'The report ___ yesterday.',choices:['wrote','was written','is writing'],a:1},
+ {level:'B2',q:'___ he was tired, he kept working.',choices:['However','Although','Therefore'],a:1},
+ {level:'C1',q:'Choose the correct emphasis: "Never ___ such talent."',choices:['I have seen','have I seen','I saw'],a:1},
+ {level:'C1',q:'"___ we need is more time."',choices:['That','What','Which'],a:1},
+ {level:'C2',q:'Most formal: "We need to ___ more data."',choices:['get','obtain','grab'],a:1},
+ {level:'C2',q:'Which sentence is "hedged" (softened)?',choices:['This is wrong.','This may not be entirely accurate.','This is totally false.'],a:1}
+];
+
+/* ---------- CURRICULUM ---------- */
+const CURRICULUM=[
+ {level:'A1', units:[
+  {id:'a1u1', icon:'🌱', title:'First words', theme:'People & home',
+   vocab:[{id:'name',word:'name',ipa:'/neɪm/',meaning:'what someone is called',ex:'My name is Mia.'},
+    {id:'friend',word:'friend',ipa:'/frend/',meaning:'a person you like and know well',ex:'He is my best friend.'},
+    {id:'water',word:'water',ipa:'/ˈwɔː.tɚ/',meaning:'the clear liquid we drink',ex:'Can I have some water?'},
+    {id:'house',word:'house',ipa:'/haʊs/',meaning:'a building where people live',ex:'Their house is big.'},
+    {id:'eat',word:'eat',ipa:'/iːt/',meaning:'to put food in your mouth',ex:'We eat dinner at seven.'}],
+   grammar:{concept:'The verb "to be" (am/is/are)',body:'Use <b>am</b> with I, <b>is</b> with he/she/it, <b>are</b> with you/we/they.',eg:'I <b>am</b> Mia. She <b>is</b> my friend. They <b>are</b> here.'},
+   reading:{passage:'Hi! My <b>name</b> is Mia. This is my <b>house</b>. I live here with my best <b>friend</b>, Sam. We <b>eat</b> dinner together and drink <b>water</b> with our food.',
+    q:[{q:'Who does Mia live with?',choices:['Her friend Sam','Her teacher','Nobody'],a:0},{q:'What do they drink with food?',choices:['Juice','Water','Tea'],a:1}]},
+   listening:{lines:[{s:'A',t:'Hello! Are you Sam?'},{s:'B',t:'Yes, I am. Are you Mia\'s friend?'},{s:'A',t:'Yes, I am. Nice to meet you!'}],
+    q:[{q:'Are they friends of Mia?',choices:['Yes','No'],a:0}], gap:{q:'"Nice to ___ you."',a:'meet',accept:['meet']}},
+   speaking:{shadow:['My name is Mia.','This is my house.'], retell:{prompt:'Retell Mia\'s introduction in your own words.',source:'reading',useWords:['name','friend','house'],minWords:12}},
+   writing:{tip:'A simple introduction: say your <b>name</b>, then one fact about you.',scramble:'This is my friend.',gap:{q:'My ___ is Mia.',a:'name',accept:['name']},task:{prompt:'Write a 2-sentence introduction about yourself. Use the word "name".',include:['name'],minWords:6}}},
+  {id:'a1u2', icon:'☀️', title:'Everyday life', theme:'Daily basics',
+   vocab:[{id:'morning',word:'morning',ipa:'/ˈmɔːr.nɪŋ/',meaning:'the early part of the day',ex:'I run every morning.'},
+    {id:'work',word:'work',ipa:'/wɜːrk/',meaning:'a job; to do a job',ex:'She goes to work by bus.'},
+    {id:'food',word:'food',ipa:'/fuːd/',meaning:'things we eat',ex:'The food here is good.'},
+    {id:'money',word:'money',ipa:'/ˈmʌn.i/',meaning:'coins and notes we pay with',ex:'I have no money today.'},
+    {id:'time',word:'time',ipa:'/taɪm/',meaning:'minutes, hours, days',ex:'What time is it?'}],
+   grammar:{concept:'Articles a / an / the',body:'Use <b>a/an</b> for one general thing (<b>an</b> before a vowel sound), <b>the</b> for a specific one.',eg:'<b>a</b> house · <b>an</b> apple · <b>the</b> house on my street'},
+   reading:{passage:'Every <b>morning</b>, Tom goes to <b>work</b>. He buys <b>food</b> for lunch. He does not spend much <b>money</b>. He always has <b>time</b> for a coffee.',
+    q:[{q:'When does Tom go to work?',choices:['At night','Every morning','On weekends'],a:1},{q:'Does he spend a lot of money?',choices:['Yes, a lot','No, not much'],a:1}]},
+   listening:{lines:[{s:'A',t:'What time is it?'},{s:'B',t:'It\'s nine o\'clock. Time for work!'},{s:'A',t:'Do you have time for breakfast?'},{s:'B',t:'No, I\'ll buy food later.'}],
+    q:[{q:'What time is it?',choices:['Eight','Nine','Ten'],a:1}], gap:{q:'"Time for ___!"',a:'work',accept:['work']}},
+   speaking:{shadow:['What time is it?','I go to work every morning.'], retell:{prompt:'Retell Tom\'s morning in your own words.',source:'reading',useWords:['morning','work','food'],minWords:12}},
+   writing:{tip:'Use <b>a/an</b> for one general thing, <b>the</b> for a specific one.',scramble:'I have time for coffee.',gap:{q:'Tom goes to ___ every morning.',a:'work',accept:['work']},task:{prompt:'Write 2 sentences about your morning routine. Use the word "morning".',include:['morning'],minWords:8}}},
+  {id:'a1u3', icon:'🚌', title:'Getting around', theme:'Places & directions',
+   vocab:[{id:'bus',word:'bus',ipa:'/bʌs/',meaning:'a large vehicle that carries many people',ex:'I take the bus to school.'},
+    {id:'ticket',word:'ticket',ipa:'/ˈtɪk.ɪt/',meaning:'a paper that lets you travel',ex:'Buy a ticket here.'},
+    {id:'street',word:'street',ipa:'/striːt/',meaning:'a road in a town with houses',ex:'They live on this street.'},
+    {id:'near',word:'near',ipa:'/nɪr/',meaning:'close to; not far',ex:'The shop is near my house.'},
+    {id:'left',word:'left',ipa:'/left/',meaning:'the opposite of right',ex:'Turn left at the bank.'}],
+   grammar:{concept:'There is / There are',body:'Use <b>there is</b> for one thing, <b>there are</b> for more than one.',eg:'<b>There is</b> a bus stop. <b>There are</b> two shops.'},
+   reading:{passage:'The <b>bus</b> stop is <b>near</b> my <b>house</b>. I buy a <b>ticket</b> and wait on the <b>street</b>. To find it, turn <b>left</b> at the bank.',
+    q:[{q:'Where is the bus stop?',choices:['Far away','Near my house','At school'],a:1},{q:'Where do you turn?',choices:['Right','Left'],a:1}]},
+   listening:{lines:[{s:'A',t:'Excuse me, is there a bus stop near here?'},{s:'B',t:'Yes, there is. Turn left at the bank.'},{s:'A',t:'Thank you!'}],
+    q:[{q:'Is there a bus stop near?',choices:['Yes','No'],a:0}], gap:{q:'"Turn ___ at the bank."',a:'left',accept:['left']}},
+   speaking:{shadow:['Is there a bus stop near here?','Turn left at the bank.'], retell:{prompt:'Explain how to find the bus stop, in your own words.',source:'reading',useWords:['bus','near','left','ticket'],minWords:12}},
+   writing:{tip:'Giving directions: use <b>turn left/right</b> and <b>near / next to</b>.',scramble:'The bus stop is near.',gap:{q:'I buy a ___ for the bus.',a:'ticket',accept:['ticket']},task:{prompt:'Write directions from your home to a shop (2 sentences). Use "near".',include:['near'],minWords:8}}},
+  {id:'a1u4', icon:'🕐', title:'Numbers & time', theme:'Telling the time',
+   vocab:[{id:'clock',word:'clock',ipa:'/klɒk/',meaning:'a thing that shows the time',ex:'The clock says ten.'},
+    {id:'hour',word:'hour',ipa:'/aʊər/',meaning:'sixty minutes',ex:'I wait for one hour.'},
+    {id:'today',word:'today',ipa:'/təˈdeɪ/',meaning:'this day',ex:'I am busy today.'},
+    {id:'tomorrow',word:'tomorrow',ipa:'/təˈmɒr.oʊ/',meaning:'the day after today',ex:'See you tomorrow.'},
+    {id:'early',word:'early',ipa:'/ˈɜːr.li/',meaning:'before the usual time',ex:'I wake up early.'}],
+   grammar:{concept:'Telling the time',body:'Ask <b>What time is it?</b> Answer with <b>It\'s ... o\'clock</b> or <b>half past ...</b>',eg:'It\'s seven <b>o\'clock</b>. It\'s <b>half past</b> nine.'},
+   reading:{passage:'I wake up <b>early</b>, at six o\'clock. <b>Today</b> I have one free <b>hour</b> before work. The <b>clock</b> is slow, so I will fix it <b>tomorrow</b>.',
+    q:[{q:'When does the writer wake up?',choices:['Six o\'clock','Nine o\'clock','Ten o\'clock'],a:0},{q:'When will they fix the clock?',choices:['Today','Tomorrow'],a:1}]},
+   listening:{lines:[{s:'A',t:'What time is it?'},{s:'B',t:'It\'s eight o\'clock.'},{s:'A',t:'Oh, I\'m early!'}],
+    q:[{q:'What time is it?',choices:['Seven','Eight','Nine'],a:1}], gap:{q:'"It\'s eight ___."',a:'o\'clock',accept:['o\'clock','oclock']}},
+   speaking:{shadow:['What time is it?','I wake up early.'], retell:{prompt:'Talk about your morning and the time you wake up.',source:'reading',useWords:['early','clock','hour','today'],minWords:12}},
+   writing:{tip:'Ask the time: <b>What time is it?</b> Answer: <b>It\'s ... o\'clock.</b>',scramble:'I wake up early today.',gap:{q:'I wait for one ___. (sixty minutes)',a:'hour',accept:['hour']},task:{prompt:'Write 2 sentences about your morning and what time you do things.',include:['early','today','clock','hour'],minWords:8}}},
+  {id:'a1u5', icon:'🍎', title:'Food & drink', theme:'Eating out',
+   vocab:[{id:'hungry',word:'hungry',ipa:'/ˈhʌŋ.ɡri/',meaning:'needing food',ex:'I am hungry.'},
+    {id:'menu',word:'menu',ipa:'/ˈmen.juː/',meaning:'a list of food in a restaurant',ex:'Can I see the menu?'},
+    {id:'order',word:'order',ipa:'/ˈɔːr.dər/',meaning:'to ask for food',ex:'I order a pizza.'},
+    {id:'delicious',word:'delicious',ipa:'/dɪˈlɪʃ.əs/',meaning:'tasting very good',ex:'The soup is delicious.'},
+    {id:'bill',word:'bill',ipa:'/bɪl/',meaning:'the paper that shows what you pay',ex:'Can I have the bill?'}],
+   grammar:{concept:'Polite requests',body:'Order food politely with <b>I\'d like ...</b> or <b>Can I have ...?</b>',eg:'<b>I\'d like</b> a coffee. <b>Can I have</b> the menu?'},
+   reading:{passage:'I am <b>hungry</b>, so I read the <b>menu</b>. I <b>order</b> soup and bread. The soup is <b>delicious</b>! Then I ask for the <b>bill</b>.',
+    q:[{q:'Why does the writer read the menu?',choices:['Bored','Hungry','Tired'],a:1},{q:'How is the soup?',choices:['Cold','Delicious','Salty'],a:1}]},
+   listening:{lines:[{s:'A',t:'Are you ready to order?'},{s:'B',t:'Yes, I\'d like the chicken, please.'},{s:'A',t:'Good choice!'}],
+    q:[{q:'What does she order?',choices:['Soup','Chicken','Fish'],a:1}], gap:{q:'"I\'d ___ the chicken, please."',a:'like',accept:['like']}},
+   speaking:{shadow:['Can I have the menu?','I\'d like a coffee, please.'], retell:{prompt:'Order a meal in a restaurant, in your own words.',source:'reading',useWords:['hungry','menu','order','bill'],minWords:12}},
+   writing:{tip:'Order politely: <b>I\'d like ...</b> or <b>Can I have ...?</b>',scramble:'Can I have the menu?',gap:{q:'The food is ___. (very good)',a:'delicious',accept:['delicious']},task:{prompt:'Write what you would order in a restaurant (2 sentences). Use "I\'d like".',include:['like','order','menu'],minWords:8}}},
+  {id:'a1u6', icon:'👪', title:'Family', theme:'People close to you',
+   vocab:[{id:'mother',word:'mother',ipa:'/ˈmʌð.ər/',meaning:'your female parent',ex:'My mother cooks well.'},
+    {id:'father',word:'father',ipa:'/ˈfɑː.ðər/',meaning:'your male parent',ex:'My father drives a bus.'},
+    {id:'sister',word:'sister',ipa:'/ˈsɪs.tər/',meaning:'a girl with the same parents',ex:'My sister is ten.'},
+    {id:'brother',word:'brother',ipa:'/ˈbrʌð.ər/',meaning:'a boy with the same parents',ex:'I have one brother.'},
+    {id:'child',word:'child',ipa:'/tʃaɪld/',meaning:'a young person',ex:'She is a happy child.'}],
+   grammar:{concept:'Possessives (my, your, \'s)',body:'Show who something belongs to with <b>my/your/his/her</b> or <b>name + \'s</b>.',eg:'<b>My</b> sister. <b>Sara\'s</b> brother.'},
+   reading:{passage:'This is my family. My <b>mother</b> is a teacher and my <b>father</b> is a driver. I have one <b>sister</b> and one <b>brother</b>. My brother is still a small <b>child</b>.',
+    q:[{q:'What is the mother\'s job?',choices:['Driver','Teacher','Doctor'],a:1},{q:'How many brothers does the writer have?',choices:['One','Two','Three'],a:0}]},
+   listening:{lines:[{s:'A',t:'Is this your sister?'},{s:'B',t:'No, that\'s my mother. My sister is younger.'}],
+    q:[{q:'Who is in the photo?',choices:['Her sister','Her mother'],a:1}], gap:{q:'"That\'s my ___."',a:'mother',accept:['mother']}},
+   speaking:{shadow:['This is my mother.','I have one brother.'], retell:{prompt:'Describe your family, in your own words.',source:'reading',useWords:['mother','father','sister','brother'],minWords:12}},
+   writing:{tip:'Show belonging with <b>my/your/his/her</b> or <b>name\'s</b> (Sara\'s book).',scramble:'My mother is a teacher.',gap:{q:'My ___ drives a bus.',a:'father',accept:['father']},task:{prompt:'Write 2-3 sentences about your family.',include:['mother','father','sister','brother'],minWords:10}}},
+  {id:'a1u7', icon:'🛍️', title:'Shopping', theme:'Buying things',
+   vocab:[{id:'shop',word:'shop',ipa:'/ʃɒp/',meaning:'a place to buy things',ex:'The shop is open.'},
+    {id:'price',word:'price',ipa:'/praɪs/',meaning:'how much something costs',ex:'What is the price?'},
+    {id:'pay',word:'pay',ipa:'/peɪ/',meaning:'to give money for something',ex:'I pay with cash.'},
+    {id:'card',word:'card',ipa:'/kɑːrd/',meaning:'a plastic card to pay',ex:'Can I pay by card?'},
+    {id:'bag',word:'bag',ipa:'/bæɡ/',meaning:'a thing to carry shopping',ex:'I need a bag.'}],
+   grammar:{concept:'How much? · this / these',body:'Ask the price with <b>How much is this?</b> Use <b>this</b> (one) and <b>these</b> (many).',eg:'<b>How much</b> is <b>this</b>? <b>These</b> shoes are nice.'},
+   reading:{passage:'I go to the <b>shop</b> for bread. The <b>price</b> is good. I <b>pay</b> by <b>card</b>, not cash. The man gives me a <b>bag</b>.',
+    q:[{q:'How does the writer pay?',choices:['Cash','By card','Later'],a:1},{q:'What does the writer buy?',choices:['Milk','Bread','Fruit'],a:1}]},
+   listening:{lines:[{s:'A',t:'How much is this bag?'},{s:'B',t:'It\'s ten dollars.'},{s:'A',t:'OK, I\'ll pay by card.'}],
+    q:[{q:'How will she pay?',choices:['Cash','Card'],a:1}], gap:{q:'"How ___ is this bag?"',a:'much',accept:['much']}},
+   speaking:{shadow:['How much is this?','Can I pay by card?'], retell:{prompt:'Buy something in a shop, in your own words.',source:'reading',useWords:['shop','price','pay','card','bag'],minWords:12}},
+   writing:{tip:'Ask the price: <b>How much is this?</b> Use <b>this</b> (one) / <b>these</b> (many).',scramble:'How much is this bag?',gap:{q:'Can I ___ by card?',a:'pay',accept:['pay']},task:{prompt:'Write a short shopping note (2 sentences). Use "how much" or "card".',include:['much','card','pay','price'],minWords:8}}},
+  {id:'a1u8', icon:'🌦️', title:'Weather', theme:'How it feels outside',
+   vocab:[{id:'rain',word:'rain',ipa:'/reɪn/',meaning:'water that falls from the sky',ex:'I don\'t like the rain.'},
+    {id:'sun',word:'sun',ipa:'/sʌn/',meaning:'the bright star that gives light and heat',ex:'The sun is hot today.'},
+    {id:'cold',word:'cold',ipa:'/koʊld/',meaning:'low temperature; not warm',ex:'It is cold in winter.'},
+    {id:'hot',word:'hot',ipa:'/hɒt/',meaning:'high temperature; very warm',ex:'The tea is hot.'},
+    {id:'wind',word:'wind',ipa:'/wɪnd/',meaning:'air that moves outside',ex:'The wind is strong today.'}],
+   grammar:{concept:'Talking about the weather',body:'Describe weather with <b>It\'s</b> + word: <b>It\'s</b> cold, <b>It\'s</b> raining.',eg:'<b>It\'s</b> hot today. <b>It\'s</b> windy.'},
+   reading:{passage:'In summer it is <b>hot</b> and the <b>sun</b> is bright. In winter it is <b>cold</b>. I do not like <b>rain</b> or strong <b>wind</b>.',
+    q:[{q:'How is summer?',choices:['Cold','Hot','Windy'],a:1},{q:'What does the writer dislike?',choices:['The sun','Rain and wind'],a:1}]},
+   listening:{lines:[{s:'A',t:'How is the weather today?'},{s:'B',t:'It\'s cold and there is a little rain.'}],
+    q:[{q:'How is the weather?',choices:['Hot and sunny','Cold and rainy'],a:1}], gap:{q:'"It\'s ___ today."',a:'cold',accept:['cold']}},
+   speaking:{shadow:['It\'s hot today.','I don\'t like the rain.'], retell:{prompt:'Describe today\'s weather, in your own words.',source:'reading',useWords:['hot','cold','sun','rain','wind'],minWords:12}},
+   writing:{tip:'Describe weather with <b>It\'s</b> + word: It\'s sunny, It\'s cold.',scramble:'It is hot today.',gap:{q:'In winter it is ___.',a:'cold',accept:['cold']},task:{prompt:'Write 2 sentences about the weather where you live.',include:['hot','cold','rain','sun'],minWords:8}}},
+  {id:'a1u9', icon:'⚽', title:'Free time', theme:'Hobbies & fun',
+   vocab:[{id:'play',word:'play',ipa:'/pleɪ/',meaning:'to do a game or sport',ex:'I play football.'},
+    {id:'music',word:'music',ipa:'/ˈmjuː.zɪk/',meaning:'sounds you listen to and enjoy',ex:'I love this music.'},
+    {id:'read',word:'read',ipa:'/riːd/',meaning:'to look at and understand words',ex:'I read every night.'},
+    {id:'game',word:'game',ipa:'/ɡeɪm/',meaning:'an activity you play for fun',ex:'Let\'s play a game.'},
+    {id:'walk',word:'walk',ipa:'/wɔːk/',meaning:'to move on your feet',ex:'I walk in the park.'}],
+   grammar:{concept:'like + verb-ing',body:'Say what you enjoy with <b>like/love + verb-ing</b>.',eg:'I <b>like reading</b>. She <b>loves playing</b> games.'},
+   reading:{passage:'In my free time I <b>play</b> football and <b>read</b> books. I also like <b>music</b>. In the evening I <b>walk</b> in the park or play a <b>game</b> with friends.',
+    q:[{q:'What does the writer read?',choices:['Books','News','Nothing'],a:0},{q:'Where does the writer walk?',choices:['The park','The shop'],a:0}]},
+   listening:{lines:[{s:'A',t:'What do you do in your free time?'},{s:'B',t:'I like playing music and reading.'}],
+    q:[{q:'What does she like?',choices:['Sports','Music and reading'],a:1}], gap:{q:'"I like ___ music."',a:'playing',accept:['playing']}},
+   speaking:{shadow:['I like reading books.','I play football on Sunday.'], retell:{prompt:'Talk about what you do in your free time.',source:'reading',useWords:['play','read','music','walk'],minWords:12}},
+   writing:{tip:'Say what you enjoy: <b>I like + verb-ing</b> (I like reading).',scramble:'I like playing games.',gap:{q:'I like ___ books. (read)',a:'reading',accept:['reading']},task:{prompt:'Write 2-3 sentences about your hobbies. Use "I like".',include:['play','read','music','walk','game'],minWords:10}}},
+  {id:'a1u10', icon:'🩺', title:'Body & health', theme:'How you feel',
+   vocab:[{id:'head',word:'head',ipa:'/hed/',meaning:'the top part of your body',ex:'My head hurts.'},
+    {id:'hand',word:'hand',ipa:'/hænd/',meaning:'the part at the end of your arm',ex:'Wash your hands.'},
+    {id:'sick',word:'sick',ipa:'/sɪk/',meaning:'ill; not well',ex:'I feel sick today.'},
+    {id:'tired',word:'tired',ipa:'/taɪərd/',meaning:'needing rest or sleep',ex:'I am very tired.'},
+    {id:'doctor',word:'doctor',ipa:'/ˈdɒk.tər/',meaning:'a person who helps sick people',ex:'See a doctor.'}],
+   grammar:{concept:'Saying how you feel',body:'Say problems with <b>I have a ...</b> or <b>My ... hurts</b>.',eg:'I <b>have a</b> headache. <b>My</b> hand <b>hurts</b>.'},
+   reading:{passage:'I feel <b>sick</b> today. My <b>head</b> hurts and I am very <b>tired</b>. I cannot move my <b>hand</b> well, so I will see a <b>doctor</b>.',
+    q:[{q:'How does the writer feel?',choices:['Great','Sick and tired'],a:1},{q:'Who will the writer see?',choices:['A teacher','A doctor'],a:1}]},
+   listening:{lines:[{s:'A',t:'What\'s wrong?'},{s:'B',t:'I\'m tired and my head hurts.'},{s:'A',t:'You should see a doctor.'}],
+    q:[{q:'What hurts?',choices:['Her hand','Her head'],a:1}], gap:{q:'"My head ___."',a:'hurts',accept:['hurts']}},
+   speaking:{shadow:['I feel sick today.','My head hurts.'], retell:{prompt:'Tell a doctor how you feel, in your own words.',source:'reading',useWords:['sick','head','tired','doctor'],minWords:12}},
+   writing:{tip:'Say problems with <b>I have a ...</b> or <b>My ... hurts</b>.',scramble:'My head hurts today.',gap:{q:'I will see a ___.',a:'doctor',accept:['doctor']},task:{prompt:'Write 2 sentences about how you feel when you are sick.',include:['sick','tired','head','doctor'],minWords:8}}}
+ ]},
+ {level:'A2', units:[
+  {id:'a2u1', icon:'⏰', title:'Daily routine', theme:'Habits',
+   vocab:[{id:'wakeup',word:'wake up',meaning:'to stop sleeping',ex:'I wake up at six.'},
+    {id:'breakfast',word:'breakfast',ipa:'/ˈbrek.fəst/',meaning:'the first meal of the day',ex:'She skips breakfast.'},
+    {id:'usually',word:'usually',ipa:'/ˈjuː.ʒu.ə.li/',meaning:'most of the time',ex:'I usually walk to work.'},
+    {id:'late',word:'late',ipa:'/leɪt/',meaning:'after the right time',ex:'Sorry I\'m late!'},
+    {id:'busy',word:'busy',ipa:'/ˈbɪz.i/',meaning:'having a lot to do',ex:'He\'s busy this week.'}],
+   grammar:{concept:'Present simple vs continuous',body:'Simple for routines (<b>I work</b>); continuous (<b>am/is/are + -ing</b>) for right now.',eg:'I <b>work</b> on weekdays. Listen — she <b>is singing</b>.'},
+   reading:{passage:'I <b>usually</b> <b>wake up</b> at six. I have <b>breakfast</b> quickly because mornings are <b>busy</b>. I don\'t like to be <b>late</b> for work.',
+    q:[{q:'When does the writer wake up?',choices:['Six','Seven','Eight'],a:0},{q:'Why is breakfast quick?',choices:['Not hungry','Mornings are busy','No food'],a:1}]},
+   listening:{lines:[{s:'A',t:'You\'re late again!'},{s:'B',t:'Sorry, I usually wake up at six, but today I\'m very busy.'}],
+    q:[{q:'Is he usually late?',choices:['No','Yes, always'],a:0}], gap:{q:'"I usually ___ up at six."',a:'wake',accept:['wake']}},
+   speaking:{shadow:['I usually wake up at six.','I\'m very busy today.'], retell:{prompt:'Retell the writer\'s morning routine in your own words.',source:'reading',useWords:['usually','wake','breakfast','busy'],minWords:14}},
+   writing:{tip:'Use present simple for routines: <b>I always/usually + verb</b>.',scramble:'I usually wake up early.',gap:{q:'She ___ (have) breakfast every day.',a:'has',accept:['has']},task:{prompt:'Describe your daily routine in 2 sentences. Use "usually".',include:['usually'],minWords:10}}},
+  {id:'a2u2', icon:'🛒', title:'Shopping & travel', theme:'Transactions',
+   vocab:[{id:'buy',word:'buy',ipa:'/baɪ/',meaning:'to get something for money',ex:'I want to buy a coat.'},
+    {id:'cheap',word:'cheap',ipa:'/tʃiːp/',meaning:'low in price',ex:'This bag is cheap.'},
+    {id:'expensive',word:'expensive',ipa:'/ɪkˈspen.sɪv/',meaning:'costing a lot of money',ex:'That hotel is expensive.'},
+    {id:'size',word:'size',ipa:'/saɪz/',meaning:'how big or small something is',ex:'Do you have a bigger size?'},
+    {id:'returnv',word:'return',ipa:'/rɪˈtɜːrn/',meaning:'to give something back to a shop',ex:'I want to return these shoes.'}],
+   grammar:{concept:'Past simple',body:'Regular verbs add <b>-ed</b>; many common verbs are irregular and must be learned.',eg:'walk → walk<b>ed</b>; go → <b>went</b>; buy → <b>bought</b>'},
+   reading:{passage:'Yesterday I went to a shop to <b>buy</b> a coat. The first one was too <b>expensive</b>. I found a <b>cheap</b> one in my <b>size</b>, but later I had to <b>return</b> it.',
+    q:[{q:'Why did the first coat not work?',choices:['Wrong size','Too expensive','Ugly'],a:1},{q:'What did he do later?',choices:['Kept it','Returned it'],a:1}]},
+   listening:{lines:[{s:'A',t:'Can I return these shoes? They\'re the wrong size.'},{s:'B',t:'Of course. Do you want a bigger size?'}],
+    q:[{q:'What is the problem?',choices:['Wrong colour','Wrong size','Too cheap'],a:1}], gap:{q:'"Can I ___ these shoes?"',a:'return',accept:['return']}},
+   speaking:{shadow:['Do you have a bigger size?','This one is too expensive.'], retell:{prompt:'Retell the shopping story in your own words.',source:'reading',useWords:['buy','expensive','cheap','size','return'],minWords:14}},
+   writing:{tip:'Past simple: regular verbs add <b>-ed</b>; learn irregulars (go→went).',scramble:'I bought a cheap coat.',gap:{q:'Yesterday we ___ (go) shopping.',a:'went',accept:['went']},task:{prompt:'Write about something you bought. Use "cheap" or "expensive".',include:['cheap','expensive'],minWords:10}}},
+  {id:'a2u3', icon:'📅', title:'Plans', theme:'The future',
+   vocab:[{id:'weekend',word:'weekend',ipa:'/ˈwiːk.end/',meaning:'Saturday and Sunday',ex:'What are your weekend plans?'},
+    {id:'meet',word:'meet',ipa:'/miːt/',meaning:'to come together with someone',ex:'Let\'s meet at noon.'},
+    {id:'plan',word:'plan',ipa:'/plæn/',meaning:'an idea about what you will do',ex:'Do you have a plan?'},
+    {id:'free',word:'free',ipa:'/friː/',meaning:'not busy; available',ex:'Are you free tomorrow?'},
+    {id:'soon',word:'soon',ipa:'/suːn/',meaning:'in a short time',ex:'See you soon!'}],
+   grammar:{concept:'going to / will',body:'<b>going to</b> for plans already made; <b>will</b> for instant decisions and predictions.',eg:'I\'m <b>going to</b> visit family. It\'s cold — I\'<b>ll</b> close the window.'},
+   reading:{passage:'This <b>weekend</b> I\'m <b>free</b>. I have a <b>plan</b> to <b>meet</b> my friends. We\'ll decide where to go <b>soon</b>.',
+    q:[{q:'Is the writer busy this weekend?',choices:['Yes','No, free'],a:1},{q:'Who will they meet?',choices:['Family','Friends','The boss'],a:1}]},
+   listening:{lines:[{s:'A',t:'Are you free this weekend?'},{s:'B',t:'Yes! Let\'s meet on Saturday.'},{s:'A',t:'Great, I\'ll call you soon.'}],
+    q:[{q:'When will they meet?',choices:['Friday','Saturday','Sunday'],a:1}], gap:{q:'"I\'ll call you ___."',a:'soon',accept:['soon']}},
+   speaking:{shadow:['Are you free this weekend?','Let\'s meet on Saturday.'], retell:{prompt:'Retell the plan for the weekend in your own words.',source:'listening',useWords:['weekend','free','meet','plan','soon'],minWords:14}},
+   writing:{tip:'Plans you\'ve decided: <b>going to</b>. Decisions/promises now: <b>will</b>.',scramble:'Let\'s meet this weekend.',gap:{q:'We ___ to travel next month. (plan)',a:'are going',accept:['are going','plan','going']},task:{prompt:'Write your plans for next weekend (2 sentences). Use "going to" or "will".',include:['going','will'],minWords:10}}},
+  {id:'a2u4', icon:'🏖️', title:'Past holidays', theme:'Talking about trips',
+   vocab:[{id:'trip',word:'trip',ipa:'/trɪp/',meaning:'a short journey somewhere',ex:'We took a trip to the coast.'},
+    {id:'beach',word:'beach',ipa:'/biːtʃ/',meaning:'sand next to the sea',ex:'The beach was beautiful.'},
+    {id:'stay',word:'stay',ipa:'/steɪ/',meaning:'to live somewhere for a time',ex:'We stayed in a hotel.'},
+    {id:'visit',word:'visit',ipa:'/ˈvɪz.ɪt/',meaning:'to go and see a place or person',ex:'I visited my aunt.'},
+    {id:'amazing',word:'amazing',ipa:'/əˈmeɪ.zɪŋ/',meaning:'very good; surprising',ex:'The view was amazing.'}],
+   grammar:{concept:'Past simple questions',body:'Ask about the past with <b>Did + you + verb?</b>',eg:'<b>Did you</b> enjoy it? Where <b>did you</b> go?'},
+   reading:{passage:'Last summer I took a <b>trip</b> to the coast. I did not <b>stay</b> in a hotel; I camped near the <b>beach</b>. I went to <b>visit</b> an old town. It was <b>amazing</b>.',
+    q:[{q:'Where did the writer stay?',choices:['A hotel','Near the beach'],a:1},{q:'How was the trip?',choices:['Boring','Amazing'],a:1}]},
+   listening:{lines:[{s:'A',t:'Did you have a good holiday?'},{s:'B',t:'Yes! I visited three cities. It was amazing.'}],
+    q:[{q:'How many cities did she visit?',choices:['One','Three'],a:1}], gap:{q:'"Did you ___ a good holiday?"',a:'have',accept:['have']}},
+   speaking:{shadow:['I took a trip to the beach.','It was amazing!'], retell:{prompt:'Talk about a holiday or trip you took.',source:'reading',useWords:['trip','beach','stay','visit','amazing'],minWords:14}},
+   writing:{tip:'Ask past questions with <b>Did you ...?</b> (Did you go? Did you like it?)',scramble:'I went to the beach.',gap:{q:'___ you enjoy the trip?',a:'did',accept:['did']},task:{prompt:'Write about a holiday or trip (2-3 sentences) in the past.',include:['trip','beach','visit','amazing'],minWords:12}}},
+  {id:'a2u5', icon:'🧑', title:'Describing people', theme:'Looks & character',
+   vocab:[{id:'tall',word:'tall',ipa:'/tɔːl/',meaning:'higher than average in height',ex:'He is very tall.'},
+    {id:'kind',word:'kind',ipa:'/kaɪnd/',meaning:'caring and friendly to others',ex:'She is kind to everyone.'},
+    {id:'funny',word:'funny',ipa:'/ˈfʌn.i/',meaning:'making you laugh',ex:'My uncle is funny.'},
+    {id:'hair',word:'hair',ipa:'/her/',meaning:'what grows on your head',ex:'She has long hair.'},
+    {id:'friendly',word:'friendly',ipa:'/ˈfrend.li/',meaning:'kind and easy to talk to',ex:'The staff are friendly.'}],
+   grammar:{concept:'Describing people',body:'Use <b>be</b> for character and <b>have (got)</b> for features.',eg:'She <b>is</b> kind. He <b>has</b> short hair.'},
+   reading:{passage:'My friend Lina is <b>tall</b> and has long <b>hair</b>. She is very <b>kind</b> and <b>friendly</b>. She is also <b>funny</b> and makes everyone laugh.',
+    q:[{q:'What is Lina like?',choices:['Rude','Kind and friendly'],a:1},{q:'Why do people laugh?',choices:['She is funny','She is tall'],a:0}]},
+   listening:{lines:[{s:'A',t:'What does your brother look like?'},{s:'B',t:'He\'s tall and has short hair.'}],
+    q:[{q:'How is her brother?',choices:['Short','Tall'],a:1}], gap:{q:'"He has short ___."',a:'hair',accept:['hair']}},
+   speaking:{shadow:['She is very kind.','He has short hair.'], retell:{prompt:'Describe a friend or family member.',source:'reading',useWords:['tall','kind','funny','hair','friendly'],minWords:14}},
+   writing:{tip:'Use <b>is</b> for character (kind), <b>has</b> for features (has brown hair).',scramble:'She is kind and funny.',gap:{q:'He ___ short hair. (have)',a:'has',accept:['has']},task:{prompt:'Describe a person you know (2-3 sentences).',include:['tall','kind','funny','friendly','hair'],minWords:12}}},
+  {id:'a2u6', icon:'💊', title:'Health & advice', theme:'Staying well',
+   vocab:[{id:'medicine',word:'medicine',ipa:'/ˈmed.ɪ.sɪn/',meaning:'something you take when ill',ex:'Take your medicine.'},
+    {id:'rest',word:'rest',ipa:'/rest/',meaning:'to relax and not work',ex:'You need to rest.'},
+    {id:'exercise',word:'exercise',ipa:'/ˈek.sər.saɪz/',meaning:'physical activity to stay fit',ex:'I exercise every morning.'},
+    {id:'healthy',word:'healthy',ipa:'/ˈhel.θi/',meaning:'well; not ill',ex:'Eat healthy food.'},
+    {id:'advice',word:'advice',ipa:'/ədˈvaɪs/',meaning:'a helpful suggestion',ex:'Can I give you some advice?'}],
+   grammar:{concept:'should / shouldn\'t',body:'Give advice with <b>should</b> (good idea) and <b>shouldn\'t</b> (bad idea).',eg:'You <b>should</b> rest. You <b>shouldn\'t</b> work so hard.'},
+   reading:{passage:'To stay <b>healthy</b>, you <b>should</b> get plenty of <b>rest</b> and do some <b>exercise</b>. If you are ill, take your <b>medicine</b>. That is my best <b>advice</b>.',
+    q:[{q:'What should you do to stay healthy?',choices:['Rest and exercise','Work more'],a:0},{q:'What should you take when ill?',choices:['Advice','Medicine'],a:1}]},
+   listening:{lines:[{s:'A',t:'I\'m always tired.'},{s:'B',t:'You should exercise and rest more.'}],
+    q:[{q:'What is the advice?',choices:['Exercise and rest','Eat more'],a:0}], gap:{q:'"You ___ exercise more."',a:'should',accept:['should']}},
+   speaking:{shadow:['You should rest more.','You shouldn\'t work so hard.'], retell:{prompt:'Give a friend health advice, in your own words.',source:'reading',useWords:['healthy','rest','exercise','medicine','advice'],minWords:14}},
+   writing:{tip:'Give advice with <b>should</b> / <b>shouldn\'t</b>.',scramble:'You should rest more.',gap:{q:'You ___ exercise every day. (advice)',a:'should',accept:['should']},task:{prompt:'Give 2-3 pieces of health advice using "should".',include:['should','rest','exercise','healthy'],minWords:12}}}
+ ]}
+ ,
+ {level:'B1', units:[
+  {id:'b1u1', icon:'💬', title:'Opinions', theme:'Saying what you think',
+   vocab:[{id:'agree',word:'agree',ipa:'/əˈɡriː/',meaning:'to think the same as someone',ex:'I agree with you.'},
+    {id:'opinion',word:'opinion',ipa:'/əˈpɪn.jən/',meaning:'what you think about something',ex:'In my opinion, it\'s risky.'},
+    {id:'reason',word:'reason',ipa:'/ˈriː.zən/',meaning:'why something happens or is done',ex:'Give me one good reason.'},
+    {id:'pov',word:'point of view',meaning:'a way of thinking about something',ex:'I see your point of view.'},
+    {id:'otherhand',word:'on the other hand',meaning:'used to show a different side',ex:'It\'s cheap; on the other hand, it\'s slow.'}],
+   grammar:{concept:'Present perfect (have/has + past participle)',body:'Connects the past to now — the result matters, not exactly when.',eg:'I <b>have finished</b> the report. Have you <b>ever</b> travelled abroad?'},
+   reading:{passage:'In my <b>opinion</b>, remote work is great. The main <b>reason</b> is freedom. <b>On the other hand</b>, some people miss the office. I <b>agree</b> it depends on your <b>point of view</b>.',
+    q:[{q:'What is the writer\'s opinion?',choices:['The office is best','Remote work is great','No opinion'],a:1},{q:'What do some people miss?',choices:['Money','The office','Lunch'],a:1}]},
+   listening:{lines:[{s:'A',t:'Have you ever worked from home?'},{s:'B',t:'Yes, I have. In my opinion, it\'s better.'}],
+    q:[{q:'Does she like working from home?',choices:['Yes','No'],a:0}], gap:{q:'"Have you ___ worked from home?"',a:'ever',accept:['ever']}},
+   speaking:{shadow:['In my opinion, it\'s better.','I agree with you.'], retell:{prompt:'Give your own opinion on remote work, with a reason.',source:'reading',useWords:['opinion','reason','agree'],minWords:18}},
+   writing:{tip:'State an opinion: <b>In my opinion, ... because ...</b>. Add balance with <b>on the other hand</b>.',scramble:'I agree with your opinion.',gap:{q:'We have lived here ___ 2019.',a:'since',accept:['since']},task:{prompt:'Write your opinion on working from home (2-3 sentences). Give a reason.',include:['opinion','because','reason'],minWords:14}}},
+  {id:'b1u2', icon:'💼', title:'Work life', theme:'The workplace',
+   vocab:[{id:'reliable',word:'reliable',ipa:'/rɪˈlaɪ.ə.bəl/',meaning:'able to be trusted; works well',ex:'She\'s reliable and never late.'},
+    {id:'deadline',word:'deadline',ipa:'/ˈded.laɪn/',meaning:'the latest time to finish something',ex:'The deadline is Friday.'},
+    {id:'manage',word:'manage',ipa:'/ˈmæn.ɪdʒ/',meaning:'to control or succeed in doing',ex:'Can you manage this project?'},
+    {id:'afford',word:'afford',ipa:'/əˈfɔːrd/',meaning:'to have enough money/time for',ex:'We can\'t afford delays.'},
+    {id:'pointout',word:'point out',meaning:'to tell someone a fact or mistake',ex:'He pointed out an error.'}],
+   grammar:{concept:'First conditional (If + present, will + verb)',body:'For real future possibilities. Comma only when "if" comes first.',eg:'<b>If</b> we finish early, we <b>will</b> celebrate.'},
+   reading:{passage:'A good worker is <b>reliable</b> and meets every <b>deadline</b>. If you <b>manage</b> your time well, you can <b>afford</b> to relax later. Let me <b>point out</b> one tip: plan your week.',
+    q:[{q:'What is a good worker?',choices:['Late','Reliable','Lazy'],a:1},{q:'What is the tip?',choices:['Sleep more','Plan your week','Work weekends'],a:1}]},
+   listening:{lines:[{s:'A',t:'Can you manage the deadline?'},{s:'B',t:'If I start today, I\'ll finish on time.'}],
+    q:[{q:'When will he finish?',choices:['Late','On time','Never'],a:1}], gap:{q:'"If I start today, I\'ll ___ on time."',a:'finish',accept:['finish']}},
+   speaking:{shadow:['I always meet my deadlines.','If I start now, I\'ll finish on time.'], retell:{prompt:'Explain how to be a good worker, in your own words.',source:'reading',useWords:['reliable','deadline','manage'],minWords:18}},
+   writing:{tip:'First conditional for real plans: <b>If + present, will + verb</b>.',scramble:'If you plan, you will succeed.',gap:{q:'If it rains, we ___ (stay) inside.',a:'will stay',accept:['will stay']},task:{prompt:'Write 2 sentences about how you manage your work. Use "if".',include:['if'],minWords:12}}},
+  {id:'b1u3', icon:'🌤️', title:'Feelings', theme:'Emotions',
+   vocab:[{id:'reluctant',word:'reluctant',ipa:'/rɪˈlʌk.tənt/',meaning:'not wanting to do something',ex:'She was reluctant to speak.'},
+    {id:'confident',word:'confident',ipa:'/ˈkɒn.fɪ.dənt/',meaning:'sure of yourself',ex:'He felt confident before the exam.'},
+    {id:'anxious',word:'anxious',ipa:'/ˈæŋk.ʃəs/',meaning:'worried and nervous',ex:'I get anxious before flights.'},
+    {id:'proud',word:'proud',ipa:'/praʊd/',meaning:'pleased about something you did',ex:'I\'m proud of my team.'},
+    {id:'relieved',word:'relieved',ipa:'/rɪˈliːvd/',meaning:'glad a problem is over',ex:'She was relieved to pass.'}],
+   grammar:{concept:'Comparatives & superlatives',body:'Short words add <b>-er/-est</b>; longer words use <b>more/most</b>.',eg:'cheap<b>er</b> · the cheap<b>est</b> · <b>more</b> confident · the <b>most</b> reliable'},
+   reading:{passage:'Before the exam I felt <b>anxious</b> and a little <b>reluctant</b> to start. But I studied hard, so I became more <b>confident</b>. When I passed, I was <b>relieved</b> and very <b>proud</b>.',
+    q:[{q:'How did the writer feel before?',choices:['Confident','Anxious','Bored'],a:1},{q:'How did they feel after passing?',choices:['Sad','Proud and relieved'],a:1}]},
+   listening:{lines:[{s:'A',t:'How do you feel?'},{s:'B',t:'More confident than yesterday, but still a bit anxious.'}],
+    q:[{q:'More confident than when?',choices:['Yesterday','Last year'],a:0}], gap:{q:'"I feel more ___ than yesterday."',a:'confident',accept:['confident']}},
+   speaking:{shadow:['I feel more confident now.','I\'m a little anxious about it.'], retell:{prompt:'Retell how the writer\'s feelings changed around the exam.',source:'reading',useWords:['anxious','confident','proud','relieved'],minWords:18}},
+   writing:{tip:'Comparatives: short +er, long "more". Superlative: "the ...est / the most".',scramble:'She is more confident now.',gap:{q:'This is ___ (cheap) option of all.',a:'the cheapest',accept:['the cheapest']},task:{prompt:'Describe a time you felt proud (2-3 sentences).',include:['proud','relieved','confident'],minWords:14}}}
+ ]},
+ {level:'B2', units:[
+  {id:'b2u1', icon:'🗣️', title:'Discussion', theme:'Debating ideas',
+   vocab:[{id:'thorough',word:'thorough',ipa:'/ˈθʌr.oʊ/',meaning:'complete and careful',ex:'A thorough check found the fault.'},
+    {id:'inevitable',word:'inevitable',ipa:'/ɪˈnev.ɪ.tə.bəl/',meaning:'certain to happen',ex:'Change is inevitable.'},
+    {id:'cautious',word:'cautious',ipa:'/ˈkɔː.ʃəs/',meaning:'careful to avoid risk',ex:'Be cautious with investments.'},
+    {id:'comeup',word:'come up with',meaning:'to think of an idea or plan',ex:'We came up with a solution.'},
+    {id:'setup',word:'set up',meaning:'to start or arrange something',ex:'They set up a new system.'}],
+   grammar:{concept:'The passive voice (be + past participle)',body:'Focus on the action, not who did it. Add "by" only if it matters.',eg:'The report <b>was written</b> last week. It <b>was approved by</b> the manager.'},
+   reading:{passage:'After a <b>thorough</b> review, the team <b>came up with</b> a new plan. Change was <b>inevitable</b>, so they were <b>cautious</b> and <b>set up</b> a small test first.',
+    q:[{q:'What did the team do first?',choices:['Nothing','A thorough review','Quit'],a:1},{q:'Why were they cautious?',choices:['Change was inevitable','No reason'],a:0}]},
+   listening:{lines:[{s:'A',t:'Was the plan approved?'},{s:'B',t:'Yes, it was approved by the manager yesterday.'}],
+    q:[{q:'Who approved it?',choices:['The team','The manager'],a:1}], gap:{q:'"It was ___ by the manager."',a:'approved',accept:['approved']}},
+   speaking:{shadow:['We came up with a new idea.','Change is inevitable.'], retell:{prompt:'Retell how the team handled the new plan.',source:'reading',useWords:['thorough','inevitable','cautious','set up'],minWords:20}},
+   writing:{tip:'Passive (be + past participle) focuses on the action: <b>The report was written</b>.',scramble:'The plan was approved yesterday.',gap:{q:'English ___ (speak) worldwide.',a:'is spoken',accept:['is spoken']},task:{prompt:'Describe a process using the passive (2-3 sentences).',include:['was','were','is'],minWords:16}}},
+  {id:'b2u2', icon:'✍️', title:'Writing well', theme:'Linking ideas',
+   vocab:[{id:'nevertheless',word:'nevertheless',meaning:'in spite of that; however',ex:'It was hard; nevertheless, we finished.'},
+    {id:'furthermore',word:'furthermore',meaning:'in addition; also',ex:'It\'s cheap. Furthermore, it\'s fast.'},
+    {id:'consequently',word:'consequently',meaning:'as a result',ex:'Sales fell; consequently, we cut costs.'},
+    {id:'whereas',word:'whereas',meaning:'used to compare two different facts',ex:'He likes tea, whereas she likes coffee.'},
+    {id:'incontrast',word:'in contrast',meaning:'showing a clear difference',ex:'In contrast, our rivals grew.'}],
+   grammar:{concept:'Linking words',body:'Contrast: <b>although/however</b>. Result: <b>therefore/consequently</b>. Addition: <b>furthermore/moreover</b>.',eg:'<b>Although</b> it rained, we went. Costs rose; <b>therefore,</b> prices changed.'},
+   reading:{passage:'Our sales rose this year. <b>Furthermore</b>, costs fell. <b>Consequently</b>, profits grew. <b>Nevertheless</b>, we must stay careful, <b>whereas</b> our rivals spend freely.',
+    q:[{q:'What happened to profits?',choices:['Fell','Grew','Stayed the same'],a:1},{q:'How do rivals behave?',choices:['They save','They spend freely'],a:1}]},
+   listening:{lines:[{s:'A',t:'Sales dropped. What now?'},{s:'B',t:'Consequently, we\'ll cut costs. Nevertheless, we\'ll keep our staff.'}],
+    q:[{q:'Will they keep staff?',choices:['Yes','No'],a:0}], gap:{q:'"Sales dropped. ___, we cut costs."',a:'consequently',accept:['consequently','therefore']}},
+   speaking:{shadow:['Sales rose; furthermore, costs fell.','Nevertheless, we must be careful.'], retell:{prompt:'Summarise the company\'s year using linking words.',source:'reading',useWords:['furthermore','consequently','nevertheless','whereas'],minWords:22}},
+   writing:{tip:'Link ideas: contrast (however), result (therefore), add (furthermore).',scramble:'Costs fell so profits grew.',gap:{q:'It was late. ___, we left. (result)',a:'therefore',accept:['therefore','consequently']},task:{prompt:'Write a short paragraph (3 sentences) using two linking words.',include:['however','therefore','furthermore','consequently','nevertheless'],minWords:20}}},
+  {id:'b2u3', icon:'🧭', title:'Abstract ideas', theme:'Reasoning',
+   vocab:[{id:'significant',word:'significant',ipa:'/sɪɡˈnɪf.ɪ.kənt/',meaning:'large or important enough to notice',ex:'A significant improvement.'},
+    {id:'consequence',word:'consequence',ipa:'/ˈkɒn.sɪ.kwəns/',meaning:'a result of an action',ex:'Every choice has consequences.'},
+    {id:'approach',word:'approach',ipa:'/əˈproʊtʃ/',meaning:'a way of doing something',ex:'A fresh approach to the problem.'},
+    {id:'tendto',word:'tend to',meaning:'to usually do something',ex:'Prices tend to rise in summer.'},
+    {id:'likely',word:'likely',ipa:'/ˈlaɪk.li/',meaning:'probable; expected to happen',ex:'Rain is likely tonight.'}],
+   grammar:{concept:'2nd & 3rd conditional',body:'2nd (unreal now): <b>If + past, would + verb</b>. 3rd (unreal past): <b>If + had + p.p., would have + p.p.</b>',eg:'If I <b>had</b> time, I <b>would</b> travel. If I <b>had known</b>, I <b>would have come</b>.'},
+   reading:{passage:'There was a <b>significant</b> change in policy, and the <b>consequence</b> was clear. A new <b>approach</b> is <b>likely</b> to help. Prices <b>tend to</b> fall when supply rises.',
+    q:[{q:'How big was the change?',choices:['Tiny','Significant'],a:1},{q:'When do prices tend to fall?',choices:['When supply rises','Never'],a:0}]},
+   listening:{lines:[{s:'A',t:'If we changed our approach, would it help?'},{s:'B',t:'Probably. A new approach is likely to work.'}],
+    q:[{q:'Is a new approach likely to work?',choices:['Yes','No'],a:0}], gap:{q:'"A new approach is ___ to work."',a:'likely',accept:['likely']}},
+   speaking:{shadow:['That had a significant consequence.','A new approach is likely to help.'], retell:{prompt:'Explain the change and its consequences in your own words.',source:'reading',useWords:['significant','consequence','approach','likely'],minWords:20}},
+   writing:{tip:'2nd conditional for imaginary situations: <b>If + past, would + verb</b>.',scramble:'If I had time I would travel.',gap:{q:'If she had studied, she ___ (pass). [3rd]',a:'would have passed',accept:['would have passed']},task:{prompt:'Write 2 sentences: one 2nd-conditional, one with "significant" or "consequence".',include:['if','would'],minWords:16}}}
+ ]},
+ {level:'C1', units:[
+  {id:'c1u1', icon:'🎯', title:'Nuance', theme:'Precision',
+   vocab:[{id:'meticulous',word:'meticulous',ipa:'/məˈtɪk.jə.ləs/',meaning:'very careful about details',ex:'Meticulous research notes.'},
+    {id:'gist',word:'gist',ipa:'/dʒɪst/',meaning:'the main idea',ex:'I got the gist of it.'},
+    {id:'nuance',word:'nuance',ipa:'/ˈnuː.ɑːns/',meaning:'a small difference in meaning',ex:'A subtle nuance in tone.'},
+    {id:'subtle',word:'subtle',ipa:'/ˈsʌt.əl/',meaning:'not obvious; delicate',ex:'A subtle change in the plan.'},
+    {id:'grasp',word:'grasp',ipa:'/ɡræsp/',meaning:'to understand fully',ex:'She quickly grasped the idea.'}],
+   grammar:{concept:'Inversion for emphasis',body:'After a negative adverb (<b>Never, Not only, Rarely</b>) at the start, invert subject and verb.',eg:'<b>Never have I</b> seen such talent. <b>Not only did</b> she win, but she set a record.'},
+   reading:{passage:'She is <b>meticulous</b>, catching every <b>subtle</b> <b>nuance</b> in a text. Most readers only <b>grasp</b> the <b>gist</b>; never have they noticed such detail.',
+    q:[{q:'What does she notice?',choices:['Only the gist','Subtle nuances'],a:1},{q:'What do most readers grasp?',choices:['Every detail','The gist'],a:1}]},
+   listening:{lines:[{s:'A',t:'Did you understand it all?'},{s:'B',t:'Not every word, but I got the gist.'}],
+    q:[{q:'Did he understand every word?',choices:['Yes','No, just the gist'],a:1}], gap:{q:'"I got the ___ of it."',a:'gist',accept:['gist']}},
+   speaking:{shadow:['Never have I seen such detail.','She is very meticulous.'], retell:{prompt:'Describe the careful reader, using inversion if you can.',source:'reading',useWords:['meticulous','subtle','nuance','grasp','gist'],minWords:22}},
+   writing:{tip:'Inversion adds emphasis: <b>Never have I...</b>, <b>Not only did she...</b>.',scramble:'Never have I seen this.',gap:{q:'Rarely ___ we see such quality. (do)',a:'do',accept:['do']},task:{prompt:'Write 2 sentences, one using inversion for emphasis.',include:['never','rarely','not only','seldom'],minWords:16}}},
+  {id:'c1u2', icon:'🎓', title:'Academic English', theme:'Formal writing',
+   vocab:[{id:'underpin',word:'underpin',ipa:'/ˌʌn.dɚˈpɪn/',meaning:'to support or be the basis of',ex:'Trust underpins teamwork.'},
+    {id:'attribute',word:'attribute',ipa:'/əˈtrɪb.juːt/',meaning:'to say something is caused by',ex:'They attribute success to luck.'},
+    {id:'derive',word:'derive',ipa:'/dɪˈraɪv/',meaning:'to get or come from',ex:'The word derives from Latin.'},
+    {id:'albeit',word:'albeit',ipa:'/ɔːlˈbiː.ɪt/',meaning:'although; even though',ex:'A useful, albeit costly, tool.'},
+    {id:'notwith',word:'notwithstanding',meaning:'in spite of',ex:'Notwithstanding the risks, they continued.'}],
+   grammar:{concept:'Cleft sentences',body:'<b>It was ___ that…</b> and <b>What ___ is…</b> highlight one key part.',eg:'<b>It was</b> the price <b>that</b> worried me. <b>What</b> we need <b>is</b> more time.'},
+   reading:{passage:'Trust <b>underpins</b> teamwork. Experts <b>attribute</b> success to it and <b>derive</b> their methods from it. <b>Notwithstanding</b> the risks, it works — <b>albeit</b> slowly.',
+    q:[{q:'What underpins teamwork?',choices:['Money','Trust','Speed'],a:1},{q:'How does it work?',choices:['Quickly','Slowly'],a:1}]},
+   listening:{lines:[{s:'A',t:'What do we need most?'},{s:'B',t:'What we need is more time, not money.'}],
+    q:[{q:'What do they need?',choices:['Money','Time'],a:1}], gap:{q:'"What we need ___ more time."',a:'is',accept:['is']}},
+   speaking:{shadow:['Trust underpins our work.','What we need is more time.'], retell:{prompt:'Explain why trust matters, in a formal style.',source:'reading',useWords:['underpin','attribute','derive','albeit'],minWords:22}},
+   writing:{tip:'Cleft sentences emphasise: <b>It was X that...</b>, <b>What I need is...</b>.',scramble:'What we need is time.',gap:{q:'It was John ___ called you. (relative)',a:'who',accept:['who','that']},task:{prompt:'Write a formal sentence using a cleft structure ("It was..." or "What...").',include:['what','it was','it is'],minWords:10}}},
+  {id:'c1u3', icon:'🪶', title:'Idiom & register', theme:'Sounding natural',
+   vocab:[{id:'nutshell',word:'in a nutshell',meaning:'in a few words; briefly',ex:'In a nutshell, we won.'},
+    {id:'bottomline',word:'the bottom line',meaning:'the most important point',ex:'The bottom line is cost.'},
+    {id:'ballpark',word:'ballpark figure',meaning:'a rough estimate',ex:'Give me a ballpark figure.'},
+    {id:'touchbase',word:'touch base',meaning:'to make brief contact',ex:'Let\'s touch base next week.'},
+    {id:'samepage',word:'on the same page',meaning:'in agreement; sharing understanding',ex:'Are we on the same page?'}],
+   grammar:{concept:'Formal vs informal register',body:'Formal for reports/strangers; informal for friends. Phrasal verbs feel informal; single verbs feel formal.',eg:'<b>set up</b> (informal) vs <b>establish</b> (formal)'},
+   reading:{passage:'<b>In a nutshell</b>, we\'re behind. <b>The bottom line</b> is cost. Give me a <b>ballpark figure</b>, let\'s <b>touch base</b> tomorrow, and make sure we\'re <b>on the same page</b>.',
+    q:[{q:'What is the bottom line?',choices:['Time','Cost','Staff'],a:1},{q:'When will they touch base?',choices:['Today','Tomorrow'],a:1}]},
+   listening:{lines:[{s:'A',t:'Can you sort it out?'},{s:'B',t:'Sure, let\'s touch base tomorrow.'}],
+    q:[{q:'Is this conversation informal?',choices:['Yes','No'],a:0}], gap:{q:'"Let\'s ___ base tomorrow."',a:'touch',accept:['touch']}},
+   speaking:{shadow:['In a nutshell, we\'re behind.','Are we on the same page?'], retell:{prompt:'Retell the update using a couple of these idioms.',source:'reading',useWords:['in a nutshell','bottom line','touch base','same page'],minWords:20}},
+   writing:{tip:'Match register: idioms/phrasal verbs are informal; single verbs are formal.',scramble:'Let us touch base tomorrow.',gap:{q:'Could you please ___ this? (formal for "sort out")',a:'resolve',accept:['resolve','address']},task:{prompt:'Rewrite an informal message in a formal style (2 sentences).',include:['please','would','could'],minWords:12}}}
+ ]},
+ {level:'C2', units:[
+  {id:'c2u1', icon:'⚖️', title:'Rhetoric & persuasion', theme:'Winning an argument',
+   vocab:[{id:'compelling',word:'compelling',ipa:'/kəmˈpel.ɪŋ/',meaning:'so convincing it demands attention',ex:'She made a compelling argument.'},
+    {id:'concede',word:'concede',ipa:'/kənˈsiːd/',meaning:'to admit something is true, often reluctantly',ex:'I concede that you have a point.'},
+    {id:'undermine',word:'undermine',ipa:'/ˌʌn.dɚˈmaɪn/',meaning:'to weaken something gradually',ex:'Rumours undermined his authority.'},
+    {id:'advocate',word:'advocate',ipa:'/ˈæd.və.keɪt/',meaning:'to publicly support an idea',ex:'They advocate for reform.'},
+    {id:'sway',word:'sway',ipa:'/sweɪ/',meaning:'to influence someone\'s opinion',ex:'Nothing could sway her decision.'}],
+   grammar:{concept:'Fronting & emphatic "do"',body:'Move a phrase to the front, or add emphatic <b>do/did</b>, to stress a point.',eg:'<b>Never</b> would I agree. I <b>do</b> believe it matters.'},
+   reading:{passage:'A <b>compelling</b> speaker can <b>sway</b> an audience in minutes. Skilled debaters <b>advocate</b> their view, yet <b>concede</b> fair points. Personal attacks only <b>undermine</b> the argument.',
+    q:[{q:'What can a compelling speaker do?',choices:['Bore people','Sway an audience','Nothing'],a:1},{q:'What undermines an argument?',choices:['Conceding fair points','Personal attacks'],a:1}]},
+   listening:{lines:[{s:'A',t:'Did the speech convince you?'},{s:'B',t:'Yes, it was compelling. It really swayed me.'}],
+    q:[{q:'Was he convinced?',choices:['Yes','No'],a:0}], gap:{q:'"It really ___ me."',a:'swayed',accept:['swayed','sway']}},
+   speaking:{shadow:['She made a compelling argument.','I concede that you have a point.'], retell:{prompt:'Explain what makes a debater persuasive, in your own words.',source:'reading',useWords:['compelling','sway','advocate','concede','undermine'],minWords:24}},
+   writing:{tip:'Persuade by conceding first, then countering: <b>While X is true, Y matters more.</b>',scramble:'A compelling argument can sway people.',gap:{q:'I ___ (concede) that you are right.',a:'concede',accept:['concede']},task:{prompt:'Write a short persuasive point: concede something, then argue your view (2-3 sentences).',include:['while','although','however','concede'],minWords:20}}},
+  {id:'c2u2', icon:'🎭', title:'Connotation & tone', theme:'Reading between the lines',
+   vocab:[{id:'connotation',word:'connotation',ipa:'/ˌkɒn.əˈteɪ.ʃən/',meaning:'the feeling a word suggests beyond its literal meaning',ex:'"Cheap" has a negative connotation.'},
+    {id:'understate',word:'understatement',ipa:'/ˈʌn.dɚˌsteɪt.mənt/',meaning:'making something seem less important than it is',ex:'Calling the storm "a bit windy" is an understatement.'},
+    {id:'euphemism',word:'euphemism',ipa:'/ˈjuː.fə.mɪ.zəm/',meaning:'a mild word used in place of a harsh one',ex:'"Passed away" is a euphemism for "died".'},
+    {id:'irony',word:'irony',ipa:'/ˈaɪ.rə.ni/',meaning:'saying the opposite of what you mean for effect',ex:'"Lovely weather," she said in the rain — pure irony.'},
+    {id:'candid',word:'candid',ipa:'/ˈkæn.dɪd/',meaning:'honest and direct, even when awkward',ex:'To be candid, the plan won\'t work.'}],
+   grammar:{concept:'Hedging (softening your message)',body:'Soften strong claims with <b>may, tend to, somewhat, it seems</b> — common in diplomatic and academic English.',eg:'This <b>may suggest</b> a problem. Results <b>tend to</b> vary.'},
+   reading:{passage:'Word choice carries <b>connotation</b>. A <b>euphemism</b> softens bad news, while <b>understatement</b> downplays it. To be <b>candid</b>, <b>irony</b> can confuse non-native listeners.',
+    q:[{q:'What does a euphemism do?',choices:['Softens bad news','Exaggerates'],a:0},{q:'What can confuse listeners?',choices:['Understatement','Irony'],a:1}]},
+   listening:{lines:[{s:'A',t:'How was the exam?'},{s:'B',t:'Oh, just a little challenging — total understatement; it was brutal.'}],
+    q:[{q:'Was the exam easy?',choices:['Yes','No, it was brutal'],a:1}], gap:{q:'"That\'s a total ___."',a:'understatement',accept:['understatement']}},
+   speaking:{shadow:['"Cheap" has a negative connotation.','To be candid, it won\'t work.'], retell:{prompt:'Explain how tone changes meaning, using examples.',source:'reading',useWords:['connotation','euphemism','understatement','candid','irony'],minWords:24}},
+   writing:{tip:'Match connotation to intent: <b>frugal</b> (positive) vs <b>cheap</b> (negative) mean nearly the same thing.',scramble:'Words carry hidden connotations and tone.',gap:{q:'"Passed away" is a ___ for "died".',a:'euphemism',accept:['euphemism']},task:{prompt:'Write 2 sentences: one candid, one using a euphemism for the same idea.',include:['candid','euphemism','frankly'],minWords:18}}},
+  {id:'c2u3', icon:'🔬', title:'Academic discourse', theme:'Scholarly writing',
+   vocab:[{id:'paradigm',word:'paradigm',ipa:'/ˈpær.ə.daɪm/',meaning:'a typical model or way of thinking',ex:'A new paradigm in education.'},
+    {id:'empirical',word:'empirical',ipa:'/ɪmˈpɪr.ɪ.kəl/',meaning:'based on observation or experiment, not theory',ex:'Empirical evidence supports it.'},
+    {id:'salient',word:'salient',ipa:'/ˈseɪ.li.ənt/',meaning:'most noticeable or important',ex:'The salient point is cost.'},
+    {id:'caveat',word:'caveat',ipa:'/ˈkæv.i.æt/',meaning:'a warning or condition',ex:'One caveat: results may vary.'},
+    {id:'corroborate',word:'corroborate',ipa:'/kəˈrɒb.ə.reɪt/',meaning:'to confirm with more evidence',ex:'Two studies corroborate the finding.'}],
+   grammar:{concept:'Nominalisation (formal style)',body:'Turn verbs/adjectives into nouns to sound academic: <b>decide → decision</b>, <b>fail → failure</b>.',eg:'<b>The implementation of the policy</b> = they implemented the policy.'},
+   reading:{passage:'<b>Empirical</b> research can shift an entire <b>paradigm</b>. The <b>salient</b> findings must be <b>corroborated</b> by others, with one <b>caveat</b>: data can mislead.',
+    q:[{q:'What can shift a paradigm?',choices:['Opinion','Empirical research'],a:1},{q:'What is the caveat?',choices:['Data can mislead','Nothing'],a:0}]},
+   listening:{lines:[{s:'A',t:'Is the result reliable?'},{s:'B',t:'Two more studies corroborate it, so yes — with one caveat.'}],
+    q:[{q:'Is it reliable?',choices:['Yes, with a caveat','No'],a:0}], gap:{q:'"Two studies ___ it."',a:'corroborate',accept:['corroborate']}},
+   speaking:{shadow:['The salient point is cost.','Empirical evidence supports it.'], retell:{prompt:'Summarise how findings become trusted, in formal English.',source:'reading',useWords:['empirical','paradigm','salient','corroborate','caveat'],minWords:24}},
+   writing:{tip:'Nominalisation makes writing formal: <b>We analysed the data</b> → <b>The analysis of the data...</b>',scramble:'Empirical evidence must be corroborated carefully.',gap:{q:'The ___ point is cost. (most important)',a:'salient',accept:['salient']},task:{prompt:'Write 2 formal sentences using nominalisation and one academic word above.',include:['analysis','implementation','evidence','research'],minWords:18}}}
+ ]}
+];
+
+const ALL_UNITS=[]; CURRICULUM.forEach(L=>L.units.forEach(u=>{u.level=L.level; ALL_UNITS.push(u);}));
+const VOCAB_BY_ID={}; ALL_UNITS.forEach(u=>u.vocab.forEach(v=>{v.level=u.level; VOCAB_BY_ID[v.id]=v;}));
+const ALL_VOCAB=Object.values(VOCAB_BY_ID);
+
+/* ---------- STATE ---------- */
+const LS_KEY='lingua_v4';
+let S=load();
+function freshState(){return{onboarded:false,entry:'A1',goal:'B1',pace:'regular',programStart:null,
+  xp:0,xpToday:0,streak:0,bestStreak:0,hearts:5,gems:0,lastActive:null,weekDays:{},
+  skills:{},totalReviews:0,cards:{}};}
+function load(){try{const r=localStorage.getItem(LS_KEY);return r?JSON.parse(r):freshState();}catch(e){return freshState();}}
+function save(){localStorage.setItem(LS_KEY,JSON.stringify(S));}
+
+/* ---------- SM-2 ---------- */
+const DAY=86400000;
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function cardState(id){if(!S.cards[id])S.cards[id]={ef:2.5,interval:0,reps:0,due:0,lapses:0,seen:false};return S.cards[id];}
+function schedule(id,grade){const c=cardState(id);c.seen=true;const q=[2,3,4,5][grade];
+  if(q<3){c.reps=0;c.interval=1;c.lapses++;}else{if(c.reps===0)c.interval=1;else if(c.reps===1)c.interval=grade===3?4:2;else c.interval=Math.round(c.interval*c.ef);
+   if(grade===3)c.interval=Math.max(c.interval,c.reps<=1?3:Math.round(c.interval*1.3));if(grade===1)c.interval=Math.max(1,Math.round(c.interval*0.6));c.reps++;}
+  c.ef=Math.max(1.3,c.ef+(0.1-(5-q)*(0.08+(5-q)*0.02)));c.due=Date.now()+c.interval*DAY;S.totalReviews++;return c;}
+function dueCards(){const now=Date.now();return ALL_VOCAB.filter(v=>{const c=S.cards[v.id];return c&&c.seen&&c.due<=now;});}
+
+/* ---------- PROGRAM ---------- */
+function buildProgram(entry){const ei=ORDER.indexOf(entry);const gi=Math.min(ei+2,ORDER.length-1);S.entry=entry;S.goal=ORDER[gi];}
+function programUnits(){const ei=ORDER.indexOf(S.entry),gi=ORDER.indexOf(S.goal);return ALL_UNITS.filter(u=>{const i=ORDER.indexOf(u.level);return i>=ei&&i<=gi;});}
+function unitSkills(id){return S.skills[id]||{};}
+function skillDone(id,sk){return !!unitSkills(id)[sk];}
+function unitFullyDone(id){const s=unitSkills(id);return SKILLS.every(k=>s[k]);}
+function doneSkillsCount(){let n=0;programUnits().forEach(u=>{const s=unitSkills(u.id);SKILLS.forEach(k=>{if(s[k])n++;});});return n;}
+function totalSkillsCount(){return programUnits().length*SKILLS.length;}
+function unitsDoneCount(){return programUnits().filter(u=>unitFullyDone(u.id)).length;}
+function nextUnit(){return programUnits().find(u=>!unitFullyDone(u.id))||null;}
+function programPct(){const t=totalSkillsCount();return t?Math.round(doneSkillsCount()/t*100):0;}
+function projectedFinish(){const remainingUnits=(totalSkillsCount()-doneSkillsCount())/SKILLS.length;
+  const days=Math.max(1,Math.ceil(remainingUnits*PACE[S.pace].daysPerUnit));return{days,date:new Date(Date.now()+days*DAY),weeks:Math.max(1,Math.round(days/7))};}
+function dayNumber(){if(!S.programStart)return 1;return Math.floor((Date.now()-new Date(S.programStart).getTime())/DAY)+1;}
+function fmtDate(d){return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});}
+
+/* ---------- PURE HELPERS (speech + writing checks) ---------- */
+function normalizeText(s){return (s||'').toLowerCase().replace(/[^a-z0-9\s']/g,' ').replace(/\s+/g,' ').trim();}
+function speechScore(target,said){const t=normalizeText(target).split(' ').filter(Boolean);const h=normalizeText(said).split(' ').filter(Boolean);
+  if(!t.length)return 0;let matched=0;const pool=[...h];t.forEach(w=>{const i=pool.indexOf(w);if(i>=0){matched++;pool.splice(i,1);}});return matched/t.length;}
+function coverageScore(said,words){const h=normalizeText(said);const used=words.filter(w=>h.includes(normalizeText(w)));return {used,ratio:words.length?used.length/words.length:1};}
+function checkWriting(text,task){const words=normalizeText(text).split(' ').filter(Boolean);const n=words.length;
+  const inc=(task.include||[]);const hasInc=inc.length===0||inc.some(w=>normalizeText(text).includes(normalizeText(w)));
+  const longEnough=n>=(task.minWords||1);return {n,longEnough,hasInc,pass:longEnough&&hasInc};}
+function scrambleCheck(input,sentence){return normalizeText(input)===normalizeText(sentence);}
+function starsFor(ratio){const s=ratio>=0.85?3:ratio>=0.6?2:ratio>=0.3?1:0;return '★'.repeat(s)+'☆'.repeat(3-s);}
+
+/* ---------- SPEECH ---------- */
+const Speech={
+  speak(text){try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=0.95;window.speechSynthesis.speak(u);}catch(e){}},
+  supported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition);},
+  listen(onResult,onEnd){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){onEnd&&onEnd(null);return null;}
+    const r=new SR();r.lang='en-US';r.interimResults=false;r.maxAlternatives=1;
+    r.onresult=e=>{const t=e.results[0][0].transcript;onResult&&onResult(t);};
+    r.onerror=()=>{onEnd&&onEnd('error');};r.onend=()=>{onEnd&&onEnd('done');};
+    try{r.start();}catch(e){}return r;}
+};
+
+/* ---------- APP ---------- */
+const App={
+  session:null,_obLevel:null,_obPace:'regular',_curUnit:null,_rec:null,_build:null,
+  init(){if(S.onboarded){this.go('home');}else{this.show('s-onboard');}},
+  show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');
+    document.getElementById('nav').style.display=(id==='s-study'||id==='s-onboard'||id==='s-placement')?'none':'flex';window.scrollTo(0,0);},
+  go(where){document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.nav===where));
+    if(where==='home'){this.touchStreak();this.renderHome();this.show('s-home');}
+    if(where==='path'){this.renderPath();this.show('s-path');}
+    if(where==='pace'){this.renderPaceScreen();this.show('s-pace');}
+    if(where==='stats'){this.renderStats();this.show('s-stats');}},
+
+  /* onboarding */
+  obLevel(l,el){this._obLevel=l;document.querySelectorAll('#ob-step1 .opt').forEach(o=>o.classList.remove('sel'));el&&el.classList.add('sel');
+    buildProgram(l);document.getElementById('ob-step2').style.display='block';this.updateObFinish();document.getElementById('ob-step2').scrollIntoView({behavior:'smooth'});},
+  obPace(p,el){this._obPace=p;document.querySelectorAll('#ob-step2 .opt').forEach(o=>o.classList.remove('sel'));el&&el.classList.add('sel');this.updateObFinish();},
+  updateObFinish(){S.pace=this._obPace;const remaining=programUnits().length;const days=Math.ceil(remaining*PACE[this._obPace].daysPerUnit);const d=new Date(Date.now()+days*DAY);
+    document.getElementById('ob-finish').textContent='Finish around '+fmtDate(d);
+    document.getElementById('ob-finish-sub').textContent=`Path ${S.entry} → ${S.goal} · ${programUnits().length} units · about ${Math.max(1,Math.round(days/7))} weeks`;},
+  startPlacement(){this._pl={i:0,score:{}};ORDER.forEach(l=>this._pl.score[l]={c:0,t:0});this.show('s-placement');this.renderPL();},
+  renderPL(){const p=this._pl;const item=PLACEMENT[p.i];document.getElementById('pl-bar').style.width=(p.i/PLACEMENT.length*100)+'%';
+    document.getElementById('pl-body').innerHTML=`<div class="eyebrow">Placement · question ${p.i+1} of ${PLACEMENT.length}</div>
+      <div class="card fcard" style="min-height:auto"><div class="q" style="font-size:21px">${item.q}</div></div>
+      <div class="choices" id="choices">${item.choices.map((c,idx)=>`<button class="choice" onclick="App.answerPL(${idx})">${c}</button>`).join('')}</div>`;
+    document.getElementById('pl-foot').innerHTML='';},
+  answerPL(idx){const p=this._pl;const item=PLACEMENT[p.i];const ok=idx===item.a;
+    p.score[item.level].t++;if(ok)p.score[item.level].c++;
+    const btns=document.querySelectorAll('#choices .choice');btns.forEach(b=>{b.style.pointerEvents='none';b.classList.add('dim');});
+    btns[idx].classList.remove('dim');btns[idx].classList.add(ok?'correct':'wrong');if(!ok){btns[item.a].classList.remove('dim');btns[item.a].classList.add('correct');}
+    setTimeout(()=>{p.i++;if(p.i>=PLACEMENT.length)this.computePlacement();else this.renderPL();},ok?450:850);},
+  computePlacement(){const p=this._pl;let entry='C1';
+    for(const l of ORDER){const s=p.score[l];const ratio=s.t?s.c/s.t:0;if(ratio<0.5){entry=l;break;}}
+    if(ORDER.indexOf(entry)>4)entry='C1'; // cap so there's always room to grow
+    this._assessed=entry;buildProgram(entry);let total=0;ORDER.forEach(l=>total+=p.score[l].c);
+    document.getElementById('pl-bar').style.width='100%';
+    document.getElementById('pl-body').innerHTML=`<div class="result"><div class="big">📊</div>
+      <h2>You're at ${entry}</h2><p class="muted">${LEVELNAME[entry]} — you scored ${total}/${PLACEMENT.length}. We'll start your path here and take you to ${S.goal}.</p>
+      <div class="statgrid"><div><b>${entry}</b><small>Your level</small></div><div><b>→ ${S.goal}</b><small>Your goal</small></div></div></div>`;
+    document.getElementById('pl-foot').innerHTML=`<button class="btn" onclick="App.placementContinue()">Continue →</button>`;confetti();},
+  placementContinue(){this.show('s-onboard');document.getElementById('ob-step1').style.display='none';
+    document.getElementById('ob-assessed').innerHTML=`<div class="finishbox" style="border-color:#cdede7;margin-bottom:14px"><span class="cal">📊</span><div><b>Assessed level: ${this._assessed} · ${LEVELNAME[this._assessed]}</b><div class="muted" style="font-size:12px">Path ${S.entry} → ${S.goal}</div></div></div>`;
+    this.obLevel(this._assessed,null);},
+  cancelPlacement(){this.show('s-onboard');},
+  obStart(){S.pace=this._obPace;S.onboarded=true;S.programStart=new Date().toISOString();this.touchStreak();save();this.go('home');toast('Your program is ready! 🌟');},
+
+  touchStreak(){const t=todayStr();if(S.lastActive===t)return;const y=new Date(Date.now()-DAY).toISOString().slice(0,10);
+    if(S.lastActive===y)S.streak++;else S.streak=1;S.xpToday=0;S.lastActive=t;S.bestStreak=Math.max(S.bestStreak,S.streak);S.weekDays[t]=true;save();},
+  addXP(n){S.xp+=n;S.xpToday+=n;save();},
+
+  /* ===== UNIT HUB ===== */
+  openCurrentUnit(){const u=nextUnit();if(!u){toast('Program complete! 🎓 Keep reviewing.');return;}this.openUnit(u.id);},
+  openUnit(id){this._curUnit=id;this.touchStreak();this.renderUnitHub();this.show('s-unit');},
+  renderUnitHub(){const u=ALL_UNITS.find(x=>x.id===this._curUnit);if(!u)return;
+    document.getElementById('uh-title').textContent=u.title;
+    document.getElementById('uh-level').textContent=u.level;
+    document.getElementById('uh-theme').textContent=u.theme;
+    document.getElementById('uh-words').textContent=u.vocab.length+' words';
+    const s=unitSkills(u.id);const done=SKILLS.filter(k=>s[k]).length;
+    document.getElementById('uh-pct').textContent=done+'/4 skills done';
+    document.getElementById('uh-bar').style.width=(done/4*100)+'%';
+    const inputDone=s.reading&&s.listening;
+    SKILLS.forEach(k=>{const el=document.getElementById('sk-'+k);const ck=document.getElementById('ck-'+k);
+      const locked=(k==='speaking'||k==='writing')&&!inputDone;
+      el.classList.toggle('done',!!s[k]);el.classList.toggle('locked',locked&&!s[k]);
+      ck.textContent=s[k]?'✓':locked?'🔒':'›';});},
+
+  /* ===== SKILL RUNNER ===== */
+  startSkill(skill){const u=ALL_UNITS.find(x=>x.id===this._curUnit);if(!u)return;
+    const s=unitSkills(u.id);
+    if((skill==='speaking'||skill==='writing')&&!(s.reading&&s.listening)){toast('Finish Reading & Listening first 🔒');return;}
+    let steps=[];
+    if(skill==='reading')steps=this.buildReading(u);
+    if(skill==='listening')steps=this.buildListening(u);
+    if(skill==='speaking')steps=this.buildSpeaking(u);
+    if(skill==='writing')steps=this.buildWriting(u);
+    this.session={mode:'skill',unit:u,skill,steps,i:0,correct:0,total:0,xp:0};
+    document.getElementById('study-hearts').style.display='none';
+    this.show('s-study');this.renderStep();},
+
+  buildReading(u){const steps=[{t:'passage',html:u.reading.passage}];
+    steps.push({t:'grammar',data:u.grammar});
+    u.vocab.forEach(v=>steps.push({t:'introduce',v}));
+    u.reading.q.forEach(q=>steps.push({t:'mc',data:q}));
+    sample(u.vocab,2).forEach(v=>steps.push({t:'vmc',v}));return steps;},
+  buildListening(u){const steps=[{t:'listen',lines:u.listening.lines}];
+    u.listening.q.forEach(q=>steps.push({t:'mc',data:q}));
+    if(u.listening.gap)steps.push({t:'lgap',data:u.listening.gap,lines:u.listening.lines});
+    steps.push({t:'script',lines:u.listening.lines});return steps;},
+  buildSpeaking(u){const steps=[];(u.speaking.shadow||[]).forEach(t=>steps.push({t:'shadow',text:t}));
+    if(u.speaking.retell){const src=u.speaking.retell.source==='listening'?u.listening.lines.map(l=>l.t).join(' '):stripTags(u.reading.passage);
+      steps.push({t:'retell',data:u.speaking.retell,source:src});}return steps;},
+  buildWriting(u){return [{t:'tip',html:u.writing.tip},{t:'scramble',sentence:u.writing.scramble},{t:'wgap',data:u.writing.gap},{t:'wtask',data:u.writing.task}];},
+
+  renderStep(){const ss=this.session;const st=ss.steps[ss.i];const body=document.getElementById('study-body'),foot=document.getElementById('study-foot');
+    document.getElementById('study-bar').style.width=(ss.i/ss.steps.length*100)+'%';
+    const lvlTag=`<div class="eyebrow">${skillLabel(ss.skill)} · ${ss.unit.level}</div>`;
+    if(st.t==='passage'){
+      body.innerHTML=lvlTag+`<div class="card"><div class="passage">${st.html}</div></div>
+        <p class="muted center" style="font-size:13px;margin-top:10px">🔊 Tip: read it aloud once.</p>`;
+      foot.innerHTML=`<div class="btn row2"><button class="btn ghost" onclick="Speech.speak(this.dataset.t)" data-t="${stripTags(st.html).replace(/"/g,'&quot;')}">🔊 Hear it</button><button class="btn" onclick="App.nextStep(true,4)">I've read it →</button></div>`;
+    } else if(st.t==='grammar'){
+      body.innerHTML=lvlTag+`<div class="card teach"><div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Grammar focus</div>
+        <div class="concept">${st.data.concept}</div><p>${st.data.body}</p><div class="eg">${st.data.eg}</div></div>`;
+      foot.innerHTML=`<button class="btn" onclick="App.nextStep(true,2)">Got it</button>`;
+    } else if(st.t==='introduce'){
+      const c=cardState(st.v.id);if(!c.seen){c.seen=true;c.reps=1;c.interval=1;c.due=Date.now()+DAY;}save();
+      body.innerHTML=lvlTag+`<div class="card intro-card"><div class="word">${st.v.word}</div><div class="ipa">${st.v.ipa||''}</div>
+        <div class="mean">${st.v.meaning}</div><div class="ex">“${st.v.ex}”</div></div>`;
+      foot.innerHTML=`<div class="btn row2"><button class="btn ghost" onclick="Speech.speak(this.dataset.t)" data-t="${st.v.word}">🔊</button><button class="btn" onclick="App.nextStep(true,2)">Next →</button></div>`;
+    } else if(st.t==='mc'){
+      body.innerHTML=lvlTag+`<div class="card fcard" style="min-height:auto"><div class="q" style="font-size:21px">${st.data.q}</div></div>
+        <div class="choices" id="choices">${st.data.choices.map((c,i)=>`<button class="choice" onclick="App.answerMC(this,${i===st.data.a})">${c}</button>`).join('')}</div>`;foot.innerHTML='';
+    } else if(st.t==='vmc'){
+      const opts=shuffle([st.v.meaning,...sample(ALL_VOCAB.filter(v=>v.id!==st.v.id).map(v=>v.meaning),3)]);
+      body.innerHTML=lvlTag+`<div class="card fcard" style="min-height:auto"><div class="q">${st.v.word}</div><div class="sub">Choose the meaning</div></div>
+        <div class="choices" id="choices">${opts.map(o=>`<button class="choice" onclick="App.answerMC(this,${o===st.v.meaning},'${st.v.id}')">${o}</button>`).join('')}</div>`;foot.innerHTML='';
+    } else if(st.t==='listen'){
+      body.innerHTML=lvlTag+`<div class="card fcard"><div style="font-size:40px">🎧</div><div class="sub" style="margin:10px 0">Listen carefully — the script is hidden.</div>
+        <button class="btn" style="max-width:200px;margin:0 auto" onclick="App.playLines()">▶︎ Play audio</button></div>`;
+      foot.innerHTML=`<button class="btn ghost" onclick="App.nextStep(true,3)">I'm ready →</button>`;
+      setTimeout(()=>this.playLines(),300);
+    } else if(st.t==='lgap'){
+      body.innerHTML=lvlTag+`<div class="card fcard" style="min-height:auto"><div class="sub" style="margin-bottom:10px">Type the missing word you heard</div>
+        <div class="q" style="font-size:21px">${st.data.q}</div><input class="typing" id="cloze" placeholder="missing word" autocomplete="off">
+        <div class="reveal" id="rev"><div class="ans">${st.data.a}</div></div></div>`;
+      foot.innerHTML=`<div class="btn row2"><button class="btn ghost" onclick="App.playLines()">🔊 Replay</button><button class="btn" onclick="App.checkCloze('lgap')">Check</button></div>`;
+      setTimeout(()=>{const el=document.getElementById('cloze');el&&el.focus();el&&el.addEventListener('keydown',e=>{if(e.key==='Enter')App.checkCloze('lgap');});},50);
+    } else if(st.t==='script'){
+      body.innerHTML=lvlTag+`<div class="card"><div class="eyebrow">The script</div><div class="dialogue">${st.lines.map(l=>`<div class="dline"><span class="who">${l.s}</span><span>${l.t}</span></div>`).join('')}</div></div>`;
+      foot.innerHTML=`<button class="btn" onclick="App.nextStep(true,2)">Done →</button>`;
+    } else if(st.t==='shadow'){
+      body.innerHTML=lvlTag+`<div class="card speakbox"><div class="eyebrow">Shadowing — repeat after the model</div>
+        <div class="q" style="font-family:'Lora';font-size:24px;margin:8px 0">${st.text}</div>
+        <button class="btn ghost" style="max-width:170px;margin:6px auto" onclick="Speech.speak(this.dataset.t)" data-t="${st.text.replace(/"/g,'&quot;')}">🔊 Hear it</button>
+        <button class="mic" id="micBtn" onclick="App.recordSpeak('${escapeJs(st.text)}')">🎤</button>
+        <div class="sub" id="micHint">Tap and say it aloud</div><div id="speakResult"></div></div>`;
+      foot.innerHTML=`<button class="btn ghost" id="speakNext" onclick="App.nextStep(true,8)" style="display:none">Next →</button>`;
+    } else if(st.t==='retell'){
+      body.innerHTML=lvlTag+`<div class="card"><div class="eyebrow">Retell the story</div>
+        <p style="font-size:15px;margin:6px 0 10px">${st.data.prompt}</p>
+        <div style="background:#f0f4f3;border-radius:12px;padding:10px 12px;font-size:14px;color:#3c534f" id="retellSrc">${st.source}</div>
+        <p class="muted" style="font-size:12px;margin-top:8px">Try to use: <b>${st.data.useWords.join(', ')}</b> · aim for ${st.data.minWords}+ words</p>
+        <button class="mic" id="micBtn" onclick="App.recordRetell()">🎤</button>
+        <div class="sub center" id="micHint">Tap, then retell it aloud</div><div id="speakResult"></div></div>`;
+      foot.innerHTML=`<button class="btn ghost" id="speakNext" onclick="App.finishStep(true,12)" style="display:none">Next →</button>
+        <div class="ai-soon">✨ AI feedback on your retelling coming soon</div>`;
+    } else if(st.t==='tip'){
+      body.innerHTML=lvlTag+`<div class="card teach"><div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Writing tip</div><p style="font-size:16px">${st.html}</p></div>`;
+      foot.innerHTML=`<button class="btn" onclick="App.nextStep(true,2)">Start writing →</button>`;
+    } else if(st.t==='scramble'){
+      this._build={placed:[],bank:shuffle(st.sentence.split(' ')),sentence:st.sentence};
+      body.innerHTML=lvlTag+`<div class="card"><div class="eyebrow">Build the sentence</div><div class="sub" style="margin-bottom:8px">Tap the words in the right order.</div>
+        <div class="tiles-build" id="built"></div><div class="tilebank" id="bank"></div><div id="scrFb"></div></div>`;
+      foot.innerHTML=`<button class="btn" id="scrCheck" onclick="App.checkScramble()">Check</button>`;this.renderBuild();
+    } else if(st.t==='wgap'){
+      body.innerHTML=lvlTag+`<div class="card fcard" style="min-height:auto"><div class="sub" style="margin-bottom:8px">Fill the gap</div>
+        <div class="q" style="font-size:20px;line-height:1.4">${st.data.q}</div><input class="typing" id="cloze" placeholder="your answer" autocomplete="off">
+        <div class="reveal" id="rev"><div class="ans">${st.data.a}</div></div></div>`;
+      foot.innerHTML=`<button class="btn" onclick="App.checkCloze('wgap')">Check</button>`;
+      setTimeout(()=>{const el=document.getElementById('cloze');el&&el.focus();el&&el.addEventListener('keydown',e=>{if(e.key==='Enter')App.checkCloze('wgap');});},50);
+    } else if(st.t==='wtask'){
+      body.innerHTML=lvlTag+`<div class="card"><div class="eyebrow">Writing task</div><p style="font-size:15px;margin:6px 0 10px">${st.data.prompt}</p>
+        <textarea class="typing" id="wtext" placeholder="Write here..."></textarea>
+        <div class="muted" style="font-size:12px;margin-top:6px" id="wcount">0 words · aim for ${st.data.minWords}+</div><div id="wFb"></div></div>`;
+      foot.innerHTML=`<button class="btn" onclick="App.checkTask()">Check my writing</button><div class="ai-soon">✨ AI grammar & style feedback coming soon</div>`;
+      setTimeout(()=>{const el=document.getElementById('wtext');el&&el.addEventListener('input',()=>{document.getElementById('wcount').textContent=normalizeText(el.value).split(' ').filter(Boolean).length+' words · aim for '+st.data.minWords+'+';});},50);
+    }
+  },
+
+  playLines(){const st=this.session.steps[this.session.i];const lines=st.lines||[];
+    try{window.speechSynthesis.cancel();}catch(e){}
+    lines.forEach(l=>{try{const u=new SpeechSynthesisUtterance(l.t);u.lang='en-US';u.rate=0.95;window.speechSynthesis.speak(u);}catch(e){}});},
+
+  /* answer handlers */
+  answerMC(btn,correct,vid){document.querySelectorAll('#choices .choice').forEach(b=>{b.style.pointerEvents='none';b.classList.add('dim');});
+    btn.classList.remove('dim');btn.classList.add(correct?'correct':'wrong');
+    if(!correct){const st=this.session.steps[this.session.i];if(vid){const v=VOCAB_BY_ID[vid];document.querySelectorAll('#choices .choice').forEach(b=>{if(b.textContent===v.meaning){b.classList.remove('dim');b.classList.add('correct');}});}
+      else{document.querySelectorAll('#choices .choice')[st.data.a].classList.remove('dim');document.querySelectorAll('#choices .choice')[st.data.a].classList.add('correct');}}
+    if(vid)schedule(vid,correct?2:0);
+    this.finishStep(correct,correct?8:4);},
+  checkCloze(kind){const st=this.session.steps[this.session.i];const val=(document.getElementById('cloze').value||'').trim().toLowerCase();
+    const acc=(st.data.accept||[st.data.a]).map(a=>a.toLowerCase());const ok=acc.includes(val);
+    document.getElementById('rev').classList.add('show');document.getElementById('cloze').style.borderColor=ok?'var(--teal)':'var(--rose)';
+    this.finishStep(ok,ok?8:4);},
+  recordSpeak(target){const btn=document.getElementById('micBtn');const hint=document.getElementById('micHint');
+    if(!Speech.supported()){this.speakFallback();return;}
+    btn.classList.add('rec');hint.textContent='Listening… speak now';
+    this._rec=Speech.listen(said=>{const score=speechScore(target,said);
+      document.getElementById('speakResult').innerHTML=`<div class="stars">${starsFor(score)}</div><div class="heard">You said: <b>${said||'—'}</b></div>`;
+      document.getElementById('speakNext').style.display='';if(score>=0.5){this.session.correct++;this.addXP(8);} this.session.total++;
+    },()=>{btn.classList.remove('rec');hint.textContent='Tap to try again';});},
+  recordRetell(){const btn=document.getElementById('micBtn');const hint=document.getElementById('micHint');const st=this.session.steps[this.session.i];
+    if(!Speech.supported()){this.speakFallback(true);return;}
+    btn.classList.add('rec');hint.textContent='Listening… retell now';
+    this._rec=Speech.listen(said=>{const cov=coverageScore(said,st.data.useWords);const n=normalizeText(said).split(' ').filter(Boolean).length;
+      const lenOk=n>=st.data.minWords;const ratio=(cov.ratio*0.6)+(lenOk?0.4:0.4*n/st.data.minWords);
+      document.getElementById('speakResult').innerHTML=`<div class="stars">${starsFor(ratio)}</div>
+        <div class="heard">You used <b>${cov.used.length}/${st.data.useWords.length}</b> target words · <b>${n}</b> words${lenOk?' ✓':''}<br><span style="color:var(--muted)">“${said||'—'}”</span></div>`;
+      document.getElementById('speakNext').style.display='';if(ratio>=0.5){this.session.correct++;this.addXP(12);}this.session.total++;
+    },()=>{btn.classList.remove('rec');hint.textContent='Tap to try again';});},
+  speakFallback(retell){const r=document.getElementById('speakResult');
+    r.innerHTML=`<div class="heard">🎤 Speech recognition isn't available in this browser. Say it aloud${retell?' (retell the story)':''}, then rate yourself.</div>
+      <div class="btn row2" style="margin-top:10px"><button class="btn ghost" onclick="App.selfRate(false)">Try again</button><button class="btn" onclick="App.selfRate(true)">I said it ✓</button></div>`;
+    document.getElementById('micHint').textContent='No mic — self-rate below';},
+  selfRate(ok){if(ok){this.session.correct++;this.addXP(8);}this.session.total++;this.finishStep(true,0);},
+
+  /* scramble */
+  renderBuild(){const b=this._build;
+    document.getElementById('built').innerHTML=b.placed.map((w,i)=>`<span class="word-tile placed" onclick="App.unplace(${i})">${w}</span>`).join('')||'<span class="muted" style="font-size:13px;align-self:center">Tap words below…</span>';
+    document.getElementById('bank').innerHTML=b.bank.map((w,i)=>`<span class="word-tile" onclick="App.place(${i})">${w}</span>`).join('');},
+  place(i){const b=this._build;b.placed.push(b.bank[i]);b.bank.splice(i,1);this.renderBuild();},
+  unplace(i){const b=this._build;b.bank.push(b.placed[i]);b.placed.splice(i,1);this.renderBuild();},
+  checkScramble(){const b=this._build;const ok=scrambleCheck(b.placed.join(' '),b.sentence);
+    document.getElementById('scrFb').innerHTML=`<div class="fb ${ok?'ok':'no'}">${ok?'Perfect! ✓':'Not quite — correct: "'+b.sentence+'"'}</div>`;
+    this.finishStep(ok,ok?10:5);},
+  /* writing task */
+  checkTask(){const st=this.session.steps[this.session.i];const txt=document.getElementById('wtext').value;const r=checkWriting(txt,st.data);
+    let msg=r.pass?'Nice work! ✓ You hit the goal.':(!r.longEnough?`Add a little more — ${r.n}/${st.data.minWords} words.`:'Try to include the suggested word(s).');
+    document.getElementById('wFb').innerHTML=`<div class="fb ${r.pass?'ok':'no'}">${msg}</div>`;
+    if(r.pass)this.finishStep(true,14);else{/* allow continue after a try */ document.querySelector('#study-foot .btn').textContent='Continue anyway →';document.querySelector('#study-foot .btn').setAttribute('onclick','App.finishStep(true,6)');}},
+
+  nextStep(correct,xp){this.finishStep(correct,xp);},
+  finishStep(correct,xp){const ss=this.session;const st=ss.steps[ss.i];
+    const scored=['mc','vmc','lgap','wgap','scramble'].includes(st.t);
+    if(scored){ss.total++;if(correct)ss.correct++;}
+    if(correct&&xp){ss.xp+=xp;this.addXP(xp);}save();
+    setTimeout(()=>{ss.i++;if(ss.i>=ss.steps.length)this.finishSkill();else this.renderStep();},scored?(correct?450:800):120);},
+
+  finishSkill(){const ss=this.session;
+    if(!S.skills[ss.unit.id])S.skills[ss.unit.id]={};
+    S.skills[ss.unit.id][ss.skill]=true;S.gems+=2;
+    const justFinishedUnit=unitFullyDone(ss.unit.id);
+    if(justFinishedUnit)S.gems+=6;save();
+    const programDone=!nextUnit();
+    const pct=ss.total?Math.round(ss.correct/ss.total*100):100;const emoji=pct>=80?'🎉':pct>=50?'👍':'💪';
+    document.getElementById('study-bar').style.width='100%';
+    document.getElementById('study-body').innerHTML=`<div class="result"><div class="big">${justFinishedUnit?(programDone?'🎓':'🏆'):emoji}</div>
+      <h2>${skillLabel(ss.skill)} done!</h2>
+      <p class="muted">${justFinishedUnit?(programDone?'You completed the whole program! Keep reviewing to lock it in.':'Unit complete — all four skills! 🎉'):'Nice work. '+ (ss.skill==='listening'?'Output is now unlocked.':'On to the next skill.')}</p>
+      <div class="statgrid"><div><b>${ss.correct}/${ss.total||'—'}</b><small>Correct</small></div><div><b>+${ss.xp}</b><small>XP</small></div>
+      <div><b>${programPct()}%</b><small>Program</small></div><div><b>🔥 ${S.streak}</b><small>Streak</small></div></div></div>`;
+    document.getElementById('study-foot').innerHTML=`<button class="btn" onclick="App.backToUnit()">${justFinishedUnit?'Back to path':'Back to unit'}</button>`;
+    if(pct>=50||justFinishedUnit)confetti();},
+  backToUnit(){if(unitFullyDone(this._curUnit)){this.go('path');}else{this.renderUnitHub();this.show('s-unit');}},
+
+  /* ===== DAILY REVIEW ===== */
+  startReview(){this.touchStreak();let queue=dueCards();if(queue.length===0){toast('Nothing due — open today\'s unit 📘');this.go('home');return;}
+    queue=shuffle(queue).slice(0,15);this.session={mode:'review',queue,i:0,correct:0,xp:0};
+    document.getElementById('study-hearts').style.display='';this.renderHearts();this.show('s-study');this.renderCard();},
+  renderCard(){const ss=this.session;const card=ss.queue[ss.i];document.getElementById('study-bar').style.width=(ss.i/ss.queue.length*100)+'%';
+    const body=document.getElementById('study-body'),foot=document.getElementById('study-foot');
+    const types=['recall','mc','cloze'];const t=types[(ss.i+(card.id.charCodeAt(0)||0))%3];ss.curType=t;
+    if(t==='recall'){body.innerHTML=`<div class="card fcard"><div class="eyebrow"><span class="pill lvlpill">${card.level}</span></div><div class="q">${card.word}</div><div class="ipa">${card.ipa||''}</div><div class="sub">What does it mean?</div>
+      <div class="reveal" id="rev"><div class="ans">${card.meaning}</div><div class="ex">“${card.ex}”</div></div></div>`;
+      foot.innerHTML=`<div class="btn row2"><button class="btn ghost" onclick="Speech.speak('${escapeJs(card.word)}')">🔊</button><button class="btn" onclick="App.reveal()">Show answer</button></div>`;
+    } else if(t==='mc'){const opts=shuffle([card.meaning,...sample(ALL_VOCAB.filter(v=>v.id!==card.id).map(v=>v.meaning),3)]);
+      body.innerHTML=`<div class="card fcard"><div class="eyebrow"><span class="pill lvlpill">${card.level}</span></div><div class="q">${card.word}</div><div class="ipa">${card.ipa||''}</div><div class="sub">Choose the meaning</div></div>
+      <div class="choices" id="choices">${opts.map(o=>`<button class="choice" onclick="App.answerRMC(this,${o===card.meaning})">${o}</button>`).join('')}</div>`;foot.innerHTML='';
+    } else {const blanked=card.ex.replace(new RegExp(card.word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'),'_____');
+      body.innerHTML=`<div class="card fcard"><div class="eyebrow"><span class="pill lvlpill">${card.level}</span></div><div class="sub" style="margin-bottom:10px">Fill the gap</div>
+      <div class="q" style="font-size:20px;line-height:1.35">${blanked}</div><input class="typing" id="cloze" placeholder="missing word" autocomplete="off">
+      <div class="reveal" id="rev"><div class="ans">${card.word}</div></div></div>`;
+      foot.innerHTML=`<button class="btn" onclick="App.checkRCloze()">Check</button>`;
+      setTimeout(()=>{const el=document.getElementById('cloze');el&&el.focus();el&&el.addEventListener('keydown',e=>{if(e.key==='Enter')App.checkRCloze();});},50);}},
+  reveal(){document.getElementById('rev').classList.add('show');document.getElementById('study-foot').innerHTML=gradeRow();},
+  checkRCloze(){const ss=this.session,card=ss.queue[ss.i];const val=(document.getElementById('cloze').value||'').trim().toLowerCase();const ok=val===card.word.toLowerCase();
+    document.getElementById('rev').classList.add('show');document.getElementById('cloze').style.borderColor=ok?'var(--teal)':'var(--rose)';
+    if(ok)this.afterAnswer(card,3,true);else{this.loseHeart();this.afterAnswer(card,0,false);}},
+  answerRMC(btn,correct){const ss=this.session,card=ss.queue[ss.i];document.querySelectorAll('#choices .choice').forEach(b=>{b.style.pointerEvents='none';b.classList.add('dim');});
+    btn.classList.remove('dim');btn.classList.add(correct?'correct':'wrong');
+    if(!correct){this.loseHeart();document.querySelectorAll('#choices .choice').forEach(b=>{if(b.textContent===card.meaning){b.classList.remove('dim');b.classList.add('correct');}});}
+    this.afterAnswer(card,correct?2:0,correct);},
+  grade(g){const ss=this.session,card=ss.queue[ss.i];this.afterAnswer(card,g,g>0);},
+  afterAnswer(card,grade,correct){schedule(card.id,grade);const ss=this.session;if(correct){ss.correct++;ss.xp+=grade>=3?12:8;this.addXP(grade>=3?12:8);}save();
+    setTimeout(()=>{ss.i++;if(ss.i>=ss.queue.length||S.hearts<=0)this.finishReview();else this.renderCard();},correct?450:850);},
+  loseHeart(){S.hearts=Math.max(0,S.hearts-1);this.renderHearts();save();if(S.hearts<=0)toast('Out of hearts — they refill tomorrow 💛');},
+  renderHearts(){const h='❤️'.repeat(S.hearts)+'🤍'.repeat(5-S.hearts);const el=document.getElementById('study-hearts');if(el)el.textContent=h;const ch=document.getElementById('chip-hearts');if(ch)ch.textContent='❤️ '+S.hearts;},
+  finishReview(){const ss=this.session;S.gems+=Math.round(ss.correct/2);save();const pct=ss.queue.length?Math.round(ss.correct/ss.queue.length*100):0;const emoji=pct>=80?'🎉':pct>=50?'👍':'💪';
+    document.getElementById('study-bar').style.width='100%';
+    document.getElementById('study-body').innerHTML=`<div class="result"><div class="big">${emoji}</div><h2>Review complete!</h2><p class="muted">${pct>=80?'Excellent recall.':'Repetition is how it sticks.'}</p>
+      <div class="statgrid"><div><b>${ss.correct}/${ss.queue.length}</b><small>Correct</small></div><div><b>+${ss.xp}</b><small>XP</small></div><div><b>🔥 ${S.streak}</b><small>Streak</small></div><div><b>💎 ${S.gems}</b><small>Gems</small></div></div></div>`;
+    document.getElementById('study-foot').innerHTML=`<button class="btn" onclick="App.go('home')">Back to home</button>`;confetti();},
+  confirmExit(){try{window.speechSynthesis.cancel();}catch(e){}if(this._rec){try{this._rec.stop();}catch(e){}}
+    if(this.session&&this.session.i>0&&this.session.mode!=='skill'){if(!confirm('Leave this session? Your answers are saved.'))return;}
+    if(this.session&&this.session.mode==='skill'){this.backToUnit();}else this.go('home');},
+
+  /* ===== RENDER HOME/PATH/PACE/STATS ===== */
+  renderHome(){const np=nextUnit();const pf=projectedFinish();
+    document.getElementById('hero-goal').textContent=`Path to ${S.goal} · ${LEVELNAME[S.goal]}`;
+    document.getElementById('hero-day').textContent=`Day ${dayNumber()} of your program`;
+    document.getElementById('hero-pbar').style.width=programPct()+'%';
+    document.getElementById('hero-pct').textContent=programPct()+'% complete';
+    document.getElementById('hero-units').textContent=`${unitsDoneCount()} / ${programUnits().length} units`;
+    document.getElementById('hero-finish').textContent=np?fmtDate(pf.date):'Done 🎓';
+    document.getElementById('hero-pace').textContent=PACE[S.pace].label;
+    document.getElementById('chip-streak').textContent='🔥 '+S.streak;document.getElementById('chip-gems').textContent='💎 '+S.gems;this.renderHearts();
+    document.getElementById('t-streak').textContent=S.streak;document.getElementById('t-streak-sub').textContent=S.bestStreak>1?('Best: '+S.bestStreak):'Start today!';
+    document.getElementById('t-xp').textContent=S.xpToday;document.getElementById('t-goal-sub').textContent='/ '+PACE[S.pace].goalXP+' XP today';
+    document.getElementById('t-goal').textContent=Math.min(100,Math.round(S.xpToday/PACE[S.pace].goalXP*100))+'%';
+    const due=dueCards().length;document.getElementById('due-count').textContent=due;
+    document.getElementById('due-title').textContent=due>0?`${due} word${due>1?'s':''} to review`:'All caught up!';
+    document.getElementById('due-sub').textContent=due>0?'Spaced repetition keeps these fresh':'Come back later or open a unit';
+    if(np){const s=unitSkills(np.id);const done=SKILLS.filter(k=>s[k]).length;
+      document.getElementById('nu-icon').textContent=np.icon;document.getElementById('nu-title').textContent=np.title;
+      document.getElementById('nu-sub').textContent=`${np.level} · ${np.theme} · ${done}/4 skills`;document.getElementById('nu-pill').textContent=done>0?'Continue →':'Open →';
+    }else{document.getElementById('nu-icon').textContent='🎓';document.getElementById('nu-title').textContent='Program complete!';document.getElementById('nu-sub').textContent='Keep your daily review going';document.getElementById('nu-pill').textContent='✓';}
+    this.renderWeek();},
+  renderWeek(){const names=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];const now=new Date();const dow=(now.getDay()+6)%7;let html='';
+    for(let i=0;i<7;i++){const d=new Date(now);d.setDate(now.getDate()-(dow-i));const ds=d.toISOString().slice(0,10);const on=S.weekDays[ds];const today=i===dow;
+      html+=`<div class="day ${on?'on':''} ${today?'today':''}"><div class="fl">${on?'🔥':'·'}</div>${names[i]}</div>`;}
+    document.getElementById('week-strip').innerHTML=html;},
+  renderPath(){document.getElementById('path-goal').textContent='→ '+S.goal;document.getElementById('path-pct').textContent=programPct()+'% complete';
+    document.getElementById('path-bar').style.width=programPct()+'%';const pf=projectedFinish();
+    document.getElementById('path-finish').textContent=nextUnit()?('~'+fmtDate(pf.date)):'Finished 🎓';
+    const units=programUnits();const np=nextUnit();let html='';let lastLevel=null;let reached=false;
+    units.forEach(u=>{if(u.level!==lastLevel){html+=`<div class="lvl-band">${u.level} · ${LEVELNAME[u.level]}</div>`;lastLevel=u.level;}
+      const done=unitFullyDone(u.id);const current=np&&np.id===u.id;let locked=false;if(!done&&!current){if(reached)locked=true;}if(current)reached=true;
+      const s=unitSkills(u.id);const ds=SKILLS.filter(k=>s[k]).length;
+      const cls=done?'done':current?'current':locked?'locked':'';const status=done?'✓':current?(ds+'/4'):locked?'🔒':'';
+      html+=`<div class="card unit ${cls}" ${locked?'':`onclick="App.openUnit('${u.id}')"`}><div class="dot">${u.icon}</div>
+        <div class="meta"><b>${u.title}</b><small>${u.theme} · 4 skills</small></div><span class="status">${status}</span></div>`;});
+    document.getElementById('path-list').innerHTML=html;},
+  renderPaceScreen(){document.querySelectorAll('#s-pace .opt').forEach(o=>o.classList.toggle('sel',o.dataset.pace===S.pace));
+    ['casual','regular','intensive'].forEach(p=>{const remaining=(totalSkillsCount()-doneSkillsCount())/SKILLS.length;const days=Math.max(1,Math.ceil(remaining*PACE[p].daysPerUnit));const d=new Date(Date.now()+days*DAY);
+      document.getElementById('pc-'+p).textContent=`Finish ~${fmtDate(d)} (${Math.max(1,Math.round(days/7))} wks) · ${PACE[p].goalXP} XP/day`;});},
+  setPace(p){S.pace=p;save();this.renderPaceScreen();toast('Pace updated — finish date adjusted');},
+  renderStats(){const seen=Object.values(S.cards).filter(c=>c.seen).length;const mastered=Object.values(S.cards).filter(c=>c.interval>=8).length;
+    document.getElementById('stat-mastered').textContent=mastered+' words mastered';const pct=seen?Math.round(mastered/seen*100):0;
+    document.getElementById('stat-bar').style.width=pct+'%';document.getElementById('stat-bar-label').textContent=`${mastered} of ${seen} started · ${pct}% mastered`;
+    document.getElementById('stat-seen').textContent=seen;document.getElementById('stat-best').textContent=S.bestStreak;
+    let totalSk=0;Object.values(S.skills).forEach(o=>totalSk+=Object.values(o).filter(Boolean).length);
+    document.getElementById('stat-skills').textContent=totalSk;
+    document.getElementById('stat-units').textContent=ALL_UNITS.filter(u=>unitFullyDone(u.id)).length;
+    const el=document.getElementById('stat-levels');el.innerHTML='';
+    ORDER.forEach(b=>{const total=ALL_VOCAB.filter(v=>v.level===b).length;const started=ALL_VOCAB.filter(v=>v.level===b&&S.cards[v.id]&&S.cards[v.id].seen).length;const p=total?Math.round(started/total*100):0;
+      el.innerHTML+=`<div style="margin:10px 0 4px;display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span>${b} · ${LEVELNAME[b]}</span><span class="muted">${started}/${total}</span></div><div class="pbar dark"><i style="width:${p}%"></i></div>`;});},
+  reset(){if(confirm('Reset ALL progress? This cannot be undone.')){S=freshState();save();location.reload();}}
+};
+
+/* helpers */
+function skillLabel(k){return {reading:'📖 Reading',listening:'🎧 Listening',speaking:'🎤 Speaking',writing:'✍️ Writing',review:'Review'}[k]||k;}
+function stripTags(h){return (h||'').replace(/<[^>]*>/g,'');}
+function escapeJs(s){return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+function gradeRow(){return `<div class="grade-row"><div class="grade again" onclick="App.grade(0)">Again<small>&lt;1 day</small></div><div class="grade hard" onclick="App.grade(1)">Hard<small>soon</small></div><div class="grade good" onclick="App.grade(2)">Good<small>on track</small></div><div class="grade easy" onclick="App.grade(3)">Easy<small>later</small></div></div>`;}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function sample(a,n){return shuffle(a).slice(0,n);}
+let toastT;function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2400);}
+function confetti(){for(let i=0;i<28;i++){const c=document.createElement('div');c.style.cssText=`position:fixed;top:-10px;left:${Math.random()*100}vw;width:9px;height:9px;z-index:99;border-radius:2px;background:${['#0f9d8e','#f5b73d','#e85d6b','#7b6cf6'][i%4]};transition:transform 1.4s ease,opacity 1.4s;pointer-events:none`;document.body.appendChild(c);requestAnimationFrame(()=>{c.style.transform=`translateY(${60+Math.random()*40}vh) rotate(${Math.random()*720}deg)`;c.style.opacity='0';});setTimeout(()=>c.remove(),1500);}}
+
+App.init();
+</script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lingua — Method Demo (chunks + shadowing)</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--teal:#0f9d8e;--teal-dark:#0b7d72;--teal-soft:#e6f6f3;--ink:#16302c;--muted:#6b8480;--line:#e4ecea;--bg:#f4f8f7;--rose:#e85d6b;--amber:#f0a020;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  h1,h2{font-family:'Lora',serif}
+  .wrap{max-width:480px;margin:0 auto;min-height:100vh;padding:16px 16px 40px}
+  .eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 6px 22px rgba(16,60,55,.06);padding:20px;margin-bottom:14px}
+  .btn{border:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:15px;border-radius:13px;padding:13px 16px;background:var(--teal);color:#fff;width:100%;box-shadow:0 4px 12px rgba(15,157,142,.25)}
+  .btn:hover{background:var(--teal-dark)} .btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
+  .btn.row{display:flex;gap:10px} .btn.row>*{flex:1}
+  .progress-top{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+  .bar{flex:1;height:9px;background:var(--line);border-radius:99px;overflow:hidden}.bar>i{display:block;height:100%;background:var(--teal);transition:width .3s}
+  .chunk{font-family:'Lora';font-size:26px;font-weight:700;line-height:1.3;margin:6px 0}
+  .use{color:var(--muted);font-size:14px;margin-top:6px}
+  .eg{background:var(--teal-soft);border-radius:11px;padding:11px 13px;margin-top:12px;font-size:15px}
+  .tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--amber);padding:3px 8px;border-radius:99px}
+  .mic{width:78px;height:78px;border-radius:50%;border:none;background:var(--teal);color:#fff;font-size:30px;cursor:pointer;margin:16px auto 6px;display:block;box-shadow:0 6px 16px rgba(15,157,142,.35)}
+  .mic.rec{background:var(--rose);animation:p 1s infinite}@keyframes p{0%{box-shadow:0 0 0 0 rgba(232,93,107,.5)}70%{box-shadow:0 0 0 14px rgba(232,93,107,0)}100%{box-shadow:0 0 0 0 rgba(232,93,107,0)}}
+  .stars{font-size:24px;text-align:center;margin:4px 0}
+  .heard{background:#f0f4f3;border-radius:10px;padding:9px 11px;font-size:14px;margin-top:8px}.heard b{color:var(--teal-dark)}
+  .choices{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+  .choice{padding:14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font-weight:600;text-align:left;font-size:15px}
+  .choice:hover{border-color:var(--teal);background:var(--teal-soft)}
+  .choice.correct{border-color:var(--teal);background:#e9f8f0;color:var(--teal-dark)} .choice.wrong{border-color:var(--rose);background:#fdeef0;color:var(--rose)} .choice.dim{opacity:.5}
+  .dline{display:flex;gap:10px;margin:8px 0}.dline .who{font-weight:700;color:var(--teal);width:22px}
+  .center{text-align:center}.muted{color:var(--muted)}.big{font-size:50px;text-align:center}
+  textarea,input{width:100%;padding:13px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:15px;margin-top:10px}
+  .why{font-size:12.5px;color:var(--muted);background:#fff;border:1px dashed #cdded9;border-radius:12px;padding:12px;margin-top:10px}
+  .why b{color:var(--teal-dark)}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const $=id=>document.getElementById(id);
+const norm=s=>(s||'').toLowerCase().replace(/[^a-z0-9\s']/g,' ').replace(/\s+/g,' ').trim();
+function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.95;speechSynthesis.speak(u);}catch(e){}}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+function listen(onR,onE){if(!SR){onE&&onE(null);return null;}const r=new SR();r.lang='en-US';r.interimResults=false;r.onresult=e=>onR(e.results[0][0].transcript);r.onerror=()=>onE&&onE('e');r.onend=()=>onE&&onE('d');try{r.start();}catch(e){}return r;}
+function score(t,s){const T=norm(t).split(' ').filter(Boolean),H=norm(s).split(' ').filter(Boolean);if(!T.length)return 0;let m=0,p=[...H];T.forEach(w=>{const i=p.indexOf(w);if(i>=0){m++;p.splice(i,1);}});return m/T.length;}
+const stars=r=>{const n=r>=.85?3:r>=.6?2:r>=.3?1:0;return '★'.repeat(n)+'☆'.repeat(3-n);};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+/* ===== ONE UNIT, built the "real methods" way =====
+   Vocabulary = useful CHUNKS/SENTENCES (not single words),
+   trained with SHADOWING for fluency + situational recall. */
+const UNIT = {
+  title:"Making plans with a friend",
+  level:"A2–B1",
+  chunks:[
+    {text:"What are you up to this weekend?", use:"Casually ask about someone's plans.", situation:"You want to ask a friend about their weekend plans."},
+    {text:"Do you fancy grabbing a coffee?",  use:"Informally invite someone out.",       situation:"You want to invite a friend out for a coffee."},
+    {text:"I'm free on Saturday afternoon.",  use:"Say when you are available.",          situation:"You want to tell someone when you're available."},
+    {text:"Let's meet around noon.",          use:"Suggest a time to meet.",              situation:"You want to suggest meeting at about 12:00."},
+    {text:"Something came up — can we reschedule?", use:"Politely move or cancel a plan.", situation:"You can't make it and need to change the plan."}
+  ],
+  dialogue:[
+    {s:"A",t:"Hey! What are you up to this weekend?"},
+    {s:"B",t:"Not much. Do you fancy grabbing a coffee?"},
+    {s:"A",t:"Sure! I'm free on Saturday afternoon."},
+    {s:"B",t:"Great, let's meet around noon."}
+  ],
+  task:{prompt:"Invite a friend to do something this weekend. Try to use at least TWO of the chunks you learned.", need:2}
+};
+
+// build the step sequence
+let steps=[{t:'intro'}];
+UNIT.chunks.forEach(c=>steps.push({t:'learn',c}));
+UNIT.chunks.forEach(c=>steps.push({t:'recall',c}));
+steps.push({t:'dialogue'});
+steps.push({t:'task'});
+steps.push({t:'done'});
+let i=0, learned=0, correct=0, total=0;
+
+function frame(html,foot){$('app').innerHTML=`<div class="progress-top"><div class="bar"><i style="width:${i/steps.length*100}%"></i></div></div><div id="b">${html}</div><div id="f" style="margin-top:14px">${foot||''}</div>`;}
+function next(){i++;render();}
+
+function render(){
+  const st=steps[i];
+  if(st.t==='intro'){
+    frame(`<div class="card center"><div class="big">🗣️</div><h1 style="font-size:24px;margin:6px 0">${UNIT.title}</h1>
+      <p class="muted">${UNIT.level} · practical English</p>
+      <div class="why" style="text-align:left"><b>How this works:</b> you'll learn <b>5 whole phrases</b> (not single words), <b>shadow</b> each one to train your mouth, then use them in real situations. This is how fluent speakers actually store language — in chunks.</div></div>`,
+      `<button class="btn" onclick="next()">Start →</button>`);
+  }
+  else if(st.t==='learn'){
+    frame(`<div class="eyebrow">Learn the phrase ${'· chunk '+(i)} </div>
+      <div class="card"><span class="tag">Say it, don't just read it</span>
+        <div class="chunk">${st.c.text}</div>
+        <div class="use">${st.c.use}</div>
+        <button class="btn ghost" style="max-width:170px;margin:14px auto 0" onclick="speak('${st.c.text.replace(/'/g,"\\'")}')">🔊 Hear it</button>
+        <button class="mic" id="mic">🎤</button>
+        <div class="muted center" id="hint">Tap, then shadow it (copy the rhythm)</div>
+        <div id="res"></div></div>`,
+      `<button class="btn ghost" id="nx" style="display:none" onclick="next()">Next →</button>`);
+    $('mic').onclick=()=>{ if(!SR){$('res').innerHTML='<div class="heard">Mic not available — say it aloud a few times, then continue.</div>';$('nx').style.display='';return;}
+      $('mic').classList.add('rec');$('hint').textContent='Listening… shadow now';
+      listen(said=>{const sc=score(st.c.text,said);$('res').innerHTML=`<div class="stars">${stars(sc)}</div><div class="heard">You said: <b>${said||'—'}</b></div>`;if(sc>=.5)learned++;$('nx').style.display='';},
+        ()=>{$('mic').classList.remove('rec');$('hint').textContent='Tap to shadow again';});};
+  }
+  else if(st.t==='recall'){
+    const opts=shuffle([st.c.text,...shuffle(UNIT.chunks.filter(x=>x.text!==st.c.text).map(x=>x.text)).slice(0,2)]);
+    frame(`<div class="eyebrow">Use it in the moment</div>
+      <div class="card"><p style="font-size:16px"><b>Situation:</b> ${st.c.situation}</p>
+        <p class="muted" style="font-size:13px;margin-top:4px">What do you say?</p>
+        <div class="choices" id="ch">${opts.map(o=>`<button class="choice">${o}</button>`).join('')}</div></div>`,'');
+    document.querySelectorAll('#ch .choice').forEach(b=>b.onclick=()=>{
+      document.querySelectorAll('#ch .choice').forEach(z=>{z.style.pointerEvents='none';z.classList.add('dim');});
+      const ok=b.textContent===st.c.text; b.classList.remove('dim'); b.classList.add(ok?'correct':'wrong');
+      if(!ok)document.querySelectorAll('#ch .choice').forEach(z=>{if(z.textContent===st.c.text){z.classList.remove('dim');z.classList.add('correct');}});
+      total++; if(ok)correct++; setTimeout(next, ok?550:1000);});
+  }
+  else if(st.t==='dialogue'){
+    frame(`<div class="eyebrow">Hear the phrases in a real chat</div>
+      <div class="card"><div>${UNIT.dialogue.map(l=>`<div class="dline"><span class="who">${l.s}</span><span>${l.t}</span></div>`).join('')}</div>
+      <button class="btn ghost" style="margin-top:8px" onclick="playD()">🔊 Play conversation</button></div>`,
+      `<button class="btn" onclick="next()">Got it →</button>`);
+    setTimeout(playD,300);
+  }
+  else if(st.t==='task'){
+    frame(`<div class="eyebrow">Now you — speak</div>
+      <div class="card"><p style="font-size:16px">${UNIT.task.prompt}</p>
+        <button class="mic" id="mic">🎤</button><div class="muted center" id="hint">Tap, then speak your invitation</div>
+        <div id="res"></div>
+        <p class="muted" style="font-size:12px;margin-top:8px">Phrases: ${UNIT.chunks.map(c=>'"'+c.text+'"').join(' · ')}</p></div>`,
+      `<button class="btn ghost" id="nx" style="display:none" onclick="next()">Finish →</button>`);
+    $('mic').onclick=()=>{ if(!SR){$('res').innerHTML='<div class="heard">Mic not available — say your invitation aloud, then finish.</div>';$('nx').style.display='';return;}
+      $('mic').classList.add('rec');$('hint').textContent='Listening…';
+      listen(said=>{const used=UNIT.chunks.filter(c=>{const key=norm(c.text).split(' ').slice(0,3).join(' ');return norm(said).includes(key);});
+        $('res').innerHTML=`<div class="heard">You used <b>${used.length}</b> target phrase(s).<br><span class="muted">“${said||'—'}”</span></div>`;
+        if(used.length>=UNIT.task.need)correct++; total++; $('nx').style.display='';},
+        ()=>{$('mic').classList.remove('rec');$('hint').textContent='Tap to try again';});};
+  }
+  else if(st.t==='done'){
+    frame(`<div class="card center"><div class="big">🎉</div><h1 style="font-size:24px">Unit complete!</h1>
+      <p class="muted">You shadowed <b>${learned}/5</b> phrases and used them in real situations.</p>
+      <div class="why" style="text-align:left;margin-top:14px"><b>Why you'll remember these:</b> you learned full phrases (not words), trained pronunciation by shadowing, and recalled them by situation. Spaced repetition will bring them back over the next days so they stick.</div></div>`,
+      `<button class="btn" onclick="i=0;learned=0;correct=0;total=0;render()">Try again</button>`);
+  }
+}
+function playD(){try{speechSynthesis.cancel();}catch(e){}UNIT.dialogue.forEach(l=>speak(l.t));}
+render();
+</script>
+</body>
+</html>
