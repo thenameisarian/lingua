@@ -266,7 +266,7 @@ async function doJoin(){const code=$('jc').value.trim().toUpperCase();if(!code){
   const c=data[0];CTX.classId=c.class_id;CTX.className=c.class_name;CTX.level=c.level;await hydrate();toast('Joined '+c.class_name);home();}
 
 /* ===== STUDENT: learning home (level-gated) ===== */
-function unlocked(u){if(CTX.preview||CTX.role!=='student')return true;const mine=levelUnits();const i=mine.findIndex(x=>x.id===u.id);if(i<=0)return true;if((UNLOCKS||[]).includes(u.id))return true;return !!S.unitsDone[(mine[i-1]||{}).id];}
+function unlocked(u){if(CTX.preview||CTX.role!=='student')return true;if(S.unitsDone[u.id])return true;const mine=levelUnits();const i=mine.findIndex(x=>x.id===u.id);if(i<=0)return true;if((UNLOCKS||[]).includes(u.id))return true;return !!S.unitsDone[(mine[i-1]||{}).id];}
 function home(){
   touchDay();wallOn();
   const mine=levelUnits();
@@ -497,7 +497,7 @@ async function studentView(sid,cid){wallOff();
   const nt=(await SUPA.from('lingua_notes').select('body').eq('student_id',sid).eq('author_id',CTX.user.id).maybeSingle()).data;
   const ul=(await SUPA.from('lingua_unlocks').select('unit_id').eq('student_id',sid).eq('class_id',cid)).data||[];const ulset=ul.map(x=>x.unit_id);
   const sd=(pr&&pr.state)||{};const lvU=UNITS.filter(u=>u.level===c.level);let lk=`<div class="eyebrow">Lesson access</div><div class="card">`;
-  lvU.forEach((u,i)=>{const dn=(sd.unitsDone||{})[u.id];const auto=(i===0)||!!(sd.unitsDone||{})[(lvU[i-1]||{}).id];const adm=ulset.includes(u.id);const open=dn||auto||adm;lk+=`<div class="row-item" style="cursor:default;padding:5px 0"><div class="dot" style="width:28px;height:28px;font-size:13px">${dn?'✓':(open?'🔓':'🔒')}</div><div class="meta"><small>${escH(u.title)}${adm?' · admin-unlocked':''}</small></div>${auto?`<span class="muted" style="font-size:11px">auto</span>`:(adm?`<button class="x" onclick="adminLock('${sid}','${cid}','${u.id}')">lock</button>`:`<button class="pill" style="border:none;cursor:pointer" onclick="adminUnlock('${sid}','${cid}','${u.id}')">unlock</button>`)}</div>`;});
+  lvU.forEach((u,i)=>{const dn=(sd.unitsDone||{})[u.id];const auto=dn||(i===0)||!!(sd.unitsDone||{})[(lvU[i-1]||{}).id];const adm=ulset.includes(u.id);const open=dn||auto||adm;lk+=`<div class="row-item" style="cursor:default;padding:5px 0"><div class="dot" style="width:28px;height:28px;font-size:13px">${dn?'✓':(open?'🔓':'🔒')}</div><div class="meta"><small>${escH(u.title)}${adm?' · admin-unlocked':''}</small></div>${auto?`<span class="muted" style="font-size:11px">auto</span>`:(adm?`<button class="x" onclick="adminLock('${sid}','${cid}','${u.id}')">lock</button>`:`<button class="pill" style="border:none;cursor:pointer" onclick="adminUnlock('${sid}','${cid}','${u.id}')">unlock</button>`)}</div>`;});
   lk+=`</div>`;
   const st=(pr&&pr.state)||{}; const name=(e&&e.student_name)||'Student';
   const lvlUnits=UNITS.filter(u=>u.level===c.level);
