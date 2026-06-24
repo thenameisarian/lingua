@@ -281,20 +281,22 @@ function landingScreen(){
   .lp-h2{font-family:Lora,serif;font-size:37px;text-align:center;margin:10px 0 12px;letter-spacing:-.02em;color:#0f1d1a}
   .lp-lead{text-align:center;color:#566b66;margin:0 auto 44px;max-width:560px;font-size:16.5px;line-height:1.6}
   .lp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
-  .lp-card{position:relative;background:#fff;border:1px solid #e8efed;border-radius:20px;padding:30px;transition:transform .22s cubic-bezier(.2,.7,.2,1),box-shadow .22s,border-color .22s}
+  .lp-card{position:relative;background:#fff;border:1px solid #e8efed;border-radius:20px;padding:30px;display:flex;flex-direction:column;transition:transform .22s cubic-bezier(.2,.7,.2,1),box-shadow .22s,border-color .22s}
   .lp-card:hover{transform:translateY(-7px);box-shadow:0 24px 50px -24px rgba(16,60,54,.28);border-color:#d2e7e1}
   .lp-ic{width:52px;height:52px;border-radius:15px;background:linear-gradient(145deg,#eafaf7,#d6f2ec);color:#0c897b;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(15,157,142,.08)}
   .lp-ic svg{width:25px;height:25px}
   .lp-card h3{font-size:18.5px;margin:18px 0 7px;letter-spacing:-.01em;color:#13201d}
   .lp-card p{font-size:14.5px;color:#5c726d;margin:0;line-height:1.6}
-  .lp-price{display:inline-block;margin-top:16px;background:#eafaf7;color:#0c897b;font-weight:700;font-size:12.5px;border-radius:8px;padding:5px 12px;letter-spacing:.01em}
+  .lp-price{display:inline-block;align-self:flex-start;margin-top:auto;padding-top:0;background:#eafaf7;color:#0c897b;font-weight:700;font-size:12.5px;border-radius:8px;padding:5px 12px;letter-spacing:.01em}
+  .lp-free{display:inline-block;align-self:flex-start;margin-top:auto;background:#eef2f1;color:#5c726d;font-weight:700;font-size:12.5px;border-radius:8px;padding:5px 12px;letter-spacing:.01em}
+  .lp-card p{margin-bottom:16px}
   .lp-num{width:42px;height:42px;border-radius:13px;background:#0f9d8e;color:#fff;font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px -8px rgba(15,157,142,.6);font-family:Lora,serif}
   /* testimonials */
-  .lp-tcard{background:#fff;border:1px solid #e8efed;border-radius:20px;padding:28px}
+  .lp-tcard{background:#fff;border:1px solid #e8efed;border-radius:20px;padding:28px;display:flex;flex-direction:column}
   .lp-quote{color:#cfe6e0}
   .lp-quote svg{width:30px;height:30px}
   .lp-tcard .q{font-size:15.5px;color:#33433f;line-height:1.65;margin-top:12px}
-  .lp-tu{display:flex;align-items:center;gap:12px;margin-top:20px}
+  .lp-tu{display:flex;align-items:center;gap:12px;margin-top:auto;padding-top:20px}
   .lp-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(145deg,#0f9d8e,#39ccab);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:Lora,serif}
   /* faq */
   .lp-faq{max-width:740px;margin:0 auto}
@@ -373,7 +375,7 @@ function landingScreen(){
   <section class="lp-alt lp-sec" id="lpcourses"><div class="lp-wrap lp-reveal">
     <div class="lp-kicker">Courses</div><h2 class="lp-h2">Something for every goal</h2><p class="lp-lead">Live classes and self-paced courses, all in one place.</p>
     <div class="lp-grid">
-      <div class="lp-card"><div class="lp-ic">${I.cap}</div><h3>Level classes · A1–C2</h3><p>Live weekly sessions with your teacher. Join with a class code.</p></div>
+      <div class="lp-card"><div class="lp-ic">${I.cap}</div><h3>Level classes · A1–C2</h3><p>Live weekly sessions with your teacher. Join with a class code.</p><span class="lp-free">Free · class code</span></div>
       <div class="lp-card"><div class="lp-ic">${I.pen}</div><h3>Writing in 90 Days</h3><p>From a strong sentence to a full research paper — 60 guided lessons.</p><span class="lp-price">$${PRICES.writing} USDT</span></div>
       <div class="lp-card"><div class="lp-ic">${I.zap}</div><h3>90-Day Intensive</h3><p>A fast-track, self-paced route through the entire curriculum.</p><span class="lp-price">$${PRICES.intensive} USDT</span></div>
       <div class="lp-card"><div class="lp-ic">${I.mic}</div><h3>Speaking Missions</h3><p>87 real-life challenges that get you talking, confidently.</p><span class="lp-price">$${PRICES.missions} USDT</span></div>
