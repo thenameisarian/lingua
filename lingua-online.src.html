@@ -234,11 +234,12 @@ async function route(){
   if(!prof){const pend=localStorage.getItem('lingua_pending');const p=pend?JSON.parse(pend):{name:(user.email||'').split('@')[0],role:'student'};
     await SUPA.from('lingua_profiles').upsert({id:user.id,name:p.name,role:p.role});localStorage.removeItem('lingua_pending');
     prof={id:user.id,name:p.name,role:p.role};}
-  CTX.role=prof.role;CTX.name=prof.name;
+  CTX.role=prof.role;CTX.name=prof.name;CTX.placed=prof.placed_level||null;
   if(prof.role==='admin'){adminHome();return;}
   if(prof.role==='teacher'){teacherHome();return;}
   const enr=(await SUPA.from('lingua_enrollments').select('class_id,lingua_classes(id,name,level)').eq('student_id',user.id).limit(1)).data;
   if(enr&&enr.length&&enr[0].lingua_classes){const c=enr[0].lingua_classes;CTX.classId=c.id;CTX.className=c.name;CTX.level=c.level;await hydrate();home();}
+  else if(!prof.placed_level){placementTest();}
   else studentJoin();
 }
 async function logout(){await SUPA.auth.signOut();CTX={user:null,role:null,name:'',classId:null,className:'',level:null};S=fresh();authScreen();}
@@ -251,6 +252,7 @@ function studentJoin(){wallOn();
   $('app').innerHTML=`<div class="top"><div class="brand" style="font-size:20px">Lingua</div><button class="x" onclick="logout()">log out</button></div>
    <div class="card"><div class="eyebrow">Join your class</div><h2 style="font-size:19px">Welcome, ${escH(CTX.name)}!</h2>
    <p class="muted" style="font-size:13px">Enter the class code your teacher gave you.</p>
+   ${CTX.placed?`<div class="why" style="text-align:left">Your placement level is <b>${CTX.placed}</b>. Ask your teacher for the ${CTX.placed} class code.</div>`:``}
    <input id="jc" placeholder="Class code (e.g. A2-7K3P)" style="text-transform:uppercase">
    <div id="jerr" class="muted" style="font-size:12px;color:var(--rose);margin-top:6px"></div>
    <button class="btn" style="margin-top:10px" id="jgo" onclick="doJoin()">Join class</button></div>`;
@@ -392,13 +394,13 @@ async function adminHome(){
   wallOff();
   $('app').innerHTML='<div class="center muted" style="margin-top:40px">Loading dashboard…</div>';
   const [profsR,clsR,enrR,progR]=await Promise.all([
-    SUPA.from('lingua_profiles').select('id,name,role'),
+    SUPA.from('lingua_profiles').select('id,name,role,placed_level'),
     SUPA.from('lingua_classes').select('*'),
     SUPA.from('lingua_enrollments').select('class_id,student_id,student_name'),
     SUPA.from('lingua_progress').select('student_id,class_id,state,updated_at')
   ]);
   const profs=profsR.data||[], cls=clsR.data||[], enr=enrR.data||[], prog=progR.data||[];
-  const nameById={}; profs.forEach(p=>nameById[p.id]=p.name);
+  const nameById={}; profs.forEach(p=>nameById[p.id]=p.name);const placedById={}; profs.forEach(p=>placedById[p.id]=p.placed_level);
   const teachers=profs.filter(p=>p.role==='teacher'||p.role==='admin').length;
   const students=profs.filter(p=>p.role==='student').length;
   const progByKey={}; prog.forEach(p=>progByKey[p.student_id+'|'+p.class_id]=p);
@@ -414,10 +416,10 @@ async function adminHome(){
   h+=`<div class="eyebrow">All classes (${cls.length})</div>`;
   if(!cls.length)h+=`<p class="muted center">No classes yet.</p>`;
   else cls.slice().sort((a,b)=>a.level.localeCompare(b.level)).forEach(c=>{const n=(enrByClass[c.id]||[]).length;h+=`<div class="card row-item" onclick="classView('${c.id}')"><div class="dot">${c.level}</div><div class="meta"><b>${escH(c.name)}</b><small>${n} student${n===1?'':'s'} · code ${c.join_code} · ${escH(nameById[c.teacher_id]||'—')}</small></div><span class="status">›</span></div>`;});
-  const rows=[]; enr.forEach(e=>{const st=(progByKey[e.student_id+'|'+e.class_id]||{}).state||{};const c=cls.find(x=>x.id===e.class_id);rows.push({name:e.student_name||nameById[e.student_id]||'Student',cls:c?c.name:'—',level:c?c.level:'',xp:st.xp||0,lv:lvlOf(st.xp||0),streak:st.streak||0,sid:e.student_id,cid:e.class_id});});
+  const rows=[]; enr.forEach(e=>{const st=(progByKey[e.student_id+'|'+e.class_id]||{}).state||{};const c=cls.find(x=>x.id===e.class_id);rows.push({placed:placedById[e.student_id],name:e.student_name||nameById[e.student_id]||'Student',cls:c?c.name:'—',level:c?c.level:'',xp:st.xp||0,lv:lvlOf(st.xp||0),streak:st.streak||0,sid:e.student_id,cid:e.class_id});});
   h+=`<div class="eyebrow" style="margin-top:8px">All students (${rows.length})</div>`;
   if(!rows.length)h+=`<p class="muted center">No students enrolled yet.</p>`;
-  else{h+=`<div class="card"><table><tr><th>Name</th><th>Class</th><th>Lv</th><th>XP</th><th>🔥</th></tr>`;rows.sort((a,b)=>b.xp-a.xp).forEach(r=>{h+=`<tr style="cursor:pointer" onclick="studentView('${r.sid}','${r.cid}')"><td><b>${escH(r.name)}</b></td><td>${escH(r.cls)} <span class="muted">${r.level}</span></td><td>${r.lv}</td><td>${r.xp}</td><td>${r.streak}</td></tr>`;});h+=`</table></div>`;}
+  else{h+=`<div class="card"><table><tr><th>Name</th><th>Class</th><th>Lv</th><th>XP</th><th>🔥</th></tr>`;rows.sort((a,b)=>b.xp-a.xp).forEach(r=>{h+=`<tr style="cursor:pointer" onclick="studentView('${r.sid}','${r.cid}')"><td><b>${escH(r.name)}</b></td><td>${escH(r.cls)} <span class="muted">${r.level}${r.placed?(' · placed '+r.placed):''}</span></td><td>${r.lv}</td><td>${r.xp}</td><td>${r.streak}</td></tr>`;});h+=`</table></div>`;}
   h+=`<div class="btn row" style="margin-top:10px"><button class="btn ghost" onclick="adminHome()">↻ Refresh</button><button class="btn ghost" onclick="usersView()">👥 People</button><button class="btn ghost" onclick="exportCSV()">⬇ Export</button></div>`;
   $('app').innerHTML=h;
 }
@@ -480,6 +482,7 @@ async function studentView(sid,cid){wallOff();
   const c=(await SUPA.from('lingua_classes').select('*').eq('id',cid).single()).data;
   const e=(await SUPA.from('lingua_enrollments').select('student_name').eq('class_id',cid).eq('student_id',sid).maybeSingle()).data;
   const pr=(await SUPA.from('lingua_progress').select('state,updated_at').eq('class_id',cid).eq('student_id',sid).maybeSingle()).data;
+  const pf=(await SUPA.from('lingua_profiles').select('placed_level').eq('id',sid).maybeSingle()).data;
   const st=(pr&&pr.state)||{}; const name=(e&&e.student_name)||'Student';
   const lvlUnits=UNITS.filter(u=>u.level===c.level);
   const doneInLevel=lvlUnits.filter(u=>(st.unitsDone||{})[u.id]);
@@ -489,7 +492,7 @@ async function studentView(sid,cid){wallOff();
   let h=`<div class="progress-top"><button class="x" onclick="classView('${cid}')">✕</button></div>
    <div class="eyebrow">${escH(c.name)} · ${c.level}</div><h2 style="font-size:22px">${escH(name)}</h2>
    <div class="card"><div style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px">
-     <span><b>Level ${lv}</b> · ${LVNAME[lv]}</span><span>⭐ ${xp} XP</span><span>🔥 ${st.streak||0}</span>
+     <span><b>Level ${lv}</b> · ${LVNAME[lv]}</span>${pf&&pf.placed_level?`<span>🎯 placed ${pf.placed_level}</span>`:``}<span>⭐ ${xp} XP</span><span>🔥 ${st.streak||0}</span>
      <span>📘 ${doneInLevel.length}/${lvlUnits.length}</span><span>📚 ${st.cards?Object.keys(st.cards).length:0}</span><span>🎓 ${cert}</span>
      <span class="muted">Last active: ${st.lastActive||'—'}</span></div></div>
    <div class="eyebrow">${c.level} units (${doneInLevel.length}/${lvlUnits.length})</div>
@@ -512,12 +515,12 @@ async function removeStudent(sid,cid){if(!confirm('Remove this student from the 
   await SUPA.from('lingua_enrollments').delete().eq('student_id',sid).eq('class_id',cid);
   toast('Removed');classView(cid);}
 async function usersView(){wallOff();
-  const profs=(await SUPA.from('lingua_profiles').select('id,name,role')).data||[];
+  const profs=(await SUPA.from('lingua_profiles').select('id,name,role,placed_level')).data||[];
   const ord={admin:0,teacher:1,student:2};
   profs.sort((a,b)=>(ord[a.role]-ord[b.role])||((a.name||'').localeCompare(b.name||'')));
   let h=`<div class="progress-top"><button class="x" onclick="adminHome()">✕</button></div><div class="eyebrow">People (${profs.length})</div><h2 style="font-size:22px;margin-bottom:10px">Manage roles</h2>`;
   if(!profs.length)h+=`<p class="muted center">No users yet.</p>`;
-  profs.forEach(p=>{h+=`<div class="card" style="display:flex;align-items:center;gap:10px"><div class="meta"><b>${escH(p.name||'(no name)')}</b><small>${p.role}</small></div>
+  profs.forEach(p=>{h+=`<div class="card" style="display:flex;align-items:center;gap:10px"><div class="meta"><b>${escH(p.name||'(no name)')}</b><small>${p.role}${p.placed_level?(' · placed '+p.placed_level):''}</small></div>
     <select id="role_${p.id}" style="width:auto;margin:0">${['student','teacher','admin'].map(r=>`<option value="${r}" ${r===p.role?'selected':''}>${r}</option>`).join('')}</select>
     <button class="btn ghost" style="width:auto;padding:9px 12px" onclick="setUserRole('${p.id}')">Set</button></div>`;});
   $('app').innerHTML=h;}
@@ -539,6 +542,28 @@ async function leaderboardView(){wallOff();
   else{h+=`<div class="card">`+rows.map((s,i)=>{const me=(s.name===CTX.name);const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';return `<div class="row-item" style="cursor:default;padding:7px 4px;${me?'background:var(--teal-soft);border-radius:10px':''}"><div style="width:32px;text-align:center;font-weight:700">${medal}</div><div class="meta"><b style="font-size:14px">${escH(s.name)}${me?' (you)':''}</b></div><div style="font-weight:700;width:64px;text-align:right">⭐ ${s.xp}</div><div class="muted" style="width:52px;text-align:right">🔥 ${s.streak}</div></div>`;}).join('')+`</div>`;}
   $('app').innerHTML=h;}
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));}
+const PLACEMENT=[
+ {q:"I ___ from Spain.",choices:["am","is","are","be"],a:0,level:"A1"},
+ {q:"She ___ a teacher.",choices:["are","am","is","do"],a:2,level:"A1"},
+ {q:"Yesterday I ___ to the cinema.",choices:["go","went","gone","going"],a:1,level:"A2"},
+ {q:"There aren't ___ apples left.",choices:["some","any","a","much"],a:1,level:"A2"},
+ {q:"If it rains, we ___ stay home.",choices:["will","would","are","have"],a:0,level:"B1"},
+ {q:"I have lived here ___ 2019.",choices:["for","since","from","during"],a:1,level:"B1"},
+ {q:"By next year, she ___ here for a decade.",choices:["will work","will have worked","works","worked"],a:1,level:"B2"},
+ {q:"He suggested ___ a little earlier.",choices:["to leave","leaving","leave","left"],a:1,level:"B2"},
+ {q:"___ harder, she would have passed the exam.",choices:["If she studied","Had she studied","Should she study","Did she study"],a:1,level:"C1"},
+ {q:"Rarely ___ such dedication in a beginner.",choices:["I have seen","have I seen","I saw","seen I have"],a:1,level:"C1"},
+ {q:"Her argument, ___ compelling, lacked hard evidence.",choices:["however","albeit","despite","even"],a:1,level:"C2"},
+ {q:"The committee will not ___ any further delays.",choices:["put up","brook","stand with","bear out"],a:1,level:"C2"}
+];
+function placementTest(){wallOn();let i=0,correct=0;
+  function q(){if(i>=PLACEMENT.length){finishPlacement(correct);return;}const it=PLACEMENT[i];
+    $('app').innerHTML=`<div style="height:16px"></div><div class="brand">Lingua</div><div class="card" style="margin-top:14px"><div class="eyebrow">Quick placement · ${i+1}/${PLACEMENT.length}</div><div class="bar" style="margin:8px 0"><i style="width:${i/PLACEMENT.length*100}%"></i></div><p class="muted" style="font-size:12px">Choose the best answer. If you don't know, just guess — this finds your level.</p><div class="q" style="font-size:18px;margin-top:8px">${it.q}</div><div class="choices" id="pc">${it.choices.map((c,x)=>`<button class="choice" data-x="${x}">${c}</button>`).join('')}</div></div>`;
+    document.querySelectorAll('#pc .choice').forEach(b=>b.onclick=()=>{document.querySelectorAll('#pc .choice').forEach(z=>z.style.pointerEvents='none');const ok=+b.dataset.x===it.a;b.classList.add(ok?'correct':'wrong');if(!ok)document.querySelectorAll('#pc .choice')[it.a].classList.add('correct');if(ok)correct++;i++;setTimeout(q,ok?420:760);});}
+  q();}
+async function finishPlacement(correct){const map=['A1','A1','A1','A2','A2','B1','B1','B2','B2','C1','C1','C2','C2'];const lvl=map[Math.min(correct,map.length-1)];const names={A1:'Beginner',A2:'Elementary',B1:'Intermediate',B2:'Upper-Intermediate',C1:'Advanced',C2:'Mastery'};
+  CTX.placed=lvl;try{await SUPA.from('lingua_profiles').update({placed_level:lvl}).eq('id',CTX.user.id);}catch(e){}
+  wallOff();$('app').innerHTML=`<div class="card center" style="margin-top:36px"><div class="big">🎯</div><div class="eyebrow">Your placement</div><h1 style="font-size:34px;color:var(--teal-dark);margin:6px 0">${lvl}</h1><p class="muted">${names[lvl]} · ${correct}/${PLACEMENT.length} correct</p><p class="muted" style="font-size:13px;margin-top:10px">Tell your teacher your level — they'll give you the ${lvl} class code.</p><button class="btn" style="margin-top:14px" onclick="studentJoin()">Continue →</button></div>`;}
 boot();
 </script>
 </body>
