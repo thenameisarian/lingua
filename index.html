@@ -58,6 +58,7 @@
   body.wallon{background:radial-gradient(120% 120% at 50% 0%,#0c2e29,#04201c 70%);color:#eafdf8}
   body.wallon .aurora,body.wallon .wall,body.wallon .grain{display:block}
   body.wallon .top>div:first-child{color:#eafdf8} body.wallon .muted{color:#9fc7bf}
+  body.wallon .brand{color:#eafdf8}
   .aurora,.aurora::before{position:fixed;inset:-30%;z-index:-2;content:""}
   .aurora{background:radial-gradient(40% 50% at 20% 25%,rgba(31,182,166,.55),transparent 60%),radial-gradient(45% 55% at 80% 20%,rgba(22,160,106,.45),transparent 60%),radial-gradient(50% 50% at 65% 80%,rgba(64,224,208,.40),transparent 60%),radial-gradient(40% 45% at 30% 85%,rgba(20,120,140,.45),transparent 60%);filter:blur(20px);animation:drift 22s ease-in-out infinite alternate}
   .aurora::before{background:radial-gradient(35% 40% at 70% 35%,rgba(120,255,220,.30),transparent 60%),radial-gradient(40% 45% at 25% 60%,rgba(31,182,166,.35),transparent 60%);animation:drift2 28s ease-in-out infinite alternate}
@@ -65,9 +66,11 @@
   @keyframes drift2{0%{transform:translate(0,0) scale(1.1)}100%{transform:translate(5%,-5%) scale(1)}}
   .grain{position:fixed;inset:0;z-index:-1;opacity:.05;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,.6) .5px,transparent .5px);background-size:3px 3px}
   .wall{position:fixed;inset:0;z-index:1;overflow:hidden;pointer-events:none}
-  .appx{pointer-events:auto;text-decoration:none;display:flex;align-items:center;justify-content:center;position:absolute;opacity:.4;filter:saturate(.72)}
+  .appx{pointer-events:auto;text-decoration:none;display:flex;align-items:center;justify-content:center;position:absolute;opacity:.45;filter:saturate(.72);transition:opacity .2s,transform .2s}
+  .appx:hover{opacity:1;filter:saturate(1);transform:scale(1.12);z-index:2}
   .appx .tile{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 22px -12px rgba(0,0,0,.7)}
-  @media(max-width:560px){.appx{opacity:.3}}
+  .appx .tile svg{width:24px;height:24px}.appx .tile img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+  @media(max-width:560px){.appx{opacity:.35}}
 </style>
 </head>
 <body>
@@ -148,11 +151,35 @@ function checkBadges(){let earned=[];BADGES.forEach(b=>{if(!S.badges[b.id]&&b.f(
 function badgeToast(b){const d=document.createElement('div');d.style.cssText='position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:120;background:#0c2a26;color:#eafdf8;border:1px solid rgba(255,255,255,.18);padding:10px 16px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.4);font-weight:600;font-size:14px;opacity:0;transition:opacity .3s,transform .3s';d.innerHTML='<span style="font-size:18px">'+b.ic+'</span> Badge unlocked — '+b.t;document.body.appendChild(d);requestAnimationFrame(()=>{d.style.opacity='1';d.style.transform='translateX(-50%) translateY(6px)';});setTimeout(()=>{d.style.opacity='0';setTimeout(()=>d.remove(),400);},2700);}
 function ring(pct,label,sub){const r=26,c=2*Math.PI*r,off=c*(1-pct/100);return '<svg width="64" height="64" viewBox="0 0 64 64" style="flex:none"><circle cx="32" cy="32" r="'+r+'" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="6"/><circle cx="32" cy="32" r="'+r+'" fill="none" stroke="#37d2bd" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+off+'" transform="rotate(-90 32 32)"/><text x="32" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="#eafdf8">'+label+'</text><text x="32" y="45" text-anchor="middle" font-size="8" fill="#9fc7bf">'+(sub||'')+'</text></svg>';}
 
-/* ===== app wall (decorative) ===== */
-const WALL_APPS=[{m:'L',c:'#0f9d8e'},{m:'A',c:'#141206'},{m:'T',c:'#16161f'},{m:'ن',c:'#8B3A1B'},{m:'E',c:'#3b82c4'},{m:'★',c:'#1ebe5d'}];
-function buildWall(){const wall=$('wall');if(!wall)return;wall.innerHTML='';const mob=innerWidth<560,cell=mob?64:92,jit=mob?12:24;let i=0;const cols=Math.ceil(innerWidth/cell)+1,rows=Math.ceil(innerHeight/cell)+1;
-  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const a=WALL_APPS[i%WALL_APPS.length];i++;const el=document.createElement('span');el.className='appx';const t=document.createElement('span');t.className='tile';t.style.background=a.c;t.innerHTML='<span style="font-size:15px">'+a.m+'</span>';const x=c*cell+(Math.random()*2-1)*jit+(r%2?cell/2:0),y=r*cell+(Math.random()*2-1)*jit;el.style.left=Math.round(x)+'px';el.style.top=Math.round(y)+'px';const sz=mob?38:54;t.style.width=sz+'px';t.style.height=sz+'px';el.appendChild(t);wall.appendChild(el);}}
-addEventListener('resize',()=>{if(document.body.classList.contains('wallon'))buildWall();});
+/* ===== app wall (animated, real links) ===== */
+const CONFIG={instagram:"https://www.instagram.com/arianismyname/",whatsapp:"https://whatsapp.com/channel/0029VbCe7n22v1J00hGDUW2J",threads:"https://www.threads.net/@arianismyname"};
+const WALL_ICONS={
+ gh:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2.1c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17 4 18 4.3 18 4.3c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.8 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>',
+ ig:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.3" fill="#fff" stroke="none"/></svg>',
+ wa:'<svg viewBox="0 0 32 32" fill="#fff"><path d="M16 4C9.4 4 4 9.4 4 16c0 2.1.6 4.1 1.5 5.8L4 28l6.3-1.5A11.9 11.9 0 0 0 16 28c6.6 0 12-5.4 12-12S22.6 4 16 4zm5.4 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1l-.9 1.2c-.2.2-.3.2-.6.1-1.5-.7-2.5-1.6-3.5-3.5-.2-.3 0-.5.1-.6l.4-.5c.1-.2.1-.3.2-.5.1-.2 0-.4 0-.5l-1-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.3.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3z"/></svg>',
+ th:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M16.7 11.2c-.1 0-.2-.1-.3-.1-.2-2.9-1.8-4.6-4.4-4.6-1.6 0-3 .7-3.8 1.9l1.5 1c.6-.9 1.6-1.1 2.3-1.1.9 0 1.6.3 2 .8.3.4.5.9.6 1.5-.8-.1-1.6-.2-2.5-.1-2.5.1-4.2 1.6-4 3.7 0 1 .6 1.9 1.5 2.5.7.5 1.7.7 2.7.7 1.3-.1 2.4-.6 3.1-1.5.5-.7.9-1.6 1.1-2.8.6.4 1.1.9 1.4 1.5.4 1 .5 2.8-.9 4.2-1.2 1.2-2.7 1.8-4.9 1.8-2.5 0-4.3-.8-5.5-2.3C5.4 16.9 4.8 15 4.8 12.6c0-2.4.6-4.4 1.8-5.8C7.9 5.3 9.8 4.5 12.3 4.5c2.5 0 4.4.8 5.6 2.4.6.8 1.1 1.7 1.4 2.8l1.7-.5c-.4-1.4-.9-2.6-1.7-3.5C17.8 2.6 15.5 1.6 12.5 1.6c-3 0-5.4 1-7 2.9C4.1 6.3 3.4 8.7 3.4 11.6v0c0 2.9.7 5.3 2.2 7 1.6 2 3.9 3 6.9 3 2.7 0 4.5-.7 6.1-2.3 2-2 1.9-4.5 1.3-6.1-.5-1.1-1.4-2-2.6-2.6z"/></svg>'};
+const WALL_APPS=[
+ {name:"Lingua English",url:"#",mono:"L",color:"#0f9d8e"},
+ {name:"Arian Academy",url:"https://order.mustafaarian.com/apply",logo:"order.mustafaarian.com",color:"#141206"},
+ {name:"TAM Network",url:"https://thetamnetwork.com",logo:"thetamnetwork.com",color:"#16161f"},
+ {name:"Nawishta",url:"https://nawishta.org",mono:"ن",color:"#8B3A1B"},
+ {name:"GitHub",url:"https://github.com/thenameisarian",icon:"gh",color:"#1a1a1a"},
+ {name:"WhatsApp",url:CONFIG.whatsapp,icon:"wa",color:"#1ebe5d"},
+ {name:"Instagram",url:CONFIG.instagram,icon:"ig",color:"#dc2743"},
+ {name:"Threads",url:CONFIG.threads,icon:"th",color:"#111"}];
+function buildWall(){const wall=$('wall');if(!wall)return;
+  function node(a){const el=document.createElement('a');el.href=a.url;el.target='_blank';el.rel='noopener';el.className='appx';
+    const tile=document.createElement('span');tile.className='tile';tile.style.background=a.color||'#0c2a26';
+    if(a.logo){const img=document.createElement('img');img.alt=a.name;img.loading='lazy';const fb='https://www.google.com/s2/favicons?domain='+a.logo+'&sz=128';img.src='https://'+a.logo+'/apple-touch-icon.png';img.onerror=function(){this.onerror=null;this.src=fb;};tile.appendChild(img);}
+    else if(a.icon){tile.innerHTML=WALL_ICONS[a.icon];}else{tile.innerHTML='<span style="font-size:15px">'+(a.mono||'')+'</span>';}
+    el.appendChild(tile);return el;}
+  wall.innerHTML='';const mob=innerWidth<560,cell=mob?64:92,jit=mob?12:26;let i=0;
+  const cols=Math.ceil(innerWidth/cell)+1,rows=Math.ceil(innerHeight/cell)+1;
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const a=WALL_APPS[i%WALL_APPS.length];i++;const n=node(a);
+    const x=c*cell+(Math.random()*2-1)*jit+(r%2?cell/2:0),y=r*cell+(Math.random()*2-1)*jit;
+    n.style.left=Math.round(x)+'px';n.style.top=Math.round(y)+'px';
+    const sz=mob?(34+Math.round(Math.random()*8)):(44+Math.round(Math.random()*16));const t=n.querySelector('.tile');t.style.width=sz+'px';t.style.height=sz+'px';wall.appendChild(n);}}
+let _ww=innerWidth;addEventListener('resize',()=>{if(!document.body.classList.contains('wallon'))return;if(Math.abs(innerWidth-_ww)<60)return;_ww=innerWidth;buildWall();});
 function wallOn(){document.body.classList.add('wallon');buildWall();}
 function wallOff(){document.body.classList.remove('wallon');}
 
@@ -164,7 +191,7 @@ async function boot(){
 }
 SUPA.auth.onAuthStateChange((ev)=>{if(ev==='SIGNED_OUT')authScreen();});
 
-function authScreen(mode){mode=mode||'login';wallOff();
+function authScreen(mode){mode=mode||'login';wallOn();
   $('app').innerHTML=`<div style="height:24px"></div><div class="brand">Lingua</div><p class="center muted" style="font-size:13px;margin-bottom:18px">English with Arian Academy</p>
    <div class="card">
      <div class="btn row" style="margin-bottom:8px"><button class="btn ${mode==='login'?'':'ghost'}" onclick="authScreen('login')">Log in</button><button class="btn ${mode==='signup'?'':'ghost'}" onclick="authScreen('signup')">Sign up</button></div>
@@ -187,7 +214,6 @@ async function doSignup(){const em=$('em').value.trim(),pw=$('pw').value,nm=$('n
   const {data,error}=await SUPA.auth.signUp({email:em,password:pw});
   if(error){$('aerr').textContent=error.message;$('ago').disabled=false;return;}
   if(!data.session){$('app').innerHTML=`<div class="card center" style="margin-top:40px"><div class="big">✉️</div><h2 style="font-size:20px">Check your email</h2><p class="muted">Confirm your email, then come back and log in.</p><button class="btn" style="margin-top:12px" onclick="authScreen('login')">Back to log in</button></div>`;
-    // store pending profile to apply after first login
     localStorage.setItem('lingua_pending',JSON.stringify({name:nm,role}));return;}
   await SUPA.from('lingua_profiles').upsert({id:data.user.id,name:nm,role});
   await route();}
@@ -196,14 +222,12 @@ async function route(){
   const {data:{user}}=await SUPA.auth.getUser();
   if(!user){authScreen();return;}
   CTX.user=user;
-  // apply pending profile (after email confirmation)
   let prof=(await SUPA.from('lingua_profiles').select('*').eq('id',user.id).maybeSingle()).data;
   if(!prof){const pend=localStorage.getItem('lingua_pending');const p=pend?JSON.parse(pend):{name:(user.email||'').split('@')[0],role:'student'};
     await SUPA.from('lingua_profiles').upsert({id:user.id,name:p.name,role:p.role});localStorage.removeItem('lingua_pending');
     prof={id:user.id,name:p.name,role:p.role};}
   CTX.role=prof.role;CTX.name=prof.name;
   if(prof.role==='teacher'){teacherHome();return;}
-  // student: find an enrollment
   const enr=(await SUPA.from('lingua_enrollments').select('class_id,lingua_classes(id,name,level)').eq('student_id',user.id).limit(1)).data;
   if(enr&&enr.length&&enr[0].lingua_classes){const c=enr[0].lingua_classes;CTX.classId=c.id;CTX.className=c.name;CTX.level=c.level;await hydrate();home();}
   else studentJoin();
@@ -214,7 +238,7 @@ async function hydrate(){const r=(await SUPA.from('lingua_progress').select('sta
   S=Object.assign(fresh(),(r&&r.state)||{});}
 
 /* ===== STUDENT: join a class ===== */
-function studentJoin(){wallOff();
+function studentJoin(){wallOn();
   $('app').innerHTML=`<div class="top"><div class="brand" style="font-size:20px">Lingua</div><button class="x" onclick="logout()">log out</button></div>
    <div class="card"><div class="eyebrow">Join your class</div><h2 style="font-size:19px">Welcome, ${escH(CTX.name)}!</h2>
    <p class="muted" style="font-size:13px">Enter the class code your teacher gave you.</p>
