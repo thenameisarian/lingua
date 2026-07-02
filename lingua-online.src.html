@@ -476,7 +476,7 @@ async function hydrate(){const r=(await SUPA.from('lingua_progress').select('sta
   S=Object.assign(fresh(),(r&&r.state)||{});}
 
 /* ===== STUDENT: join a class ===== */
-function studentJoin(){wallOn();
+function studentJoin(){wallOff();
   $('app').innerHTML=`<div class="top"><div class="brand" style="font-size:20px">Ava</div><button class="x" onclick="logout()">log out</button></div>
    <div class="card"><div class="eyebrow">Join your class</div><h2 style="font-size:19px">Welcome, ${escH(CTX.name)}!</h2>
    <p class="muted" style="font-size:13px">Enter the class code your teacher gave you.</p>
@@ -493,7 +493,7 @@ async function doJoin(){const code=$('jc').value.trim().toUpperCase();if(!code){
 /* ===== STUDENT: learning home (level-gated) ===== */
 function unlocked(u){if(CTX.preview||CTX.role!=='student'||CTX.sprintActive)return true;if(S.unitsDone[u.id])return true;const mine=levelUnits();const i=mine.findIndex(x=>x.id===u.id);if(i<=0)return true;if((UNLOCKS||[]).includes(u.id))return true;return !!S.unitsDone[(mine[i-1]||{}).id];}
 function home(){
-  touchDay();wallOn();CTX.sprintActive=false;
+  touchDay();wallOff();CTX.sprintActive=false;
   const mine=levelUnits();
   const due=dueChunks().length, vt=VOCAB.length, vs=vocabSeen();
   const li=levelInfo(),dx=dayXP(),goalPct=Math.min(100,Math.round(dx.xp/(S.goal||30)*100)),bc=Object.keys(S.badges||{}).length;
@@ -907,7 +907,7 @@ const PLACEMENT=[
  {q:"Her argument, ___ compelling, lacked hard evidence.",choices:["however","albeit","despite","even"],a:1,level:"C2"},
  {q:"The committee will not ___ any further delays.",choices:["put up","brook","stand with","bear out"],a:1,level:"C2"}
 ];
-function placementTest(){wallOn();let i=0,correct=0;
+function placementTest(){wallOff();let i=0,correct=0;
   function q(){if(i>=PLACEMENT.length){finishPlacement(correct);return;}const it=PLACEMENT[i];
     $('app').innerHTML=`<div style="height:16px"></div><div class="brand">Ava</div><div class="card" style="margin-top:14px"><div class="eyebrow">Quick placement · ${i+1}/${PLACEMENT.length}</div><div class="bar" style="margin:8px 0"><i style="width:${i/PLACEMENT.length*100}%"></i></div><p class="muted" style="font-size:12px">Choose the best answer. If you don't know, just guess — this finds your level.</p><div class="q" style="font-size:18px;margin-top:8px">${it.q}</div><div class="choices" id="pc">${it.choices.map((c,x)=>`<button class="choice" data-x="${x}">${c}</button>`).join('')}</div></div>`;
     document.querySelectorAll('#pc .choice').forEach(b=>b.onclick=()=>{document.querySelectorAll('#pc .choice').forEach(z=>z.style.pointerEvents='none');const ok=+b.dataset.x===it.a;b.classList.add(ok?'correct':'wrong');if(!ok)document.querySelectorAll('#pc .choice')[it.a].classList.add('correct');if(ok)correct++;i++;setTimeout(q,ok?420:760);});}
